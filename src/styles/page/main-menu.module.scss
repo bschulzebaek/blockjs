@@ -1,0 +1,50 @@
+.mainMenuLogo {
+    position: relative;
+    margin-bottom: 2rem;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.mainMenuLabel {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    transform: rotate(-12deg) translate(25%);
+    font-size: 16px;
+    color: #f8f849;
+    text-shadow: 0 0 10px rgb(0 0 0);
+    animation: bumpLogo 5s 5s ease-in-out infinite;
+}
+
+@keyframes bumpLogo {
+    0% {
+        font-size: 16px;
+    }
+    10% {
+        font-size: 17px;
+    }
+    20% {
+        font-size: 16px;
+    }
+    100% {
+        font-size: 16px;
+    }
+}
+
+
+.mainMenuLegal {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    font-size: 0.4rem;
+    padding: 0.25rem 0.5rem;
+
+    > a {
+        color: #ecf0f1;
+    }
+}

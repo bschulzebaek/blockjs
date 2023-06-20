@@ -1,0 +1,8 @@
+.gameListItem {
+    > button {
+        width: auto;
+        > svg {
+            display: block;
+        }
+    }
+}

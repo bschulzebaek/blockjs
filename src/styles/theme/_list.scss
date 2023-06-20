@@ -1,0 +1,18 @@
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+
+    li {
+        margin: 0.25rem 0;
+        display: flex;
+        flex: 1 1 0;
+        justify-content: space-evenly;
+        gap: 12px;
+
+        > * {
+            width: 100%;
+        }
+    }
+}
