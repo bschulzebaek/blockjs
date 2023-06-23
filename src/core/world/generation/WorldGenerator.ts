@@ -1,5 +1,6 @@
 import Chunk from '@/core/world/Chunk/Chunk';
-import generationV1 from '@/core/world/generation/generation-v1';
+import generationV1 from '@/core/world/generation/v1';
+import generationV2 from '@/core/world/generation/v2';
 
 export default class WorldGenerator {
     constructor(
@@ -12,7 +13,8 @@ export default class WorldGenerator {
         return this.seed;
     }
 
-    public generateChunk(x: number, z: number): Chunk | null {
-        return generationV1(x, z, this.seed);
+    public generateChunk(x: string, z: string): Chunk | null {
+        // return generationV1(x, z, this.seed);
+        return generationV2(x, z, this.seed);
     }
 }

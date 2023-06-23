@@ -15,9 +15,11 @@
     "@types/node": "20.3.1",
     "@types/react": "18.2.13",
     "@types/react-dom": "18.2.6",
+    "alea": "^1.0.1",
     "next": "13.4.6",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "simplex-noise": "^4.0.1",
     "three": "^0.153.0",
     "typescript": "5.1.3"
   },
