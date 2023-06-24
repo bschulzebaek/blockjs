@@ -1,0 +1,15 @@
+$playButtonSize: 2rem;
+
+.playButton {
+    padding: 0.75rem 2rem;
+
+    svg {
+        cursor: pointer;
+        width: $playButtonSize;
+        height: $playButtonSize;
+    }
+}
+
+.content {
+    top: calc(50% - #{$playButtonSize});
+}

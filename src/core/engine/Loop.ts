@@ -34,6 +34,10 @@ export default class Loop {
         this.flushAnimation();
     }
 
+    public frame() {
+        this.innerLoop(0);
+    }
+
     private loop(time: number, lastTime: number) {
         this.innerLoop(this.getDelta(time, lastTime));
         this.lastFrame = requestAnimationFrame((newTime) => this.loop(newTime, time));

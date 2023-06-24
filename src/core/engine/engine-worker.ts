@@ -2,6 +2,7 @@ import { WorldConfig } from '../storage/WorldConfigStorage';
 import Engine from './Engine';
 import MessagePayload from '../../shared/worker/MessagePayloadInterface';
 import InputMapper from '@/core/engine/InputMapper';
+import WorkerMessages from '@/app/(game)/game/WorkerMessages';
 
 // @ts-ignore
 globalThis.__inputMapper = new InputMapper();
@@ -14,9 +15,10 @@ onmessage = (event: MessageEvent<MessagePayload>) => {
             // @ts-ignore
             globalThis.__inputMapper.dispatch(event.data.data);
             break;
-        case 'start':
+        case WorkerMessages.START:
             if (!isReady()) {
-                throw new Error('Engine config not ready!');
+                console.log(engine)
+                throw new Error('Engine not ready!');
             }
 
             engine?.getLoop().start();
@@ -51,6 +53,14 @@ onmessage = (event: MessageEvent<MessagePayload>) => {
                     action: 'ready',
                 });
             }
+            break;
+        case WorkerMessages.FRAME:
+            if (isReady()) {
+                engine?.getLoop().frame();
+            }
+            break;
+        case WorkerMessages.STOP:
+            engine?.getLoop().stop();
             break;
         default:
             console.error(`Unknown action: ${event.data.action}`);

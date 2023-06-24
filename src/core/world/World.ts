@@ -8,7 +8,7 @@ export const CHUNK_SIZE = 16;
 export default class World {
     static CHUNK_SIZE = CHUNK_SIZE;
     static CHUNK_HEIGHT = BASE_SURFACE_HEIGHT;
-    static RENDER_DISTANCE = 5;
+    static RENDER_DISTANCE = 2;
 
     private readonly generator: WorldGenerator;
     private readonly chunks: Map<string, Chunk> = new Map();

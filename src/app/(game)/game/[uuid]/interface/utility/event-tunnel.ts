@@ -1,6 +1,8 @@
+import PointerLock from '@/app/(game)/game/[uuid]/interface/utility/PointerLock';
+
 let _worker: Worker | null = null;
 
-export function createEventTunnel(worker: Worker) {
+export function openEventTunnel(worker: Worker) {
     _worker = worker;
 
     addEventListener('keypress', passKeyboardEvent);
@@ -11,7 +13,7 @@ export function createEventTunnel(worker: Worker) {
     addEventListener('mousemove', passMouseEvent);
 }
 
-export function discardEventTunnel() {
+export function closeEventTunnel() {
     _worker = null;
 
     removeEventListener('keypress', passKeyboardEvent);
@@ -22,8 +24,10 @@ export function discardEventTunnel() {
     removeEventListener('mousemove', passMouseEvent);
 }
 
+const RESERVED_KEYS = ['Escape', 'e'];
+
 function passKeyboardEvent(event: KeyboardEvent) {
-    if (!document.pointerLockElement) {
+    if (!PointerLock.active() || RESERVED_KEYS.includes(event.key)) {
         return;
     } else {
         event.preventDefault();
@@ -39,7 +43,7 @@ function passKeyboardEvent(event: KeyboardEvent) {
 }
 
 function passPointerEvent(event: MouseEvent) {
-    if (!document.pointerLockElement) {
+    if (!PointerLock.active()) {
         return;
     } else {
         event.preventDefault();
@@ -55,7 +59,7 @@ function passPointerEvent(event: MouseEvent) {
 }
 
 function passMouseEvent(event: MouseEvent) {
-    if (!document.pointerLockElement) {
+    if (!PointerLock.active()) {
         return;
     } else {
         event.preventDefault();

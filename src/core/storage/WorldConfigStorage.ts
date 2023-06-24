@@ -1,4 +1,5 @@
 import generateUUID from '@/utility/generate-uuid';
+import generateSeed from '@/utility/generate-seed';
 
 export class WorldConfig {
     constructor(
@@ -50,7 +51,11 @@ export default class WorldConfigStorage {
             }
         } = JSON.parse(localStorage.getItem(WorldConfigStorage.LS_KEY) || '{}');
 
-        const config = configs[uuid];
+        const config = configs[uuid] ?? {
+            uuid: generateUUID(),
+            name: 'New World',
+            seed: generateSeed(),
+        };
 
         if (!config) {
             throw new Error('Config not found!');
