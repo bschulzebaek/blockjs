@@ -1,7 +1,8 @@
 import { createNoise2D } from 'simplex-noise';
 import Chunk, { BlockMap } from '../../Chunk/Chunk';
 import Alea from 'alea';
-import { BASE_SURFACE_HEIGHT, BEDROCK_LEVEL, NOISE_FACTOR, SPLINE_POINTS } from './configuration';
+import { CHUNK_SIZE, WORLD_HEIGHT } from '@/configuration';
+import { BEDROCK_LEVEL, NOISE_FACTOR, SPLINE_POINTS } from './parameters';
 
 import Spline from './Spline';
 import BlockId from '@/core/world/Block/BlockId';
@@ -14,7 +15,7 @@ const spErosion = new Spline(SPLINE_POINTS.EROSION.x, SPLINE_POINTS.EROSION.y);
 // const spPeaksValleys = new Spline(SPLINE_POINTS.PEAKS_VALLEYS.x, SPLINE_POINTS.PEAKS_VALLEYS.y);
 
 function getTerrainHeight(continentalness: number, erosion: number, peaksValleys: number) {
-    let th = BASE_SURFACE_HEIGHT;
+    let th = WORLD_HEIGHT;
 
     th += Math.floor(th * spContinentalness.at(continentalness));
     th = Math.floor(th * spErosion.at(erosion));
@@ -36,8 +37,8 @@ function getBlockForY(y: number, surfaceY: number) {
 }
 
 export default function shapeTerrain(seed: string, chunkX: number, chunkZ: number, blocks: BlockMap): void {
-    const absoluteX = chunkX * World.CHUNK_SIZE,
-        absoluteZ = chunkZ * World.CHUNK_SIZE;
+    const absoluteX = chunkX * CHUNK_SIZE,
+        absoluteZ = chunkZ * CHUNK_SIZE;
 
     const noise2dContinentalness = createNoise2D(Alea(seed + '-c')),
         noise2dErosion = createNoise2D(Alea(seed + '-e')),

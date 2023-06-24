@@ -1,5 +1,6 @@
-export const BASE_SURFACE_HEIGHT = 32;
-export const SEA_LEVEL = BASE_SURFACE_HEIGHT / 2 - 2;
+import { WORLD_HEIGHT } from '@/configuration';
+
+export const SEA_LEVEL = WORLD_HEIGHT / 2 - 2;
 export const BEDROCK_LEVEL = 4;
 export const NOISE_FACTOR = 0.005;
 

@@ -1,9 +1,9 @@
-import { SEA_LEVEL,  } from './configuration';
+import { SEA_LEVEL,  } from './parameters';
 import BlockId from '@/core/world/Block/BlockId';
-import World from '@/core/world/World';
 import { BlockMap } from '@/core/world/Chunk/Chunk';
 import Block from '@/core/world/Block/Block';
 import { iterateChunk2D } from '@/core/world/iterate-coordinates';
+import { WORLD_HEIGHT } from '@/configuration';
 
 // e.g.
 // +humidity && +temperature = Jungle
@@ -27,7 +27,7 @@ function getBlockId(block: Block) {
 
 export default function paintSurface(blocks: BlockMap) {
     iterateChunk2D((x: number, z: number) => {
-        let currentY = World.CHUNK_HEIGHT - 1;
+        let currentY = WORLD_HEIGHT - 1;
         let block = blocks.get(`${x}:${currentY}:${z}`)!;
 
         do {

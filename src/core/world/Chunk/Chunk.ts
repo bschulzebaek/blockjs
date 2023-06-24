@@ -1,11 +1,9 @@
-import World from '@/core/world/World';
 import { Group, Object3D } from 'three';
 import Block from '@/core/world/Block/Block';
 import ChunkGeometry from '@/core/world/Chunk/ChunkGeometry';
+import { CHUNK_SIZE, WORLD_HEIGHT } from '@/configuration';
 
 export type BlockMap = Map<string, Block | undefined>;
-
-const POSITION_OFFSET = 0.5;
 
 export default class Chunk extends Group {
 
@@ -26,7 +24,7 @@ export default class Chunk extends Group {
     }
 
     public getOffsetX(): number {
-        return this.x * World.CHUNK_SIZE;
+        return this.x * CHUNK_SIZE;
     }
 
     public getZ(): number {
@@ -34,7 +32,7 @@ export default class Chunk extends Group {
     }
 
     public getOffsetZ(): number {
-        return this.z * World.CHUNK_SIZE;
+        return this.z * CHUNK_SIZE;
     }
 
     public getBlocks(): BlockMap {
@@ -80,9 +78,9 @@ export default class Chunk extends Group {
 
     static getBlockPosition(x: number, y: number, z: number, strict = false) {
         if (strict && (
-            x < 0 || x >= World.CHUNK_SIZE ||
-            y < 0 || y >= World.CHUNK_HEIGHT ||
-            z < 0 || z >= World.CHUNK_SIZE
+            x < 0 || x >= CHUNK_SIZE ||
+            y < 0 || y >= WORLD_HEIGHT ||
+            z < 0 || z >= CHUNK_SIZE
         )) {
             throw new Error(`Block position out of bounds: ${x}:${y}:${z}`);
         }

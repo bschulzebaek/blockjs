@@ -1,5 +1,5 @@
 import { iterateChunk2D } from '../../iterate-coordinates';
-import { SEA_LEVEL } from './configuration';
+import { SEA_LEVEL } from './parameters';
 import BlockId from '@/core/world/Block/BlockId';
 import { BlockMap } from '@/core/world/Chunk/Chunk';
 import Block from '@/core/world/Block/Block';
