@@ -14,7 +14,7 @@ export default class Chunk extends Group {
     ) {
         super();
         this.name = `chunk ${this.getOffsetX()}:${this.getOffsetZ()}`;
-        this.position.set(this.getOffsetX(), 1, this.getOffsetZ());
+        this.position.set(this.getOffsetX(), 0, this.getOffsetZ());
 
         ChunkGeometry.build(this);
     }

@@ -1,22 +1,31 @@
-import * as THREE from 'three';
 import ComponentRegistry from '@/core/engine/ComponentRegistry';
+import { Camera, Scene, WebGLRenderer } from 'three';
 
 export default class Loop {
     private paused = true;
     private lastFrame: number = 0;
 
+    private camera: Camera | null = null
+
     constructor(
-        private readonly renderer: THREE.Renderer,
-        private readonly camera: THREE.Camera,
-        private readonly scene: THREE.Scene,
+        private readonly renderer: WebGLRenderer,
+        private readonly scene: Scene,
         private readonly components: ComponentRegistry,
     ) {
 
     }
 
+    public setCamera(camera: Camera) {
+        this.camera = camera;
+    }
+
     public start() {
         if (!this.paused) {
             return;
+        }
+
+        if (!this.camera) {
+            throw new Error('Camera has not been set');
         }
 
         this.flushAnimation();
@@ -35,6 +44,10 @@ export default class Loop {
     }
 
     public frame() {
+        if (!this.camera) {
+            throw new Error('Camera has not been set');
+        }
+
         this.innerLoop(0);
     }
 
@@ -45,11 +58,12 @@ export default class Loop {
 
     private innerLoop = (delta: number) => {
         // console.log(delta, performance.now())
+
         this.components.iterateDynamic((component) => {
             component.update(delta);
         });
 
-        this.renderer.render(this.scene, this.camera);
+        this.renderer.render(this.scene, this.camera!);
     }
 
     private getDelta(time: number, lastTime: number): number {

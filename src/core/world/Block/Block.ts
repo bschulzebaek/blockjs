@@ -1,5 +1,6 @@
 import BlockId from './BlockId';
 import { TRANSPARENT_BLOCKS } from '@/core/world/Block/block-data';
+import { Vector3 } from 'three';
 
 interface BiomeData {
     continentalness: number;
@@ -41,5 +42,9 @@ export default class Block {
 
     public getBiomeData() {
         return this.biomeData;
+    }
+
+    public getPosition() {
+        return new Vector3(this.x, this.y, this.z);
     }
 }

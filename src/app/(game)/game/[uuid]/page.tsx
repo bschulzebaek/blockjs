@@ -7,13 +7,14 @@ import Interface from '@/app/(game)/game/[uuid]/interface/Interface';
 import ViewTransitions from '@/app/(game)/game/[uuid]/interface/ViewTransitions';
 
 export default function GamePage() {
-    const [worker] = useState(new Worker(new URL('@/core/engine/engine-worker.ts', import.meta.url)));
+    const [worker, setWorker] = useState(null as unknown as Worker);
     const [view, setView] = useState(AppViews.SETUP);
     const [canvas, setCanvas] = useState(
         null as unknown as HTMLCanvasElement
     );
 
     useEffect(() => {
+        setWorker(new Worker(new URL('@/core/engine/engine-worker.ts', import.meta.url)));
         ViewTransitions.contextSetter(setView);
         setCanvas(document.querySelector('canvas')!);
     }, []);
@@ -27,7 +28,7 @@ export default function GamePage() {
             <CanvasContext.Provider value={canvas}>
                 <ViewContext.Provider value={{ view, setView }}>
 
-                    { canvas ? <Interface /> : null }
+                    { canvas && worker ? <Interface /> : null }
 
                 </ViewContext.Provider>
             </CanvasContext.Provider>

@@ -1,7 +1,10 @@
 import Chunk from '@/core/world/Chunk/Chunk';
 import WorldGenerator from './generation/WorldGenerator';
 import createChunkMap from '@/core/world/create-chunk-map';
-import { RENDER_DISTANCE } from '@/configuration';
+import Block from '@/core/world/Block/Block';
+import { CHUNK_SIZE } from '@/configuration';
+import { RENDER_DISTANCE } from '@/settings';
+import BlockRaycaster from '@/core/world/Block/BlockRaycaster';
 
 export default class World {
     private readonly generator: WorldGenerator;
@@ -39,5 +42,17 @@ export default class World {
                 ready: this.chunks.size,
             },
         });
+    }
+
+    public getBlock(x: number, y: number, z: number): Block | undefined {
+        const chunkX = Math.floor(x / CHUNK_SIZE);
+        const chunkZ = Math.floor(z / CHUNK_SIZE);
+        const chunk = this.chunks.get(Chunk.toId(chunkX, chunkZ));
+
+        if (!chunk) {
+            return undefined;
+        }
+
+        return chunk.getBlockLocal(x, y, z);
     }
 }

@@ -1,4 +1,4 @@
-import { Camera, Object3D, Quaternion, Vector3 } from 'three';
+import { Camera, Euler, Object3D, Quaternion, Vector3 } from 'three';
 import InputMapper from '@/core/engine/InputMapper';
 
 export enum MovementMode {
@@ -8,10 +8,18 @@ export enum MovementMode {
 
 const PI_2 = Math.PI / 2;
 
+const _eulerCamera = new Euler( 0, 0, 0, 'YXZ' );
+const _eulerPlayer = new Euler( 0, 0, 0, 'YXZ' );
+
 export default class PlayerController {
     static MOUSEMOVE_SPEED = 0.002;
 
+    public name = 'player-controller';
+
     private speed = 200;
+    private pointerSpeed = 1;
+    private minPolarAngle = 0;
+    private maxPolarAngle = Math.PI;
 
     private velocity = new Vector3();
     private direction = new Vector3();
@@ -33,6 +41,7 @@ export default class PlayerController {
     ) {
         camera.rotation.set(0, 0, 0);
         this.pitchObject.add(camera);
+        this.pitchObject.name = 'camera-controller-pitch-object';
         this.pivot.add(this.pitchObject);
 
         this.bindInput();
@@ -82,9 +91,19 @@ export default class PlayerController {
     }
 
     private onMouseMove(movementX: number, movementY: number) {
-        this.pivot.rotation.y -= movementX * PlayerController.MOUSEMOVE_SPEED;
-        this.pitchObject.rotation.x -= movementY * PlayerController.MOUSEMOVE_SPEED;
-        this.pitchObject.rotation.x = Math.max(-PI_2, Math.min(PI_2, this.pitchObject.rotation.x));
+        const camera = this.camera;
+        const pivot = this.pivot;
+
+        _eulerCamera.setFromQuaternion( camera.quaternion );
+        _eulerPlayer.setFromQuaternion( pivot.quaternion );
+
+        _eulerPlayer.y -= movementX * 0.002 * this.pointerSpeed;
+        _eulerCamera.x -= movementY * 0.002 * this.pointerSpeed;
+
+        _eulerCamera.x = Math.max( PI_2 - this.maxPolarAngle, Math.min( PI_2 - this.minPolarAngle, _eulerCamera.x ) );
+
+        camera.quaternion.setFromEuler( _eulerCamera );
+        pivot.quaternion.setFromEuler( _eulerPlayer );
     }
 
     private bindInput() {
