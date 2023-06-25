@@ -1,11 +1,11 @@
-import { AppViews } from '@/app/(game)/game/ViewContext';
-import Fullscreen from '@/app/(game)/game/[uuid]/interface/utility/Fullscreen';
-import PointerLock from '@/app/(game)/game/[uuid]/interface/utility/PointerLock';
-import { closeEventTunnel, openEventTunnel } from '@/app/(game)/game/[uuid]/interface/utility/event-tunnel';
-import { addWindowEvents, removeWindowEvents } from '@/app/(game)/game/[uuid]/interface/utility/window-events';
-import { bindUIControls, releaseUIControls } from '@/app/(game)/game/[uuid]/interface/utility/ui-controls';
-import { preventDefaults, releaseDefaults } from '@/app/(game)/game/[uuid]/interface/utility/prevent-defaults';
-import WorkerAdapter from '@/app/(game)/game/[uuid]/WorkerAdapter';
+import { AppViews } from '@/app/(game)/[uuid]/ViewContext';
+import Fullscreen from '@/app/(game)/[uuid]/interface/utility/Fullscreen';
+import PointerLock from '@/app/(game)/[uuid]/interface/utility/PointerLock';
+import { closeEventTunnel, openEventTunnel } from '@/app/(game)/[uuid]/interface/utility/event-tunnel';
+import { addWindowEvents, removeWindowEvents } from '@/app/(game)/[uuid]/interface/utility/window-events';
+import { bindUIControls, releaseUIControls } from '@/app/(game)/[uuid]/interface/utility/ui-controls';
+import { preventDefaults, releaseDefaults } from '@/app/(game)/[uuid]/interface/utility/prevent-defaults';
+import WorkerAdapter from '@/app/(game)/[uuid]/WorkerAdapter';
 
 class ViewTransitions {
     private view: AppViews = AppViews.SETUP;

@@ -1,12 +1,12 @@
 'use client';
 import { useEffect, useState } from 'react';
-import WorkerAdapterContext from '@/app/(game)/game/WorkerAdapterContext';
-import ViewContext, { AppViews } from '@/app/(game)/game/ViewContext';
-import CanvasContext from '@/app/(game)/game/CanvasContext';
-import Interface from '@/app/(game)/game/[uuid]/interface/Interface';
-import ViewTransitions from '@/app/(game)/game/[uuid]/interface/ViewTransitions';
+import WorkerAdapterContext from '@/app/(game)/[uuid]/WorkerAdapterContext';
+import ViewContext, { AppViews } from '@/app/(game)/[uuid]/ViewContext';
+import CanvasContext from '@/app/(game)/[uuid]/CanvasContext';
+import Interface from '@/app/(game)/[uuid]/interface/Interface';
+import ViewTransitions from '@/app/(game)/[uuid]/interface/ViewTransitions';
 import FeatureFlags from '@/feature-flags';
-import WorkerAdapter from '@/app/(game)/game/[uuid]/WorkerAdapter';
+import WorkerAdapter from '@/app/(game)/[uuid]/WorkerAdapter';
 
 export default function GamePage() {
     const [adapter, setAdapter] = useState(null as unknown as WorkerAdapter);

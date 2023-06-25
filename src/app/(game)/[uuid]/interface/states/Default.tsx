@@ -1,8 +1,8 @@
 import { useContext, useEffect } from 'react';
-import ViewTransitions from '@/app/(game)/game/[uuid]/interface/ViewTransitions';
-import Toolbar from '@/app/(game)/game/[uuid]/interface/components/Toolbar';
+import ViewTransitions from '@/app/(game)/[uuid]/interface/ViewTransitions';
+import Toolbar from '@/app/(game)/[uuid]/interface/components/Toolbar';
 import FeatureFlags, { Features } from '@/feature-flags';
-import WorkerAdapterContext from '@/app/(game)/game/WorkerAdapterContext';
+import WorkerAdapterContext from '@/app/(game)/[uuid]/WorkerAdapterContext';
 import styles from '@/app/styles/component/game-default.module.scss';
 
 export default function StateDefault() {

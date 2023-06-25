@@ -1,5 +1,5 @@
-import PointerLock from '@/app/(game)/game/[uuid]/interface/utility/PointerLock';
-import WorkerAdapter from '@/app/(game)/game/[uuid]/WorkerAdapter';
+import PointerLock from '@/app/(game)/[uuid]/interface/utility/PointerLock';
+import WorkerAdapter from '@/app/(game)/[uuid]/WorkerAdapter';
 import InputPayload from '@/core/engine/messages/InputPayload';
 
 let _adapter: WorkerAdapter | null = null;

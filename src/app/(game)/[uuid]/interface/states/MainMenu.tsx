@@ -1,6 +1,6 @@
 import styles from '@/app/styles/component/main-menu.module.scss';
-import ViewTransitions from '@/app/(game)/game/[uuid]/interface/ViewTransitions';
-import Fullscreen from '@/app/(game)/game/[uuid]/interface/utility/Fullscreen';
+import ViewTransitions from '@/app/(game)/[uuid]/interface/ViewTransitions';
+import Fullscreen from '@/app/(game)/[uuid]/interface/utility/Fullscreen';
 
 export default function StateMainMenu() {
     return (

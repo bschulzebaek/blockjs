@@ -1,5 +1,5 @@
 import styles from '@/app/styles/component/toolbar.module.scss';
-import ItemSlot from '@/app/(game)/game/[uuid]/interface/components/ItemSlot';
+import ItemSlot from '@/app/(game)/[uuid]/interface/components/ItemSlot';
 import { useEffect, useState } from 'react';
 
 export default function Toolbar() {

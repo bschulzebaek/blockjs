@@ -1,12 +1,12 @@
 'use client';
 import { useContext, useEffect } from 'react';
-import StateSetup from '@/app/(game)/game/[uuid]/interface/states/Setup';
-import StateDefault from '@/app/(game)/game/[uuid]/interface/states/Default';
-import StateMainMenu from '@/app/(game)/game/[uuid]/interface/states/MainMenu';
-import ViewContext, { AppViews } from '@/app/(game)/game/ViewContext';
-import StateReady from '@/app/(game)/game/[uuid]/interface/states/Ready';
-import StateTeardown from '@/app/(game)/game/[uuid]/interface/states/Teardown';
-import ViewTransitions from '@/app/(game)/game/[uuid]/interface/ViewTransitions';
+import StateSetup from '@/app/(game)/[uuid]/interface/states/Setup';
+import StateDefault from '@/app/(game)/[uuid]/interface/states/Default';
+import StateMainMenu from '@/app/(game)/[uuid]/interface/states/MainMenu';
+import ViewContext, { AppViews } from '@/app/(game)/[uuid]/ViewContext';
+import StateReady from '@/app/(game)/[uuid]/interface/states/Ready';
+import StateTeardown from '@/app/(game)/[uuid]/interface/states/Teardown';
+import ViewTransitions from '@/app/(game)/[uuid]/interface/ViewTransitions';
 
 export default function Interface() {
     const { view } = useContext(ViewContext);

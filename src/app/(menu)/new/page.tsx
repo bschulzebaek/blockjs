@@ -18,7 +18,7 @@ export default function NewPage() {
         }
 
         WorldConfigStorage.create(name, seed).then((uuid) => {
-            router.push(`/game/${uuid}`);
+            router.push(`/${uuid}`);
         });
     }
 

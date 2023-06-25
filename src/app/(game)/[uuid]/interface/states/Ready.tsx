@@ -1,6 +1,6 @@
-import ViewTransitions from '@/app/(game)/game/[uuid]/interface/ViewTransitions';
+import ViewTransitions from '@/app/(game)/[uuid]/interface/ViewTransitions';
 import { useContext, useEffect } from 'react';
-import WorkerAdapterContext from '@/app/(game)/game/WorkerAdapterContext';
+import WorkerAdapterContext from '@/app/(game)/[uuid]/WorkerAdapterContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay } from '@fortawesome/free-solid-svg-icons';
 import styles from '@/app/styles/component/ready.module.scss';

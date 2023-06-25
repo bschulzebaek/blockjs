@@ -1,4 +1,4 @@
-import ViewTransitions from '@/app/(game)/game/[uuid]/interface/ViewTransitions';
+import ViewTransitions from '@/app/(game)/[uuid]/interface/ViewTransitions';
 
 function _onFullScreenChange() {
     if (!document.fullscreenElement || !document.pointerLockElement) {

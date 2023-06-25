@@ -35,7 +35,7 @@ export default function LoadPage() {
 
             return (
                 <li key={uuid} className={styles.gameListItem}>
-                    <RetainQueryLink href={`/game/${uuid}`}>
+                    <RetainQueryLink href={`/${uuid}`}>
                         <button>
                             {name}
                         </button>

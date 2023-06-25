@@ -1,5 +1,5 @@
-import ViewTransitions from '@/app/(game)/game/[uuid]/interface/ViewTransitions';
-import { AppViews } from '@/app/(game)/game/ViewContext';
+import ViewTransitions from '@/app/(game)/[uuid]/interface/ViewTransitions';
+import { AppViews } from '@/app/(game)/[uuid]/ViewContext';
 
 const keyMap: Map<string, boolean> = new Map();
 

@@ -2,9 +2,9 @@
 import { usePathname } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
 import WorldConfigStorage from '@/core/storage/WorldConfigStorage';
-import CanvasContext from '@/app/(game)/game/CanvasContext';
-import WorkerAdapterContext from '@/app/(game)/game/WorkerAdapterContext';
-import ViewTransitions from '@/app/(game)/game/[uuid]/interface/ViewTransitions';
+import CanvasContext from '@/app/(game)/[uuid]/CanvasContext';
+import WorkerAdapterContext from '@/app/(game)/[uuid]/WorkerAdapterContext';
+import ViewTransitions from '@/app/(game)/[uuid]/interface/ViewTransitions';
 import WorkerMessages from '@/core/engine/messages/WorkerMessages';
 
 export default function StateSetup() {
