@@ -10,7 +10,7 @@ export default class WorkerAdapter {
     private callbacks: Map<string, Function> = new Map();
 
     constructor() {
-        this.worker = new Worker(new URL('@/core/engine/engine-worker.ts', import.meta.url));
+        this.worker = new Worker(new URL('@/core/core-worker.ts', import.meta.url));
 
         this.worker.onmessage = this.onMessage.bind(this);
     }

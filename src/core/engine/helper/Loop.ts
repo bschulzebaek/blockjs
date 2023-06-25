@@ -1,5 +1,5 @@
-import ComponentRegistry from '@/core/engine/scene/ComponentRegistry';
-import { Camera, Scene, WebGLRenderer } from 'three';
+import { Camera, WebGLRenderer } from 'three';
+import CustomScene from '@/core/engine/scene/CustomScene';
 
 export default class Loop {
     private paused = true;
@@ -9,8 +9,7 @@ export default class Loop {
 
     constructor(
         private readonly renderer: WebGLRenderer,
-        private readonly scene: Scene,
-        private readonly components: ComponentRegistry,
+        private readonly scene: CustomScene,
     ) {
 
     }
@@ -23,6 +22,8 @@ export default class Loop {
         if (!this.paused) {
             return;
         }
+
+        this.camera = this.scene.getMainCamera();
 
         if (!this.camera) {
             throw new Error('Camera has not been set');
@@ -49,9 +50,7 @@ export default class Loop {
     }
 
     private innerLoop = (delta: number) => {
-        // console.log(delta, performance.now())
-
-        this.components.iterateDynamic((component) => {
+        this.scene.getComponents().iterateDynamic((component) => {
             component.update(delta);
         });
 

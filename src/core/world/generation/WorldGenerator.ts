@@ -5,6 +5,7 @@ import ChunkFactory from '@/core/world/Chunk/ChunkFactory';
 import createChunkMap from '@/core/world/create-chunk-map';
 import { RENDER_DISTANCE } from '@/settings';
 import { MAX_CHUNK_CACHE } from '@/configuration';
+import FeatureFlags, { Features } from '@/feature-flags';
 
 const _cache = new Map<string, Chunk>();
 
@@ -19,6 +20,10 @@ export default class WorldGenerator {
     }
 
     public generateChunk(x: string, z: string): Promise<Chunk> {
+        if (FeatureFlags.get(Features.DEBUG)) {
+            console.debug(`[generateChunk] ${x}:${z}`);
+        }
+
         const id = Chunk.toId(x, z);
         const chunk = _cache.get(id);
 
@@ -52,6 +57,10 @@ export default class WorldGenerator {
     }
 
     private receiveChunk(event: MessageEvent<ChunkPayload>) {
+        if (FeatureFlags.get(Features.DEBUG)) {
+            console.debug(`[receiveChunk]`, event);
+        }
+
         setTimeout(() => {
             const chunk = ChunkFactory.createFromPayload(event.data);
             const promise = this.promises.get(chunk.getId());

@@ -42,7 +42,7 @@ export default class MessageHandler {
         }
 
         const renderer = WorkerContext.engine.getRenderer();
-        const camera = WorkerContext.engine.getMainCamera();
+        const camera = WorkerContext.engine.getScene().getMainCamera();
         const scene = WorkerContext.engine.getScene();
 
         if (!camera) {
@@ -60,8 +60,8 @@ export default class MessageHandler {
 
         WorkerContext.engine = new Engine();
 
-        await WorkerContext.engine.loadWorld();
-        await WorkerContext.engine.setupScene();
+        await WorkerContext.engine.getWorld().setup();
+        await WorkerContext.engine.getScene().setup(WorkerContext.engine.getWorld());
 
         this.postMessage(WorkerMessages.READY);
     }

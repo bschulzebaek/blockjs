@@ -10,12 +10,14 @@ export default class World {
     private readonly generator: WorldGenerator;
     private readonly chunks: Map<string, Chunk> = new Map();
     private pendingChunks: Map<string, undefined> = new Map();
+    private readonly chunkGroup: Group = new Group();
 
-    constructor(
-        private readonly chunkGroup: Group
-    ) {
+    constructor() {
         this.generator = new WorldGenerator();
         this.pendingChunks = WorldGenerator.createMap(); // Todo: Provide current Player Chunk as offset
+
+        this.chunkGroup.name = 'chunks';
+        this.chunkGroup.position.add(new Vector3(0.5, 0.5, 0.5));
     }
 
     public async loadPendingChunks() {
@@ -34,6 +36,14 @@ export default class World {
 
             this.postProgress();
         }));
+    }
+
+    public async setup() {
+        await this.loadPendingChunks();
+    }
+
+    public getChunkGroup() {
+        return this.chunkGroup;
     }
 
     public setPendingChunks(map: Map<string, undefined>) {

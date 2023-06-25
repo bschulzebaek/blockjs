@@ -34,7 +34,7 @@ function response(chunk: Chunk) {
     // @ts-ignore
     postMessage(payload, getBuffer(payload.geometries));
 
-    self.close();
+    close();
 }
 
 function generate({ seed, x, z }: GeneratorMessagePayload) {

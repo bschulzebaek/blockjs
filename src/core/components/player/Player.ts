@@ -23,7 +23,6 @@ export default class Player extends Object3D {
         private lastChunkId: string = '0:0'
     ) {
         super();
-
         this.name = 'player';
 
         this.rotation.set(0, 0, 0);
