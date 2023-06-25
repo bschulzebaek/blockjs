@@ -6,9 +6,7 @@ import { BEDROCK_LEVEL, NOISE_FACTOR, SPLINE_POINTS } from './parameters';
 
 import Spline from './Spline';
 import BlockId from '@/core/world/Block/BlockId';
-import World from '@/core/world/World';
 import { iterateChunk3D } from '@/core/world/iterate-coordinates';
-import Block from '@/core/world/Block/Block';
 
 const spContinentalness = new Spline(SPLINE_POINTS.CONTINENTALNESS.x, SPLINE_POINTS.CONTINENTALNESS.y);
 const spErosion = new Spline(SPLINE_POINTS.EROSION.x, SPLINE_POINTS.EROSION.y);

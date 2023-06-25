@@ -1,6 +1,4 @@
 import BlockId from './BlockId';
-import { TRANSPARENT_BLOCKS } from '@/core/world/Block/block-data';
-import { Vector3 } from 'three';
 
 interface BiomeData {
     continentalness: number;
@@ -9,7 +7,7 @@ interface BiomeData {
 }
 
 export default interface Block {
-    biomeData: BiomeData;
+    biomeData?: BiomeData;
     id: BlockId;
     x: number;
     y: number;

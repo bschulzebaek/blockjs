@@ -37,7 +37,19 @@ export default class MessageHandler {
     }
 
     private onFrame() {
-        WorkerContext.engine?.getLoop().frame();
+        if (!WorkerContext.engine) {
+            return;
+        }
+
+        const renderer = WorkerContext.engine.getRenderer();
+        const camera = WorkerContext.engine.getMainCamera();
+        const scene = WorkerContext.engine.getScene();
+
+        if (!camera) {
+            throw new Error('MainCamera not set!');
+        }
+
+        renderer.render(scene, camera);
     }
 
     private async onSetup(payload: SetupPayload) {

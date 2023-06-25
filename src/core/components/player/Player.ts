@@ -3,8 +3,11 @@ import PlayerController from '@/core/components/player/PlayerController';
 import { RESOLUTION } from '@/settings';
 import WorkerContext from '@/core/engine/WorkerContext';
 import Chunk from '@/core/world/Chunk/Chunk';
-import { CHUNK_SIZE } from '@/configuration';
+import { CHUNK_SIZE, DEFAULT_BLOCK_PLACEMENT } from '@/configuration';
 import UpdateGridEvent from '@/core/components/player/events/UpdateGridEvent';
+import BlockRaycaster from '@/core/world/Block/BlockRaycaster';
+import destroyBlock from '@/core/components/player/actions/destroy-block';
+import placeBlock from '@/core/components/player/actions/place-block';
 
 export default class Player extends Object3D {
     static HEIGHT = 1.8;
@@ -14,6 +17,7 @@ export default class Player extends Object3D {
     private controller: PlayerController;
 
     private world = WorkerContext.engine!.getWorld();
+    private raycaster: BlockRaycaster;
 
     constructor(
         private lastChunkId: string = '0:0'
@@ -27,6 +31,10 @@ export default class Player extends Object3D {
         this.camera = this.createCamera();
         this.controller = new PlayerController(this, this.camera);
         this.add(this.camera);
+
+        this.raycaster = new BlockRaycaster(this.world, this.camera);
+
+        this.registerActions();
     }
 
     public update(delta: number) {
@@ -70,5 +78,38 @@ export default class Player extends Object3D {
                 Math.floor(this.position.z / CHUNK_SIZE),
             ));
         }
+    }
+
+    private registerActions() {
+        WorkerContext.input.subscribeClick(this.onClick.bind(this));
+    }
+
+    private onClick(button: number) {
+        switch (button) {
+            case 0:
+                return this.onLeftClick();
+            case 2:
+                return this.onRightClick();
+        }
+    }
+
+    private onLeftClick() {
+        const result = this.raycaster.intersectWorld();
+
+        if (!result) {
+            return;
+        }
+
+        destroyBlock(result.position, result.block);
+    }
+
+    private onRightClick() {
+        const result = this.raycaster.intersectWorld();
+
+        if (!result) {
+            return;
+        }
+
+        placeBlock(result.position, result.face, DEFAULT_BLOCK_PLACEMENT);
     }
 }

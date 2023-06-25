@@ -3,18 +3,9 @@ import World from '@/core/world/World';
 import BlockRaycaster from '@/core/world/Block/BlockRaycaster';
 import BlockId from '@/core/world/Block/BlockId';
 
-const geometry = new BoxGeometry(1.001, 1.001, 1.001);
-const material = new MeshStandardMaterial({
-    color: 0xffffff,
-    transparent: true,
-    opacity: 0.15,
-});
-const mesh = new Mesh(geometry, material);
-const outline =  new BoxHelper(mesh, 0x333333);
-
 const CURSOR_OFFSET = new Vector3(0.5, 0.5, 0.5);
 
-const NON_HIGHLIGHTABLE_BLOCKS = [
+const NON_HIGHLIGHTABLE_BLOCKS: BlockId[] = [
     BlockId.AIR,
     BlockId.WATER,
     BlockId.FLOWING_WATER,
@@ -30,6 +21,15 @@ export default class Cursor extends Object3D {
         private readonly world: World,
     ) {
         super();
+
+        const geometry = new BoxGeometry(1.001, 1.001, 1.001);
+        const material = new MeshStandardMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.15,
+        });
+        const mesh = new Mesh(geometry, material);
+        const outline =  new BoxHelper(mesh, 0x333333);
 
         this.name = 'cursor';
         this.add(mesh, outline);

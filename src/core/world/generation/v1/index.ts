@@ -8,16 +8,39 @@ const biomeData = {
     continentalness: 0.5
 };
 
+const BLOCK_IDS = [
+    BlockId.STONE,
+    BlockId.GRASS,
+    BlockId.DIRT,
+    BlockId.COBBLESTONE,
+    BlockId.PLANKS,
+    BlockId.BEDROCK,
+    BlockId.SAND,
+    BlockId.GOLD_ORE,
+    BlockId.IRON_ORE,
+    BlockId.COAL_ORE,
+    BlockId.SANDSTONE,
+    BlockId.BOOKSHELF,
+    BlockId.CRAFTING_TABLE,
+];
+
 export default function generationV1(x: string, z: string, seed: string): Chunk | undefined {
     const blocks = Chunk.getEmptyBlocks();
 
     try {
         for (let i = 0; i < 16; i++) {
             for (let j = 0; j < 16; j++) {
-                blocks.set(`${i}:1:${j}`, { x: i, y: 1, z: j, id: BlockId.STONE, biomeData });
-                blocks.set(`${i}:3:${j}`, { x: i, y: 3, z: j, id: BlockId.GRASS, biomeData });
-                blocks.set(`${i}:7:${j}`, { x: i, y: 7, z: j, id: BlockId.STONE, biomeData });
-                blocks.set(`${i}:12:${j}`, { x: i, y: 12, z: j, id: BlockId.GLASS, biomeData });
+                const blockId = BLOCK_IDS[Math.floor(Math.random() * BLOCK_IDS.length)];
+                blocks.set(`${i}:1:${j}`, { x: i, y: 1, z: j, id: blockId });
+            }
+        }
+
+        for (let i = 6; i < 10; i++) {
+            for (let j = 6; j < 10; j++) {
+                for (let k = 6; k < 12; k++) {
+                    const blockId = BLOCK_IDS[Math.floor(Math.random() * BLOCK_IDS.length)];
+                    blocks.set(`${i}:${k}:${j}`, { x: i, y: k, z: j, id: blockId });
+                }
             }
         }
 

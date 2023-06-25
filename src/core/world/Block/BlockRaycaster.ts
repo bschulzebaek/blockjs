@@ -1,6 +1,13 @@
 import { Camera, Vector3 } from 'three';
 import World from '@/core/world/World';
 import Block from '@/core/world/Block/Block';
+import { ChunkDirections } from '@/data/chunk-faces';
+
+interface RaycastResult {
+    block: Block;
+    position: Vector3;
+    face: ChunkDirections;
+}
 
 function frac(dir: any, a: number) {
     return dir > 0 ? (1 - a % 1) : (a % 1);
@@ -18,8 +25,8 @@ export default class BlockRaycaster {
 
     }
 
-    public intersectWorld(): { block: Block, position: { x: number, y: number, z: number } } | undefined {
-        // ToDo: Could probably be moved into a custom Camera class and be called in every update, if any more ray casting is needed!
+    public intersectWorld(): RaycastResult | undefined {
+        // ToDo: Could probably be moved into a custom Camera class and be called on every update, if any more ray casting is needed!
         this.camera.updateWorldMatrix(true, false);
         this.origin.setFromMatrixPosition(this.camera.matrixWorld);
         const elements = this.camera.matrixWorld.elements;
@@ -48,22 +55,28 @@ export default class BlockRaycaster {
         toY *= dtY;
         toZ *= dtZ;
 
+        let face;
+
         while (distance-- > 0) {
             if (toX < toY) {
                 if (toX < toZ) {
                     x += stepX;
                     toX += dtX;
+                    face = stepX > 0 ? ChunkDirections.EAST : ChunkDirections.WEST;
                 } else {
                     z += stepZ;
                     toZ += dtZ;
+                    face = stepZ > 0 ? ChunkDirections.NORTH : ChunkDirections.SOUTH;
                 }
             } else {
                 if (toY < toZ) {
                     y += stepY;
                     toY += dtY;
+                    face = -stepY > 0 ? ChunkDirections.UP : ChunkDirections.DOWN;
                 } else {
                     z += stepZ;
                     toZ += dtZ;
+                    face = stepZ > 0 ? ChunkDirections.NORTH : ChunkDirections.SOUTH;
                 }
             }
 
@@ -76,11 +89,8 @@ export default class BlockRaycaster {
 
             return {
                 block,
-                position: {
-                    x,
-                    y,
-                    z,
-                }
+                position: new Vector3(x, y, z),
+                face: 0,
             };
         }
 

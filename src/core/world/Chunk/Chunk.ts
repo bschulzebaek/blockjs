@@ -2,12 +2,13 @@ import { BufferGeometry, Group, Object3D, Vector3 } from 'three';
 import Block from '@/core/world/Block/Block';
 import ChunkGeometry from '@/core/world/Chunk/ChunkGeometry';
 import { CHUNK_SIZE, WORLD_HEIGHT } from '@/configuration';
-import ChunkPayload from '@/core/world/generation/worker/ChunkPayload';
+import BlockId from '@/core/world/Block/BlockId';
 
 export type BlockMap = Map<string, Block | undefined>;
 
 export default class Chunk extends Group {
     private geometries: BufferGeometry[] = [];
+    private dirty = false;
 
     constructor(
         private readonly x: number,
@@ -82,6 +83,18 @@ export default class Chunk extends Group {
 
     public getId() {
         return Chunk.toId(this.x, this.z);
+    }
+
+    public setBlock(x: number, y: number, z: number, id: BlockId) {
+        const position = Chunk.getBlockPosition(x, y, z);
+
+        if (id === BlockId.AIR) {
+            this.blocks.delete(position);
+        } else {
+            this.blocks.set(position, { id, x, y, z });
+        }
+
+        ChunkGeometry.build(this);
     }
 
     static toId(x: number | string, z: number | string) {

@@ -12,13 +12,17 @@ import { WORLD_HEIGHT } from '@/configuration';
 // -humidity && -temperature = Snowy plains
 
 function getBlockId(block: Block) {
-    const { continentalness, humidity, temperature } = block.biomeData;
-
-    if (continentalness! > 0.76) {
-        return humidity! < -0.5 ? BlockId.SANDSTONE : BlockId.STONE;
+    if (!block.biomeData) {
+        return BlockId.GRASS;
     }
 
-    if (humidity! < -0.5 && temperature! > 0.5) {
+    const { continentalness, humidity, temperature } = block.biomeData;
+
+    if (continentalness > 0.76) {
+        return humidity < -0.5 ? BlockId.SANDSTONE : BlockId.STONE;
+    }
+
+    if (humidity < -0.5 && temperature > 0.5) {
         return BlockId.SAND;
     }
 

@@ -15,6 +15,7 @@ export default class Engine {
 
     private loop: Loop | null = null;
     private player: Player | null = null;
+    private mainCamera: Camera | null = null;
 
     constructor() {
         const chunkGroup = new Group();
@@ -23,6 +24,18 @@ export default class Engine {
 
         this.scene.add(chunkGroup);
         this.world = new World(chunkGroup);
+    }
+
+    public getRenderer() {
+        return this.renderer;
+    }
+
+    public getMainCamera() {
+        return this.mainCamera;
+    }
+
+    public getScene() {
+        return this.scene;
     }
 
     public getLoop() {
@@ -41,6 +54,7 @@ export default class Engine {
         this.player = this.createPlayer();
         const camera = this.player.getCamera();
 
+        this.mainCamera = camera;
         this.loop = this.createLoop(camera);
 
         this.scene.background = new Color(0xb0ddf9);
@@ -75,8 +89,7 @@ export default class Engine {
 
         this.scene.add(player);
         this.components.addDynamic(player);
-        player.position.set(4, 24, 4); // TODO: Get player position from IndexedDB
-        player.rotateY(180);
+        player.position.set(4, 2, 4); // TODO: Get player position from IndexedDB
 
         return player;
     }

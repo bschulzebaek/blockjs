@@ -3,6 +3,7 @@ import ViewTransitions from '@/app/(game)/game/[uuid]/interface/ViewTransitions'
 import Toolbar from '@/app/(game)/game/[uuid]/interface/components/Toolbar';
 import FeatureFlags, { Features } from '@/feature-flags';
 import WorkerAdapterContext from '@/app/(game)/game/WorkerAdapterContext';
+import styles from '@/app/styles/component/game-default.module.scss';
 
 export default function StateDefault() {
     const adapter = useContext(WorkerAdapterContext);
@@ -17,7 +18,7 @@ export default function StateDefault() {
 
     return (
         <>
-            {/*<div className={styles.cursor}>+</div>*/}
+            <div className={styles.cursor}>+</div>
             { FeatureFlags.get(Features.INVENTORY) ? <Toolbar /> : null }
         </>
     );

@@ -3,7 +3,8 @@ import WorldGenerator from './generation/WorldGenerator';
 import Block from '@/core/world/Block/Block';
 import { CHUNK_SIZE } from '@/configuration';
 import WorkerContext from '@/core/engine/WorkerContext';
-import { Group, Scene } from 'three';
+import { Group, Vector3 } from 'three';
+import BlockId from '@/core/world/Block/BlockId';
 
 export default class World {
     private readonly generator: WorldGenerator;
@@ -20,8 +21,11 @@ export default class World {
     public async loadPendingChunks() {
         await Promise.all(Array.from(this.pendingChunks.keys()).map(async (key) => {
             const [x, z] = key.split(':');
-
             const chunk = await this.generator.generateChunk(x, z);
+
+            if (!this.pendingChunks.has(key)) {
+                return;
+            }
 
             this.chunks.set(key, chunk);
             this.pendingChunks.delete(key);
@@ -48,7 +52,7 @@ export default class World {
         return this.getChunkById(Chunk.toId(x, z), strict);
     }
 
-    public getChunkById(id: string, strict = false) {
+    public getChunkById(id: string, strict: boolean = false): Chunk | undefined {
         const chunk = this.chunks.get(id);
 
         if (strict && !chunk) {
@@ -92,5 +96,19 @@ export default class World {
             this.chunks.delete(id);
             this.chunkGroup.remove(chunk);
         });
+    }
+
+    public setBlock(position: Vector3, blockId: BlockId) {
+        const chunkId = Chunk.positionToId(position);
+        const chunk = this.getChunkById(chunkId);
+
+        if (!chunk) {
+            return; // todo: Out of bounds
+        }
+
+        const blockX = position.x - chunk.getOffsetX(),
+            blockZ = position.z - chunk.getOffsetZ();
+
+        chunk.setBlock(blockX, position.y, blockZ, blockId);
     }
 }

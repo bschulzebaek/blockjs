@@ -8,6 +8,8 @@ import { MAX_CHUNK_CACHE } from '@/configuration';
 
 const _cache = new Map<string, Chunk>();
 
+// todo: Pre-generate chunks around current map
+
 export default class WorldGenerator {
     private promises: Map<string, Promise<Chunk>> = new Map();
     private seed = WorkerContext.config!.getSeed();
@@ -18,8 +20,9 @@ export default class WorldGenerator {
 
     public generateChunk(x: string, z: string): Promise<Chunk> {
         const id = Chunk.toId(x, z);
+        const chunk = _cache.get(id);
 
-        if (_cache.has(id)) {
+        if (chunk) {
             return Promise.resolve(_cache.get(Chunk.toId(x, z))!);
         }
 

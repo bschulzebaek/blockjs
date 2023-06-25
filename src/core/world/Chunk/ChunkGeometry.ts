@@ -9,6 +9,7 @@ import getGeometryData from '@/core/world/Chunk/get-geometry-data';
 import CustomTextureLoader from '@/utility/TextureLoader';
 import { TRANSPARENT_BLOCKS } from '@/core/world/Block/block-data';
 import ChunkPayload from '@/core/world/generation/worker/ChunkPayload';
+import BlockId from '@/core/world/Block/BlockId';
 
 const textureLoader = new CustomTextureLoader();
 const texture = textureLoader.load('/engine/textures.png');
@@ -28,8 +29,12 @@ const materials = {
     }),
 };
 
+// todo: Performance!
+
 export default class ChunkGeometry {
     static build(chunk: Chunk) {
+        chunk.children = [];
+
         const positions: number[] = [];
         const normals: number[] = [];
         const colors: number[] = [];
@@ -40,7 +45,13 @@ export default class ChunkGeometry {
         const colors2: number[] = [];
         const uvs2: number[] = [];
 
+        // todo: Get adjacent chunks via seed and check for occlusion
+
         chunk.iterateBlocksLocal((x, y, z, block) => {
+            if (!block || block.id === BlockId.AIR) {
+                return;
+            }
+
             const transparent = TRANSPARENT_BLOCKS.includes(block.id);
 
             const addFace = (_x: number, _y: number, _z: number) => {

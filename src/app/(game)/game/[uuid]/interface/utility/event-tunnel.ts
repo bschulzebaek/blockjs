@@ -11,7 +11,6 @@ export function openEventTunnel(adapter: WorkerAdapter) {
     addEventListener('keydown', passKeyboardEvent);
     addEventListener('keyup', passKeyboardEvent);
     addEventListener('click', passPointerEvent);
-    addEventListener('contextmenu', passPointerEvent);
     addEventListener('mousemove', passMouseEvent);
 }
 
@@ -22,7 +21,6 @@ export function closeEventTunnel() {
     removeEventListener('keydown', passKeyboardEvent);
     removeEventListener('keyup', passKeyboardEvent);
     removeEventListener('click', passPointerEvent);
-    removeEventListener('contextmenu', passPointerEvent);
     removeEventListener('mousemove', passMouseEvent);
 }
 
