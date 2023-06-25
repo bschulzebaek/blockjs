@@ -47,6 +47,10 @@ export default class World {
             return undefined;
         }
 
-        return chunk.getBlockLocal(x, y, z);
+        return chunk.getBlockLocal(
+            x - chunk.getOffsetX(),
+            y,
+            z - chunk.getOffsetZ()
+        );
     }
 }

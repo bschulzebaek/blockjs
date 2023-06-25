@@ -38,13 +38,13 @@ export default class Cursor extends Object3D {
     }
 
     public update() {
-        const block = this.raycaster.intersectWorld();
+        const result = this.raycaster.intersectWorld();
 
-        if (!block || NON_HIGHLIGHTABLE_BLOCKS.includes(block.id)) {
+        if (!result || NON_HIGHLIGHTABLE_BLOCKS.includes(result.block.id)) {
             return this.hide();
         }
 
-        this.updatePosition(new Vector3(block.x, block.y, block.z));
+        this.updatePosition(new Vector3(result.position.x, result.position.y, result.position.z));
         this.show();
     }
 

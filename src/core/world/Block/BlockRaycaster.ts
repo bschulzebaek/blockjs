@@ -18,7 +18,7 @@ export default class BlockRaycaster {
 
     }
 
-    public intersectWorld(): Block | undefined {
+    public intersectWorld(): { block: Block, position: { x: number, y: number, z: number } } | undefined {
         // ToDo: Could probably be moved into a custom Camera class and be called in every update, if any more ray casting is needed!
         this.camera.updateWorldMatrix(true, false);
         this.origin.setFromMatrixPosition(this.camera.matrixWorld);
@@ -48,9 +48,7 @@ export default class BlockRaycaster {
         toY *= dtY;
         toZ *= dtZ;
 
-        let block = undefined;
-
-        while (!block && distance-- > 0) {
+        while (distance-- > 0) {
             if (toX < toY) {
                 if (toX < toZ) {
                     x += stepX;
@@ -69,13 +67,23 @@ export default class BlockRaycaster {
                 }
             }
 
-            block = this.world.getBlock(x, y, z);
+            const block = this.world.getBlock(x, y, z);
 
-            if (block) {
-                return block;
+            if (!block) {
+                continue;
             }
+
+
+            return {
+                block,
+                position: {
+                    x,
+                    y,
+                    z,
+                }
+            };
         }
 
-        return block;
+        return undefined;
     }
 }
