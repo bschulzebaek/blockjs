@@ -1,18 +1,17 @@
 import { useContext, useEffect } from 'react';
-import WorkerContext from '@/app/(game)/game/WorkerContext';
 import ViewTransitions from '@/app/(game)/game/[uuid]/interface/ViewTransitions';
 import Toolbar from '@/app/(game)/game/[uuid]/interface/components/Toolbar';
 import FeatureFlags, { Features } from '@/feature-flags';
-import styles from '@/styles/component/game-default.module.scss';
+import WorkerAdapterContext from '@/app/(game)/game/WorkerAdapterContext';
 
 export default function StateDefault() {
-    const worker = useContext(WorkerContext);
+    const adapter = useContext(WorkerAdapterContext);
 
     useEffect(() => {
-        ViewTransitions.Default_enter(worker);
+        ViewTransitions.Default_enter(adapter);
 
         return () => {
-            ViewTransitions.Default_exit(worker);
+            ViewTransitions.Default_exit(adapter);
         }
     }, []);
 

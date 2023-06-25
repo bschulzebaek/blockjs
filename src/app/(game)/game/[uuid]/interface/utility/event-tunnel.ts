@@ -1,9 +1,11 @@
 import PointerLock from '@/app/(game)/game/[uuid]/interface/utility/PointerLock';
+import WorkerAdapter from '@/app/(game)/game/[uuid]/WorkerAdapter';
+import InputPayload from '@/core/engine/messages/InputPayload';
 
-let _worker: Worker | null = null;
+let _adapter: WorkerAdapter | null = null;
 
-export function openEventTunnel(worker: Worker) {
-    _worker = worker;
+export function openEventTunnel(adapter: WorkerAdapter) {
+    _adapter = adapter;
 
     addEventListener('keypress', passKeyboardEvent);
     addEventListener('keydown', passKeyboardEvent);
@@ -14,7 +16,7 @@ export function openEventTunnel(worker: Worker) {
 }
 
 export function closeEventTunnel() {
-    _worker = null;
+    _adapter = null;
 
     removeEventListener('keypress', passKeyboardEvent);
     removeEventListener('keydown', passKeyboardEvent);
@@ -74,9 +76,7 @@ function passMouseEvent(event: MouseEvent) {
     });
 }
 
-function sendInputEvent(eventDetail: object) {
-    _worker!.postMessage({
-        action: 'input-event',
-        data: eventDetail
-    });
+function sendInputEvent(eventDetail: unknown) {
+    // Don't wrap in if, since it will be checked on every mousemove event!
+    _adapter!.input(eventDetail as InputPayload);
 }

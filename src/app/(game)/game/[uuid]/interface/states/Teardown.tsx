@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 
 export default function StateTeardown() {
     const router = useRouter();
+    const query = useParams();
 
     useEffect(() => {
         (async () => {
@@ -10,7 +11,9 @@ export default function StateTeardown() {
                 setTimeout(resolve, 1000);
             });
 
-            router.push('/');
+            router.push('/', {
+                query,
+            });
         })();
     }, []);
 

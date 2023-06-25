@@ -2,10 +2,10 @@ import { AppViews } from '@/app/(game)/game/ViewContext';
 import Fullscreen from '@/app/(game)/game/[uuid]/interface/utility/Fullscreen';
 import PointerLock from '@/app/(game)/game/[uuid]/interface/utility/PointerLock';
 import { closeEventTunnel, openEventTunnel } from '@/app/(game)/game/[uuid]/interface/utility/event-tunnel';
-import WorkerMessages from '@/app/(game)/game/WorkerMessages';
 import { addWindowEvents, removeWindowEvents } from '@/app/(game)/game/[uuid]/interface/utility/window-events';
 import { bindUIControls, releaseUIControls } from '@/app/(game)/game/[uuid]/interface/utility/ui-controls';
 import { preventDefaults, releaseDefaults } from '@/app/(game)/game/[uuid]/interface/utility/prevent-defaults';
+import WorkerAdapter from '@/app/(game)/game/[uuid]/WorkerAdapter';
 
 class ViewTransitions {
     private view: AppViews = AppViews.SETUP;
@@ -44,28 +44,27 @@ class ViewTransitions {
         this.contextSetterFn(AppViews.READY);
     }
 
-    public Ready_enter = (worker: Worker) => {
+    public Ready_enter = (adapter: WorkerAdapter) => {
         this.debug('Ready_enter');
-        worker.postMessage({ action: WorkerMessages.FRAME });
+        adapter.renderFrame();
     }
 
-    public Default_enter = (worker: Worker) => {
+    public Default_enter = (adapter: WorkerAdapter) => {
         this.debug('Default_enter');
 
         if (!Fullscreen.active() || !PointerLock.active()) {
             return this.to_MainMenu();
         }
 
-        openEventTunnel(worker);
+        openEventTunnel(adapter);
 
-        worker.postMessage({
-            action: WorkerMessages.START,
-        });
+        adapter.start();
     }
 
-    public Default_exit = (worker: Worker) => {
+    public Default_exit = (adapter: WorkerAdapter) => {
         this.debug('Default_exit');
-        worker.postMessage({ action: WorkerMessages.STOP });
+
+        adapter.stop();
 
         closeEventTunnel();
         PointerLock.exit();

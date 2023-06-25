@@ -1,9 +1,9 @@
 'use client';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import generateSeed from '@/utility/generate-seed';
 import WorldConfigStorage from '@/core/storage/WorldConfigStorage';
+import RetainQueryLink from '@/app/component/RetainQueryLink';
 
 const DEFAULT_NAME = `New World ${new Date().toISOString().substring(0, 10)}`;
 
@@ -34,11 +34,11 @@ export default function NewPage() {
                     <input type="text" placeholder={'World Seed'} defaultValue={seed} onChange={(event) => setSeed(event.target.value)} />
                 </li>
                 <li>
-                    <Link href="/">
+                    <RetainQueryLink href="/">
                         <button>
                             Back
                         </button>
-                    </Link>
+                    </RetainQueryLink>
 
                     <button onClick={createWorldConfig}>
                         Confirm

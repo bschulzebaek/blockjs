@@ -1,15 +1,15 @@
 import ViewTransitions from '@/app/(game)/game/[uuid]/interface/ViewTransitions';
 import { useContext, useEffect } from 'react';
-import WorkerContext from '@/app/(game)/game/WorkerContext';
+import WorkerAdapterContext from '@/app/(game)/game/WorkerAdapterContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay } from '@fortawesome/free-solid-svg-icons';
 import styles from '@/styles/component/ready.module.scss';
 
 export default function StateReady() {
-    const worker = useContext(WorkerContext);
+    const adapter = useContext(WorkerAdapterContext);
 
     useEffect(() => {
-        ViewTransitions.Ready_enter(worker);
+        ViewTransitions.Ready_enter(adapter);
     }, []);
 
     return (

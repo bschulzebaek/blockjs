@@ -18,9 +18,14 @@ class FeatureFlags {
     static set(flag: Features, value: boolean) {
         _features[flag] = value;
     }
-}
 
-// @ts-ignore
-globalThis.__FeatureFlags = FeatureFlags;
+    static setFromSearchParams(params: URLSearchParams) {
+        for (const [key, value] of params.entries()) {
+            if (key in _features) {
+                _features[key as Features] = value === 'true';
+            }
+        }
+    }
+}
 
 export default FeatureFlags;

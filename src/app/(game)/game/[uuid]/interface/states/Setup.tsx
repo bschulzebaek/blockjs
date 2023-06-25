@@ -3,12 +3,13 @@ import { usePathname } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
 import WorldConfigStorage from '@/core/storage/WorldConfigStorage';
 import CanvasContext from '@/app/(game)/game/CanvasContext';
-import WorkerContext from '@/app/(game)/game/WorkerContext';
+import WorkerAdapterContext from '@/app/(game)/game/WorkerAdapterContext';
 import ViewTransitions from '@/app/(game)/game/[uuid]/interface/ViewTransitions';
+import WorkerMessages from '@/core/engine/messages/WorkerMessages';
 
 export default function StateSetup() {
     const canvas = useContext(CanvasContext)!;
-    const worker = useContext(WorkerContext);
+    const adapter = useContext(WorkerAdapterContext);
     const [progress, setProgress] = useState('');
     const pathname = usePathname();
     const uuid = pathname.substring(pathname.lastIndexOf('/') + 1);
@@ -18,32 +19,18 @@ export default function StateSetup() {
         offscreen.height = canvas.clientHeight;
         offscreen.width = canvas.clientWidth;
 
-        worker.postMessage({
-            action: 'set-canvas',
-            data: offscreen,
-        }, [ offscreen ]);
-    }, []);
-
-    useEffect(() => {
-        WorldConfigStorage.get(uuid).then((config) => {
-            worker.postMessage({
-                action: 'set-config',
-                data: config,
-            });
+        adapter.setCallback(WorkerMessages.READY, ViewTransitions.to_Ready);
+        adapter.setCallback(WorkerMessages.WORLD_GENERATION_PROGRESS, ({ ready, total }: { ready: number, total: number }) => {
+            setProgress((ready  / total * 100).toFixed(0));
         });
-    }, []);
 
-    useEffect(() => {
-        worker.onmessage = async (event) => {
-            switch (event.data.action) {
-                case 'ready':
-                    ViewTransitions.to_Ready();
-                    break;
-                case 'world-generation-progress':
-                    setProgress((event.data.data.ready  / event.data.data.total * 100).toFixed(0));
-                    break;
-            }
-        };
+        WorldConfigStorage.get(uuid).then((config) => {
+            adapter.setup({
+                parameters: location.search,
+                canvas: offscreen,
+                config,
+            }, [ offscreen ]);
+        });
     }, []);
 
     return (

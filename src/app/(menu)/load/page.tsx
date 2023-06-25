@@ -1,10 +1,10 @@
 'use client';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import WorldConfigStorage, { WorldConfig } from '@/core/storage/WorldConfigStorage';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import styles from '@/styles/page/main-menu-load.module.scss';
+import RetainQueryLink from '@/app/component/RetainQueryLink';
 
 export default function LoadPage() {
     const [loading, setLoading] = useState(true);
@@ -35,11 +35,11 @@ export default function LoadPage() {
 
             return (
                 <li key={uuid} className={styles.gameListItem}>
-                    <Link href={`/game/${uuid}`}>
+                    <RetainQueryLink href={`/game/${uuid}`}>
                         <button>
                             {name}
                         </button>
-                    </Link>
+                    </RetainQueryLink>
                     <button onClick={() => deleteWorld(uuid)}>
                         <FontAwesomeIcon icon={faTimes}/>
                     </button>
@@ -54,11 +54,11 @@ export default function LoadPage() {
             <ul>
                 {items}
                 <li className={'mt-4'}>
-                    <Link href="/">
+                    <RetainQueryLink href="/">
                         <button>
                             Back
                         </button>
-                    </Link>
+                    </RetainQueryLink>
                 </li>
             </ul>
         </>

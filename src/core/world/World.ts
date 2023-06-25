@@ -4,7 +4,9 @@ import createChunkMap from '@/core/world/create-chunk-map';
 import Block from '@/core/world/Block/Block';
 import { CHUNK_SIZE } from '@/configuration';
 import { RENDER_DISTANCE } from '@/settings';
-import BlockRaycaster from '@/core/world/Block/BlockRaycaster';
+import WorkerMessages from '@/core/engine/messages/WorkerMessages';
+
+import WorkerContext from '@/core/engine/WorkerContext';
 
 export default class World {
     private readonly generator: WorldGenerator;
@@ -35,12 +37,9 @@ export default class World {
     }
 
     private postProgress() {
-        postMessage({
-            action: 'world-generation-progress',
-            data: {
-                total: this.pendingChunks.size + this.chunks.size,
-                ready: this.chunks.size,
-            },
+        WorkerContext.messageHandler.sendGenerationProgress({
+            total: this.pendingChunks.size + this.chunks.size,
+            ready: this.chunks.size,
         });
     }
 

@@ -1,11 +1,4 @@
-interface EventPayload {
-    type: 'keydown' | 'keyup' | 'mousemove' | 'click' | 'contextmenu';
-    movementX?: number;
-    movementY?: number;
-    button?: number;
-    shiftKey?: boolean;
-    key?: string;
-}
+import InputPayload from '@/core/engine/messages/InputPayload';
 
 export default class InputMapper {
     private keyDownSubscribers: Map<string, Function> = new Map();
@@ -34,7 +27,7 @@ export default class InputMapper {
         this.contextMenuSubscriber = callback;
     }
 
-    public dispatch(event: EventPayload) {
+    public dispatch(event: InputPayload) {
         switch (event.type) {
             case 'keydown':
                 this.keyDownSubscribers.get(event.key!)?.(event.shiftKey);

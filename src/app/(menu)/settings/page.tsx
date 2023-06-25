@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import RetainQueryLink from '@/app/component/RetainQueryLink';
 
 export default function SettingsPage() {
     return (
@@ -7,11 +7,11 @@ export default function SettingsPage() {
             <ul>
                 <li>- not yet implemented -</li>
                 <li className={'mt-4'}>
-                    <Link href="/">
+                    <RetainQueryLink href="/">
                         <button>
                             Back
                         </button>
-                    </Link>
+                    </RetainQueryLink>
                 </li>
             </ul>
         </>

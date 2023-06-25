@@ -1,5 +1,6 @@
 import { Camera, Euler, Object3D, Quaternion, Vector3 } from 'three';
 import InputMapper from '@/core/engine/InputMapper';
+import WorkerContext from '@/core/engine/WorkerContext';
 
 export enum MovementMode {
     NORMAL = 0,
@@ -107,8 +108,7 @@ export default class PlayerController {
     }
 
     private bindInput() {
-        // @ts-ignore
-        const inputMapper = globalThis.__inputMapper as InputMapper;
+        const inputMapper = WorkerContext.input;
 
         inputMapper.subscribeMouseMove(this.onMouseMove.bind(this));
 

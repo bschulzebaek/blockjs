@@ -69,6 +69,7 @@ export default class Engine {
         this.scene.add(player);
         this.components.addDynamic(player);
         player.position.set(-2, 0, -2);
+        player.rotateY(180);
 
         return player;
     }

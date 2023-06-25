@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import logo from '@/assets/interface/logo.png';
 import styles from '@/styles/page/main-menu.module.scss';
+import RetainQueryLink from '@/app/component/RetainQueryLink';
 
 export default function MenuPage() {
     return (
@@ -17,25 +18,25 @@ export default function MenuPage() {
             </div>
             <ul>
                 <li>
-                    <Link href="/new">
+                    <RetainQueryLink href="/new">
                         <button>
                             New Game
                         </button>
-                    </Link>
+                    </RetainQueryLink>
                 </li>
                 <li>
-                    <Link href="/load">
+                    <RetainQueryLink href="/load">
                         <button>
                             Load Game
                         </button>
-                    </Link>
+                    </RetainQueryLink>
                 </li>
                 <li>
-                    <Link href="/settings">
+                    <RetainQueryLink href="/settings">
                         <button>
                             Settings
                         </button>
-                    </Link>
+                    </RetainQueryLink>
                 </li>
                 <li>
                     <Link href="https://github.com/bschulzebaek/blockjs" target={'_blank'}>
