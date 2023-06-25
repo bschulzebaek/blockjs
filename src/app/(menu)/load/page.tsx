@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import WorldConfigStorage, { WorldConfig } from '@/core/storage/WorldConfigStorage';
+import WorldConfigStorage, { WorldConfig } from '@/core/WorldConfigStorage';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import styles from '@/app/styles/page/main-menu-load.module.scss';

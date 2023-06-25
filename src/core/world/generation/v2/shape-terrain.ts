@@ -47,6 +47,12 @@ export default function shapeTerrain(seed: string, chunkX: number, chunkZ: numbe
     const blockNoise = createNoise2D(Alea(seed));
 
     iterateChunk3D((x: number, y: number, z: number) => {
+        const blockPosition = Chunk.getBlockPosition(x, y, z);
+
+        if (blocks.has(blockPosition)) {
+            return;
+        }
+
         const blockX = (absoluteX + x) * NOISE_FACTOR,
             blockZ = (absoluteZ + z) * NOISE_FACTOR,
             noise2d = blockNoise(blockX, blockZ),
@@ -68,7 +74,7 @@ export default function shapeTerrain(seed: string, chunkX: number, chunkZ: numbe
             return;
         }
 
-        blocks.set(Chunk.getBlockPosition(x, y, z), {
+        blocks.set(blockPosition, {
             x,
             y,
             z,

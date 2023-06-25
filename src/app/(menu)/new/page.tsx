@@ -2,7 +2,7 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import generateSeed from '@/utility/generate-seed';
-import WorldConfigStorage from '@/core/storage/WorldConfigStorage';
+import WorldConfigStorage from '@/core/WorldConfigStorage';
 import RetainQueryLink from '@/app/component/RetainQueryLink';
 
 const DEFAULT_NAME = `New World ${new Date().toISOString().substring(0, 10)}`;

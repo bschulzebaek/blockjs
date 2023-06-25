@@ -1,4 +1,4 @@
-import { WorldConfig } from '@/core/storage/WorldConfigStorage';
+import { WorldConfig } from '@/core/WorldConfigStorage';
 
 export default interface SetupPayload {
     canvas: OffscreenCanvas;

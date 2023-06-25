@@ -4,7 +4,6 @@ import ChunkGeometry from '@/core/world/Chunk/ChunkGeometry';
 import { CHUNK_SIZE, WORLD_HEIGHT } from '@/configuration';
 import BlockId from '@/core/world/Block/BlockId';
 import StorageObject, { RawStorageObject } from '@/core/engine/storage/StorageObject';
-import ChunkRepository from '@/core/world/Chunk/ChunkRepository';
 
 export type BlockMap = Map<string, Block | undefined>;
 
@@ -89,11 +88,7 @@ export default class Chunk extends Group implements StorageObject {
     public setBlock(x: number, y: number, z: number, id: BlockId) {
         const position = Chunk.getBlockPosition(x, y, z);
 
-        if (id === BlockId.AIR) {
-            this.blocks.delete(position);
-        } else {
-            this.blocks.set(position, { id, x, y, z });
-        }
+        this.blocks.set(position, { id, x, y, z });
 
         ChunkGeometry.build(this);
     }

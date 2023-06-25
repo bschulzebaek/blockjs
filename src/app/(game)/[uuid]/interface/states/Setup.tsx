@@ -1,7 +1,7 @@
 'use client';
 import { usePathname } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
-import WorldConfigStorage from '@/core/storage/WorldConfigStorage';
+import WorldConfigStorage from '@/core/WorldConfigStorage';
 import CanvasContext from '@/app/(game)/[uuid]/CanvasContext';
 import WorkerAdapterContext from '@/app/(game)/[uuid]/WorkerAdapterContext';
 import ViewTransitions from '@/app/(game)/[uuid]/interface/ViewTransitions';

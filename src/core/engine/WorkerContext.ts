@@ -1,4 +1,4 @@
-import { WorldConfig } from '@/core/storage/WorldConfigStorage';
+import { WorldConfig } from '@/core/WorldConfigStorage';
 import Engine from '@/core/engine/Engine';
 import FeatureFlags from '@/feature-flags';
 import InputMapper from '@/core/engine/helper/InputMapper';

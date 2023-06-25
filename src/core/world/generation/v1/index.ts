@@ -37,7 +37,13 @@ export default async function generationV1(x: string, z: string, seed: string, u
         for (let i = 0; i < 16; i++) {
             for (let j = 0; j < 16; j++) {
                 const blockId = BLOCK_IDS[Math.floor(Math.random() * BLOCK_IDS.length)];
-                blocks.set(`${i}:1:${j}`, { x: i, y: 1, z: j, id: blockId });
+                const mapId = `${i}:1:${j}`;
+
+                if (blocks.has(mapId)) {
+                    continue;
+                }
+
+                blocks.set(mapId, { x: i, y: 1, z: j, id: blockId });
             }
         }
 
@@ -45,6 +51,12 @@ export default async function generationV1(x: string, z: string, seed: string, u
             for (let j = 6; j < 10; j++) {
                 for (let k = 6; k < 12; k++) {
                     const blockId = BLOCK_IDS[Math.floor(Math.random() * BLOCK_IDS.length)];
+                    const mapId = `${i}:1:${j}`;
+
+                    if (blocks.has(mapId)) {
+                        continue;
+                    }
+
                     blocks.set(`${i}:${k}:${j}`, { x: i, y: k, z: j, id: blockId });
                 }
             }

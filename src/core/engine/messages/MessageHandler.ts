@@ -1,7 +1,7 @@
 import MessagePayload from '@/core/engine/messages/MessagePayloadInterface';
 import WorkerMessages from '@/core/engine/messages/WorkerMessages';
 import Engine from '@/core/engine/Engine';
-import { WorldConfig } from '@/core/storage/WorldConfigStorage';
+import { WorldConfig } from '@/core/WorldConfigStorage';
 import WorkerContext from '@/core/engine/WorkerContext';
 import SetupPayload from '@/core/engine/messages/SetupPayload';
 import InputPayload from '@/core/engine/messages/InputPayload';
