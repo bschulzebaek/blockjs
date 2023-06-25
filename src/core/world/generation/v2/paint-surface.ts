@@ -12,7 +12,7 @@ import { WORLD_HEIGHT } from '@/configuration';
 // -humidity && -temperature = Snowy plains
 
 function getBlockId(block: Block) {
-    const { continentalness, humidity, temperature } = block.getBiomeData();
+    const { continentalness, humidity, temperature } = block.biomeData;
 
     if (continentalness! > 0.76) {
         return humidity! < -0.5 ? BlockId.SANDSTONE : BlockId.STONE;
@@ -36,11 +36,11 @@ export default function paintSurface(blocks: BlockMap) {
             currentY--;
         } while (!block && currentY >= SEA_LEVEL)
 
-        if (block.getId() === BlockId.WATER) {
+        if (block.id=== BlockId.WATER) {
             return;
         }
 
-        block.setId(getBlockId(block));
+        block.id = getBlockId(block);
 
         // ToDo: Randomly change adjacent blocks to proper biome ground block
     });

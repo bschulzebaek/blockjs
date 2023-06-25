@@ -1,4 +1,4 @@
-import ComponentRegistry from '@/core/engine/ComponentRegistry';
+import ComponentRegistry from '@/core/engine/scene/ComponentRegistry';
 import { Camera, Scene, WebGLRenderer } from 'three';
 
 export default class Loop {

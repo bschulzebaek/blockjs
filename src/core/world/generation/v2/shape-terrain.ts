@@ -70,14 +70,16 @@ export default function shapeTerrain(seed: string, chunkX: number, chunkZ: numbe
             return;
         }
 
-        blocks.set(Chunk.getBlockPosition(x, y, z), new Block(
+        blocks.set(Chunk.getBlockPosition(x, y, z), {
             x,
             y,
             z,
-            blockId,
-            continentalness,
-            Math.round(noise2dHumidity(blockX, blockZ) * 100) / 100,
-            Math.round(noise2dTemperature(x, z) * 100) / 100,
-        ));
+            id: blockId,
+            biomeData: {
+                continentalness,
+                humidity: Math.round(noise2dHumidity(blockX, blockZ) * 100) / 100,
+                temperature: Math.round(noise2dTemperature(x, z) * 100) / 100,
+            },
+        });
     });
 }

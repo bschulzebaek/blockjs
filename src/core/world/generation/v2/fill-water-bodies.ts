@@ -2,7 +2,12 @@ import { iterateChunk2D } from '../../iterate-coordinates';
 import { SEA_LEVEL } from './parameters';
 import BlockId from '@/core/world/Block/BlockId';
 import { BlockMap } from '@/core/world/Chunk/Chunk';
-import Block from '@/core/world/Block/Block';
+
+const biomeData = {
+    humidity: 0.5,
+    temperature: 0.5,
+    continentalness: 0.5
+};
 
 export default function fillWaterBodies(blocks: BlockMap) {
     iterateChunk2D((x: number, z: number) => {
@@ -14,7 +19,13 @@ export default function fillWaterBodies(blocks: BlockMap) {
             const block = blocks.get(key);
 
             if (!block) {
-                blocks.set(key, new Block(x, currentY, z, BlockId.WATER));
+                blocks.set(key, {
+                    x,
+                    y: currentY,
+                    z,
+                    id: BlockId.WATER,
+                    biomeData,
+                });
             }
 
             currentY--;

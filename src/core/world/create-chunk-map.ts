@@ -1,12 +1,12 @@
 import Chunk from './Chunk/Chunk';
 
-export default function createChunkMap(radius: number, offsetX: number, offsetZ: number): Map<string, null> {
+export default function createChunkMap(radius: number, offsetX: number, offsetZ: number): Map<string, undefined> {
     const map = new Map();
 
     if (radius < 1) {
         throw new Error('"renderDistance" must be >= 1!');
     } else if (radius === 1) {
-        map.set(`${offsetX}:${offsetZ}`, null);
+        map.set(`${offsetX}:${offsetZ}`, undefined);
 
         return map
     }
@@ -19,7 +19,7 @@ export default function createChunkMap(radius: number, offsetX: number, offsetZ:
             if (radius < 8 || hypotenuse <= radius) {
                 const id = Chunk.toId(x + offsetZ, z + offsetZ);
 
-                map.set(id, null);
+                map.set(id, undefined);
             }
         }
     }

@@ -1,9 +1,8 @@
 import { WorldConfig } from '@/core/storage/WorldConfigStorage';
 import Engine from '@/core/engine/Engine';
 import FeatureFlags from '@/feature-flags';
-import InputMapper from '@/core/engine/InputMapper';
+import InputMapper from '@/core/engine/helper/InputMapper';
 import MessageHandler from '@/core/engine/messages/MessageHandler';
-
 
 interface WorkerContextInterface {
     canvas: OffscreenCanvas | null;
@@ -24,6 +23,6 @@ const WorkerContext: WorkerContextInterface = {
 };
 
 // @ts-ignore
-globalThis.context = WorkerContext;
+globalThis.__context = WorkerContext;
 
 export default WorkerContext

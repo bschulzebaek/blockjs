@@ -40,16 +40,20 @@ export default class MessageHandler {
         WorkerContext.engine?.getLoop().frame();
     }
 
-    private onSetup(payload: SetupPayload) {
+    private async onSetup(payload: SetupPayload) {
         WorkerContext.canvas = payload.canvas;
         WorkerContext.config = WorldConfig.fromObject(payload.config as { uuid: string, seed: string, name: string });
 
         WorkerContext.features.setFromSearchParams(new URLSearchParams(payload.parameters));
 
-        WorkerContext.engine = new Engine(
-            WorkerContext.canvas,
-            WorkerContext.config,
-        );
+        const engine = new Engine();
+
+        await Promise.all([
+            engine.setupScene(),
+            engine.loadWorld(),
+        ]);
+
+        WorkerContext.engine = engine;
 
         this.postMessage(WorkerMessages.READY);
     }

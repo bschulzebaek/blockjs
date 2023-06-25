@@ -1,4 +1,4 @@
-import { BoxGeometry, Camera, Mesh, MeshStandardMaterial, Object3D, Vector3 } from 'three';
+import { BoxGeometry, BoxHelper, Camera, Mesh, MeshStandardMaterial, Object3D, Vector3 } from 'three';
 import World from '@/core/world/World';
 import BlockRaycaster from '@/core/world/Block/BlockRaycaster';
 import BlockId from '@/core/world/Block/BlockId';
@@ -10,6 +10,7 @@ const material = new MeshStandardMaterial({
     opacity: 0.15,
 });
 const mesh = new Mesh(geometry, material);
+const outline =  new BoxHelper(mesh, 0x333333);
 
 const CURSOR_OFFSET = new Vector3(0.5, 0.5, 0.5);
 
@@ -31,7 +32,7 @@ export default class Cursor extends Object3D {
         super();
 
         this.name = 'cursor';
-        this.add(mesh);
+        this.add(mesh, outline);
 
         this.raycaster = new BlockRaycaster(world, camera);
     }
@@ -39,17 +40,15 @@ export default class Cursor extends Object3D {
     public update() {
         const block = this.raycaster.intersectWorld();
 
-        if (!block || NON_HIGHLIGHTABLE_BLOCKS.includes(block.getId())) {
+        if (!block || NON_HIGHLIGHTABLE_BLOCKS.includes(block.id)) {
             return this.hide();
         }
 
-        this.updatePosition(block.getPosition());
+        this.updatePosition(new Vector3(block.x, block.y, block.z));
         this.show();
     }
 
     private updatePosition(position: Vector3) {
-
-
         this.position.copy(position.clone().add(CURSOR_OFFSET));
     }
 

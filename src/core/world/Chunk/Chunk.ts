@@ -1,11 +1,14 @@
-import { Group, Object3D } from 'three';
+import { BufferGeometry, Group, Object3D } from 'three';
 import Block from '@/core/world/Block/Block';
 import ChunkGeometry from '@/core/world/Chunk/ChunkGeometry';
 import { CHUNK_SIZE, WORLD_HEIGHT } from '@/configuration';
+import ChunkPayload from '@/core/world/generation/worker/ChunkPayload';
 
 export type BlockMap = Map<string, Block | undefined>;
 
 export default class Chunk extends Group {
+
+    private geometries: BufferGeometry[] = [];
 
     constructor(
         private readonly x: number,
@@ -15,8 +18,10 @@ export default class Chunk extends Group {
         super();
         this.name = `chunk ${this.getOffsetX()}:${this.getOffsetZ()}`;
         this.position.set(this.getOffsetX(), 0, this.getOffsetZ());
+    }
 
-        ChunkGeometry.build(this);
+    public pushGeometry(geometry: BufferGeometry) {
+        this.geometries.push(geometry);
     }
 
     public getX(): number {
@@ -90,6 +95,10 @@ export default class Chunk extends Group {
 
     static getEmptyBlocks(): BlockMap {
         return new Map();
+    }
+
+    public getId() {
+        return Chunk.toId(this.x, this.z);
     }
 
     static toId(x: number | string, z: number | string) {

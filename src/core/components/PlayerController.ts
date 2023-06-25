@@ -1,5 +1,5 @@
 import { Camera, Euler, Object3D, Quaternion, Vector3 } from 'three';
-import InputMapper from '@/core/engine/InputMapper';
+import InputMapper from '@/core/engine/helper/InputMapper';
 import WorkerContext from '@/core/engine/WorkerContext';
 
 export enum MovementMode {

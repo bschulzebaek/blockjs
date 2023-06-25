@@ -2,6 +2,7 @@ import Chunk from '../../Chunk/Chunk';
 import shapeTerrain from './shape-terrain'
 import fillWaterBodies from './fill-water-bodies';
 import paintSurface from './paint-surface';
+import ChunkFactory from '@/core/world/Chunk/ChunkFactory';
 
 export default function generationV2(x: string, z: string, seed: string) {
     const blocks = Chunk.getEmptyBlocks();
@@ -13,11 +14,11 @@ export default function generationV2(x: string, z: string, seed: string) {
         fillWaterBodies(blocks);
         paintSurface(blocks);
 
-        return new Chunk(xInt, zInt, blocks);
+        return ChunkFactory.create(xInt, zInt, blocks);
     } catch(e) {
         console.error(e);
         console.debug(`${x}:${z}`, seed);
-
-        return null;
     }
+
+    return undefined;
 }
