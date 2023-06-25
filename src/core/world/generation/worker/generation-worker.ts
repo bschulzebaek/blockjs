@@ -50,6 +50,8 @@ function response(chunk: Chunk) {
 
     // @ts-ignore
     postMessage(payload, getTransferables(geometries));
+
+    self.close();
 }
 
 function generate({ seed, x, z }: GeneratorMessagePayload) {

@@ -11,7 +11,6 @@ class WorldUpdateSubscriber {
     private onUpdateGrid = (event: UpdateGridEvent) => {
         const world = WorkerContext.engine!.getWorld();
         const position = event.getPosition();
-        console.log(position)
         const newMap = WorldGenerator.createMap(position.x, position.z);
         const oldMap = world.getChunks();
 
@@ -24,9 +23,6 @@ class WorldUpdateSubscriber {
 
         world.unloadChunks(chunksToRemove);
         world.setPendingChunks(pendingMap);
-
-        console.log('Remove', chunksToRemove);
-        console.log('Create', chunksToCreate);
 
         world.loadPendingChunks();
     }

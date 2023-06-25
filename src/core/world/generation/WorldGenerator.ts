@@ -9,49 +9,62 @@ import { MAX_CHUNK_CACHE } from '@/configuration';
 const _cache = new Map<string, Chunk>();
 
 export default class WorldGenerator {
-    private worker: Worker;
-    private queue: Map<string, Function> = new Map();
+    private promises: Map<string, Promise<Chunk>> = new Map();
     private seed = WorkerContext.config!.getSeed();
-
-    constructor() {
-        this.worker = new Worker(new URL('./worker/generation-worker.ts', import.meta.url));
-        this.worker.onmessage = this.receiveChunk.bind(this);
-    }
 
     static createMap(offsetX: number = 0, offsetZ: number = 0) {
         return createChunkMap(RENDER_DISTANCE, offsetX, offsetZ);
     }
 
     public generateChunk(x: string, z: string): Promise<Chunk> {
-        return new Promise((resolve) => {
-            if (_cache.has(Chunk.toId(x, z))) {
-                resolve(_cache.get(Chunk.toId(x, z))!);
-            }
+        const id = Chunk.toId(x, z);
 
-            this.queue.set(`${x}:${z}`, resolve);
+        if (_cache.has(id)) {
+            return Promise.resolve(_cache.get(Chunk.toId(x, z))!);
+        }
 
-            this.worker.postMessage({
+        if (this.promises.has(id)) {
+            return this.promises.get(id)!;
+        }
+
+        let resolver;
+
+        const promise: Promise<Chunk> = new Promise((resolve) => {
+            resolver = resolve;
+
+            const worker = new Worker(new URL('./worker/generation-worker.ts', import.meta.url));
+            worker.onmessage = this.receiveChunk.bind(this);
+            worker.postMessage({
                 x,
                 z,
                 seed: this.seed,
             });
         });
+
+        // @ts-ignore
+        promise.resolver = resolver;
+        this.promises.set(`${x}:${z}`, promise);
+
+        return promise;
     }
 
     private receiveChunk(event: MessageEvent<ChunkPayload>) {
-        const chunk = ChunkFactory.createFromPayload(event.data);
-        const callback = this.queue.get(chunk.getId());
+        setTimeout(() => {
+            const chunk = ChunkFactory.createFromPayload(event.data);
+            const promise = this.promises.get(chunk.getId());
 
-        _cache.set(chunk.getId(), chunk);
+            _cache.set(chunk.getId(), chunk);
 
-        this.keepCacheLimit();
+            this.keepCacheLimit();
 
-        if (!callback) {
-            console.debug(event.data);
-            throw new Error('Unknown chunk received');
-        }
+            if (!promise) {
+                console.debug(event.data);
+                throw new Error('Unknown chunk received');
+            }
 
-        callback(chunk);
+            // @ts-ignore
+            promise.resolver(chunk);
+        });
     }
 
     private keepCacheLimit() {
