@@ -1,4 +1,4 @@
-export const RENDER_DISTANCE = 1;
+export const RENDER_DISTANCE = 2;
 
 export const RESOLUTION = {
     X: 1920, //2560,

@@ -17,7 +17,7 @@ export default function createChunkMap(radius: number, offsetX: number, offsetZ:
             const hypotenuse = Math.sqrt(x * x + z * z);
 
             if (radius < 8 || hypotenuse <= radius) {
-                const id = Chunk.toId(x + offsetZ, z + offsetZ);
+                const id = Chunk.toId(x + offsetX, z + offsetZ);
 
                 map.set(id, undefined);
             }

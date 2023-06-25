@@ -1,4 +1,4 @@
-import { BufferGeometry, Group, Object3D } from 'three';
+import { BufferGeometry, Group, Object3D, Vector3 } from 'three';
 import Block from '@/core/world/Block/Block';
 import ChunkGeometry from '@/core/world/Chunk/ChunkGeometry';
 import { CHUNK_SIZE, WORLD_HEIGHT } from '@/configuration';
@@ -7,7 +7,6 @@ import ChunkPayload from '@/core/world/generation/worker/ChunkPayload';
 export type BlockMap = Map<string, Block | undefined>;
 
 export default class Chunk extends Group {
-
     private geometries: BufferGeometry[] = [];
 
     constructor(
@@ -16,7 +15,7 @@ export default class Chunk extends Group {
         private readonly blocks: BlockMap,
     ) {
         super();
-        this.name = `chunk ${this.getOffsetX()}:${this.getOffsetZ()}`;
+        this.name = `chunk ${this.id}`;
         this.position.set(this.getOffsetX(), 0, this.getOffsetZ());
     }
 
@@ -61,22 +60,6 @@ export default class Chunk extends Group {
         });
     }
 
-    public iterateBlocksAbsolute(callback: (x: number, y: number, z: number, block: Block) => void) {
-        const chunkX = this.getOffsetX();
-        const chunkZ = this.getOffsetZ();
-
-        this.blocks.forEach((block, key) => {
-            const [x, y, z] = key.split(':').map((number) => parseInt(number, 10));
-
-            callback(
-                x + chunkX,
-                y,
-                z + chunkZ,
-                block as Block,
-            );
-        });
-    }
-
     public getObject(): Object3D {
         return this;
     }
@@ -103,5 +86,9 @@ export default class Chunk extends Group {
 
     static toId(x: number | string, z: number | string) {
         return `${x}:${z}`;
+    }
+
+    static positionToId(position: Vector3) {
+        return `${Math.floor(position.x / CHUNK_SIZE)}:${Math.floor(position.z / CHUNK_SIZE)}`;
     }
 }

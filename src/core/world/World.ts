@@ -2,20 +2,22 @@ import Chunk from '@/core/world/Chunk/Chunk';
 import WorldGenerator from './generation/WorldGenerator';
 import Block from '@/core/world/Block/Block';
 import { CHUNK_SIZE } from '@/configuration';
-
 import WorkerContext from '@/core/engine/WorkerContext';
+import { Group, Scene } from 'three';
 
 export default class World {
     private readonly generator: WorldGenerator;
     private readonly chunks: Map<string, Chunk> = new Map();
-    private readonly pendingChunks: Map<string, undefined> = new Map();
+    private pendingChunks: Map<string, undefined> = new Map();
 
-    constructor() {
+    constructor(
+        private readonly chunkGroup: Group
+    ) {
         this.generator = new WorldGenerator();
-        this.pendingChunks = this.generator.createMap();
+        this.pendingChunks = WorldGenerator.createMap(); // Todo: Provide current Player Chunk as offset
     }
 
-    public async loadChunks() {
+    public async loadPendingChunks() {
         await Promise.all(Array.from(this.pendingChunks.keys()).map(async (key) => {
             const [x, z] = key.split(':');
 
@@ -23,18 +25,37 @@ export default class World {
 
             this.chunks.set(key, chunk);
             this.pendingChunks.delete(key);
+
+            this.chunkGroup.add(chunk);
+
             this.postProgress();
         }));
     }
 
-    public updateMap() {
-        // Create new Map with offset
-        // Get diff to current map
-        // Unload unused chunks
+    public setPendingChunks(map: Map<string, undefined>) {
+        this.pendingChunks = map;
+    }
+
+    public getPendingChunks() {
+        return this.pendingChunks;
     }
 
     public getChunks() {
         return this.chunks;
+    }
+
+    public getChunkByPosition(x: number, z: number, strict = false) {
+        return this.getChunkById(Chunk.toId(x, z), strict);
+    }
+
+    public getChunkById(id: string, strict = false) {
+        const chunk = this.chunks.get(id);
+
+        if (strict && !chunk) {
+            throw new Error(`Chunk ${id} not found`);
+        }
+
+        return chunk;
     }
 
     private postProgress() {
@@ -58,5 +79,18 @@ export default class World {
             y,
             z - chunk.getOffsetZ()
         );
+    }
+
+    public unloadChunks(ids: string[]) {
+        ids.forEach((id) => {
+            const chunk = this.chunks.get(id);
+
+            if (!chunk) {
+                return;
+            }
+
+            this.chunks.delete(id);
+            this.chunkGroup.remove(chunk);
+        });
     }
 }

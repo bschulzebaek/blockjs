@@ -46,14 +46,10 @@ export default class MessageHandler {
 
         WorkerContext.features.setFromSearchParams(new URLSearchParams(payload.parameters));
 
-        const engine = new Engine();
+        WorkerContext.engine = new Engine();
 
-        await Promise.all([
-            engine.setupScene(),
-            engine.loadWorld(),
-        ]);
-
-        WorkerContext.engine = engine;
+        await WorkerContext.engine.loadWorld();
+        await WorkerContext.engine.setupScene();
 
         this.postMessage(WorkerMessages.READY);
     }

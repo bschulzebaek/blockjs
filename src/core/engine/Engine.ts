@@ -2,19 +2,28 @@ import World from '@/core/world/World';
 import Loop from '@/core/engine/helper/Loop';
 import ComponentRegistry from '@/core/engine/scene/ComponentRegistry';
 import { AxesHelper, Camera, CameraHelper, Color, Fog, Group, Scene, Vector3, WebGLRenderer } from 'three';
-import Cursor from '@/core/components/Cursor';
-import Player from '@/core/components/Player';
+import Cursor from '@/core/components/player/Cursor';
+import Player from '@/core/components/player/Player';
 import FeatureFlags, { Features } from '@/feature-flags';
 import WorkerContext from '@/core/engine/WorkerContext';
 
 export default class Engine {
     private readonly renderer = new WebGLRenderer({ canvas: WorkerContext.canvas! });
     private readonly components = new ComponentRegistry();
-    private readonly world = new World();
     private readonly scene = new Scene();
+    private readonly world;
 
     private loop: Loop | null = null;
     private player: Player | null = null;
+
+    constructor() {
+        const chunkGroup = new Group();
+        chunkGroup.name = 'chunks';
+        chunkGroup.position.add(new Vector3(0.5, 0.5, 0.5));
+
+        this.scene.add(chunkGroup);
+        this.world = new World(chunkGroup);
+    }
 
     public getLoop() {
         if (!this.loop) {
@@ -22,6 +31,10 @@ export default class Engine {
         }
 
         return this.loop;
+    }
+
+    public getWorld() {
+        return this.world;
     }
 
     public async setupScene() {
@@ -45,15 +58,7 @@ export default class Engine {
     }
 
     public async loadWorld() {
-        await this.world.loadChunks();
-
-        const chunks = this.world.getChunks();
-        const chunkGroup = new Group();
-        chunkGroup.name = 'chunks';
-        chunkGroup.position.add(new Vector3(0.5, 0.5, 0.5));
-
-        chunks.forEach((chunk) => chunkGroup.add(chunk));
-        this.scene.add(chunkGroup);
+        await this.world.loadPendingChunks();
     }
 
     private createDebugHelpers(camera: Camera) {
@@ -66,11 +71,11 @@ export default class Engine {
     }
 
     private createPlayer(): Player {
-        const player = new Player();
+        const player = new Player('0:0'); // TODO: Get player chunk from IndexedDB
 
         this.scene.add(player);
         this.components.addDynamic(player);
-        player.position.set(-2, 0, -2);
+        player.position.set(4, 24, 4); // TODO: Get player position from IndexedDB
         player.rotateY(180);
 
         return player;

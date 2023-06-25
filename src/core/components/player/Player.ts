@@ -1,6 +1,10 @@
 import { Camera, Object3D, PerspectiveCamera } from 'three';
-import PlayerController from '@/core/components/PlayerController';
+import PlayerController from '@/core/components/player/PlayerController';
 import { RESOLUTION } from '@/settings';
+import WorkerContext from '@/core/engine/WorkerContext';
+import Chunk from '@/core/world/Chunk/Chunk';
+import { CHUNK_SIZE } from '@/configuration';
+import UpdateGridEvent from '@/core/components/player/events/UpdateGridEvent';
 
 export default class Player extends Object3D {
     static HEIGHT = 1.8;
@@ -9,7 +13,11 @@ export default class Player extends Object3D {
     private camera: Camera;
     private controller: PlayerController;
 
-    constructor() {
+    private world = WorkerContext.engine!.getWorld();
+
+    constructor(
+        private lastChunkId: string = '0:0'
+    ) {
         super();
 
         this.name = 'player';
@@ -23,6 +31,7 @@ export default class Player extends Object3D {
 
     public update(delta: number) {
         this.controller.update(delta);
+        this.updateWorldPosition();
     }
 
     public getCamera() {
@@ -38,7 +47,7 @@ export default class Player extends Object3D {
             90,
             RESOLUTION.X / RESOLUTION.Y,
             0.01,
-            10000, // CHUNK_SIZE * RENDER_DISTANCE + CHUNK_SIZE,
+            CHUNK_SIZE /* * RENDER_DISTANCE */ * 10 + CHUNK_SIZE,
         );
 
         camera.position.set(
@@ -48,5 +57,18 @@ export default class Player extends Object3D {
         );
 
         return camera;
+    }
+
+    private updateWorldPosition() {
+        const id = Chunk.positionToId(this.position);
+
+        if (id !== this.lastChunkId) {
+            this.lastChunkId = id;
+
+            dispatchEvent(new UpdateGridEvent(
+                Math.floor(this.position.x / CHUNK_SIZE),
+                Math.floor(this.position.z / CHUNK_SIZE),
+            ));
+        }
     }
 }
