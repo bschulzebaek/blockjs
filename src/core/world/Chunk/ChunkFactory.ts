@@ -2,6 +2,8 @@ import ChunkPayload from '@/core/world/generation/worker/ChunkPayload';
 import ChunkGeometry from '@/core/world/Chunk/ChunkGeometry';
 import Chunk, { BlockMap } from '@/core/world/Chunk/Chunk';
 
+// todo: Cache chunks, drop when 'dirty' is set
+
 export default class ChunkFactory {
     static create(x: number, z: number, blocks: BlockMap) {
         const chunk = new Chunk(x, z, blocks);

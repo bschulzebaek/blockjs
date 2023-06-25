@@ -27,6 +27,12 @@ export default class World {
         }));
     }
 
+    public updateMap() {
+        // Create new Map with offset
+        // Get diff to current map
+        // Unload unused chunks
+    }
+
     public getChunks() {
         return this.chunks;
     }

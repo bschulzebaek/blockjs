@@ -1,12 +1,11 @@
 import Chunk from './Chunk';
 import {
     BufferAttribute,
-    BufferGeometry,
+    BufferGeometry, DoubleSide,
     Mesh,
     MeshBasicMaterial,
 } from 'three';
 import getGeometryData from '@/core/world/Chunk/get-geometry-data';
-import BlockId from '@/core/world/Block/BlockId';
 import CustomTextureLoader from '@/utility/TextureLoader';
 import { TRANSPARENT_BLOCKS } from '@/core/world/Block/block-data';
 import ChunkPayload from '@/core/world/generation/worker/ChunkPayload';
@@ -25,6 +24,7 @@ const materials = {
         ...materialOptions,
         transparent: true,
         opacity: 1.0,
+        side: DoubleSide,
     }),
 };
 
@@ -46,7 +46,7 @@ export default class ChunkGeometry {
             const addFace = (_x: number, _y: number, _z: number) => {
                 const _block = chunk.getBlockLocal(_x, _y, _z);
 
-                if (!_block || _block.id === BlockId.AIR) {
+                if (!_block || TRANSPARENT_BLOCKS.includes(_block.id)) {
                     return true;
                 }
 
