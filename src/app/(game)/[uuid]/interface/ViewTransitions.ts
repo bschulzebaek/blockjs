@@ -44,11 +44,6 @@ class ViewTransitions {
         this.contextSetterFn(AppViews.READY);
     }
 
-    public Ready_enter = (adapter: WorkerAdapter) => {
-        this.debug('Ready_enter');
-        adapter.renderFrame();
-    }
-
     public Default_enter = (adapter: WorkerAdapter) => {
         this.debug('Default_enter');
 

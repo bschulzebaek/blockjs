@@ -12,4 +12,21 @@ $playButtonSize: 2rem;
 
 .content {
     top: calc(50% - #{$playButtonSize});
+
+    animation: fadeInOpacity .5s ease-in forwards;
+}
+
+.readyBackdrop {
+    opacity: 1 !important;
+    animation: fadeOutBackground .5s ease-out forwards !important;
+    background: rgba(0, 0, 0, 1);
+}
+
+@keyframes fadeOutBackground {
+    from {
+        background: rgba(0, 0, 0, 1);
+    }
+    to {
+        background: rgba(0, 0, 0, 0.7);
+    }
 }

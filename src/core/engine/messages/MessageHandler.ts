@@ -18,8 +18,6 @@ export default class MessageHandler {
                 return this.onStart();
             case WorkerMessages.STOP:
                 return this.onStop();
-            case WorkerMessages.FRAME:
-                return this.onFrame();
             case WorkerMessages.SETUP:
                 return this.onSetup(payload as SetupPayload);
             default:
@@ -36,22 +34,6 @@ export default class MessageHandler {
         WorkerContext.engine?.getLoop().stop();
     }
 
-    private onFrame() {
-        if (!WorkerContext.engine) {
-            return;
-        }
-
-        const renderer = WorkerContext.engine.getRenderer();
-        const camera = WorkerContext.engine.getScene().getMainCamera();
-        const scene = WorkerContext.engine.getScene();
-
-        if (!camera) {
-            throw new Error('MainCamera not set!');
-        }
-
-        renderer.render(scene, camera);
-    }
-
     private async onSetup(payload: SetupPayload) {
         WorkerContext.canvas = payload.canvas;
         WorkerContext.config = WorldConfig.fromObject(payload.config as { uuid: string, seed: string, name: string });
@@ -62,6 +44,8 @@ export default class MessageHandler {
 
         await WorkerContext.engine.getWorld().setup();
         await WorkerContext.engine.getScene().setup(WorkerContext.engine.getWorld());
+
+        this.renderFrame();
 
         this.postMessage(WorkerMessages.READY);
     }
@@ -79,5 +63,17 @@ export default class MessageHandler {
             action,
             payload,
         });
+    }
+
+    private renderFrame() {
+        const renderer = WorkerContext.engine.getRenderer();
+        const camera = WorkerContext.engine.getScene().getMainCamera();
+        const scene = WorkerContext.engine.getScene();
+
+        if (!camera) {
+            throw new Error('MainCamera not set!');
+        }
+
+        renderer.render(scene, camera);
     }
 }

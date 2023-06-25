@@ -1,20 +1,12 @@
 import ViewTransitions from '@/app/(game)/[uuid]/interface/ViewTransitions';
-import { useContext, useEffect } from 'react';
-import WorkerAdapterContext from '@/app/(game)/[uuid]/WorkerAdapterContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay } from '@fortawesome/free-solid-svg-icons';
 import styles from '@/app/styles/component/ready.module.scss';
 
 export default function StateReady() {
-    const adapter = useContext(WorkerAdapterContext);
-
-    useEffect(() => {
-        ViewTransitions.Ready_enter(adapter);
-    }, []);
-
     return (
         <>
-            <div className={'backdrop backdrop-7'}></div>
+            <div className={'backdrop ' + styles.readyBackdrop}></div>
 
             <div className={styles.content + ' center-absolute'}>
                 <h2>Your world is ready</h2>

@@ -42,7 +42,7 @@ export default class CustomScene extends Object3D {
     }
 
     private createEnvironment() {
-        // this.background = new Color(0xb0ddf9);
+        // Needs a THREE.Scene
         // this.fog = new Fog(0xf0f0f0, 64, 300); // CHUNK_SIZE, RENDER_DISTANCE
     }
 

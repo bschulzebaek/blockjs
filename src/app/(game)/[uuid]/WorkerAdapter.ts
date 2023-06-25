@@ -30,10 +30,6 @@ export default class WorkerAdapter {
         this.callbacks.set(name, callback);
     }
 
-    public renderFrame() {
-        this.postMessage(WorkerMessages.FRAME);
-    }
-
     public start() {
         this.postMessage(WorkerMessages.START);
     }

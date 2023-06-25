@@ -1,7 +1,6 @@
 enum WorkerMessages {
     SETUP = 'setup',
     START = 'start',
-    FRAME = 'frame',
     STOP = 'stop',
     INPUT_EVENT = 'input-event',
     READY = 'ready',
