@@ -33,7 +33,7 @@ export default class Engine {
         const chunks = this.world.getChunks();
         const chunkGroup = new Group();
         chunkGroup.name = 'chunks';
-        // chunkGroup.position.add(new Vector3(0.5, 0.5, 0.5));
+        chunkGroup.position.add(new Vector3(0.5, 0.5, 0.5));
 
         chunks.forEach((chunk) => chunkGroup.add(chunk));
         this.scene.add(chunkGroup);

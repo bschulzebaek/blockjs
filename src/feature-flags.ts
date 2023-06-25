@@ -7,7 +7,7 @@ export enum Features {
 const _features = {
     INVENTORY: false,
     DEBUG_HELPERS: true,
-    CURSOR: false,
+    CURSOR: true,
 }
 
 class FeatureFlags {
