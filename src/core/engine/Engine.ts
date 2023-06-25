@@ -40,7 +40,7 @@ export default class Engine {
     }
 
     private createDebugHelpers() {
-        if (!FeatureFlags.get(Features.DEBUG_HELPERS)) {
+        if (!FeatureFlags.get(Features.DEBUG)) {
             return;
         }
 

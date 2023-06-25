@@ -1,12 +1,12 @@
 export enum Features {
     INVENTORY = 'INVENTORY',
-    DEBUG_HELPERS = 'DEBUG_HELPERS',
+    DEBUG = 'DEBUG',
     CURSOR = 'CURSOR',
 }
 
 const _features = {
     INVENTORY: false,
-    DEBUG_HELPERS: true,
+    DEBUG: false,
     CURSOR: true,
 }
 
@@ -20,11 +20,11 @@ class FeatureFlags {
     }
 
     static setFromSearchParams(params: URLSearchParams) {
-        for (const [key, value] of params.entries()) {
+        Array.from(params.entries()).forEach(([key, value]) => {
             if (key in _features) {
                 _features[key as Features] = value === 'true';
             }
-        }
+        });
     }
 }
 

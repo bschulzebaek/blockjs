@@ -42,7 +42,7 @@ export default class MessageHandler {
 
     private onSetup(payload: SetupPayload) {
         WorkerContext.canvas = payload.canvas;
-        WorkerContext.config = WorldConfig.fromObject(payload.config);
+        WorkerContext.config = WorldConfig.fromObject(payload.config as { uuid: string, seed: string, name: string });
 
         WorkerContext.features.setFromSearchParams(new URLSearchParams(payload.parameters));
 
