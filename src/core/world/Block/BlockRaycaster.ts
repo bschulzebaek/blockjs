@@ -55,7 +55,7 @@ export default class BlockRaycaster {
         toY *= dtY;
         toZ *= dtZ;
 
-        let face;
+        let face = -1;
 
         while (distance-- > 0) {
             if (toX < toY) {
@@ -90,7 +90,7 @@ export default class BlockRaycaster {
             return {
                 block,
                 position: new Vector3(x, y, z),
-                face: 0,
+                face,
             };
         }
 
