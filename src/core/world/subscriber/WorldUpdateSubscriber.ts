@@ -3,11 +3,17 @@ import Chunk from '@/core/world/Chunk/Chunk';
 import WorldGenerator from '@/core/world/generation/WorldGenerator';
 import WorkerContext from '@/core/engine/WorkerContext';
 import SetBlockEvent from '@/core/components/player/events/SetBlockEvent';
+import ChunkRepository from '@/core/world/Chunk/ChunkRepository';
+import StorageAdapter from '@/core/engine/storage/StorageAdapter';
 
 class WorldUpdateSubscriber {
+    private chunkRepository = new ChunkRepository(new StorageAdapter(WorkerContext.config.getUUID()));
+
     constructor() {
         addEventListener(UpdateGridEvent.NAME, this.onUpdateGrid as unknown as EventListener);
         addEventListener(SetBlockEvent.NAME, this.onSetBlock as unknown as EventListener);
+
+
     }
 
     private onUpdateGrid = (event: UpdateGridEvent) => {
@@ -46,6 +52,8 @@ class WorldUpdateSubscriber {
             blockZ = position.z - chunk.getOffsetZ();
 
         chunk.setBlock(blockX, position.y, blockZ, id);
+
+        this.chunkRepository.write(chunk);
     }
 }
 

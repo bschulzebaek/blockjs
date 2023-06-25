@@ -6,6 +6,7 @@ import WorkerContext from '@/core/engine/WorkerContext';
 import SetupPayload from '@/core/engine/messages/SetupPayload';
 import InputPayload from '@/core/engine/messages/InputPayload';
 import GenerationProgressPayload from '@/core/engine/messages/GenerationProgressPayload';
+import firstTimeSetup from '@/core/engine/storage/first-time-setup';
 
 export default class MessageHandler {
     public onMessage = (event: MessageEvent<MessagePayload>) => {
@@ -42,6 +43,7 @@ export default class MessageHandler {
 
         WorkerContext.engine = new Engine();
 
+        await firstTimeSetup(WorkerContext.config.getUUID());
         await WorkerContext.engine.getWorld().setup();
         await WorkerContext.engine.getScene().setup(WorkerContext.engine.getWorld());
 

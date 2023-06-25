@@ -6,8 +6,10 @@ import GeneratorMessagePayload from '@/core/world/generation/worker/GeneratorMes
 import ChunkPayload, { ChunkGeometryData } from '@/core/world/generation/worker/ChunkPayload';
 import createGeometry from '@/core/world/generation/utility/create-geometry';
 
-onmessage = (event: MessageEvent<GeneratorMessagePayload>) => {
-    generate(event.data);
+onmessage = async (event: MessageEvent<GeneratorMessagePayload>) => {
+    const chunk = await generate(event.data);
+
+    response(chunk);
 };
 
 function getBuffer(geometry: ChunkGeometryData): ArrayBuffer[] {
@@ -37,13 +39,19 @@ function response(chunk: Chunk) {
     close();
 }
 
-function generate({ seed, x, z }: GeneratorMessagePayload) {
+async function generate({ seed, x, z, uuid }: GeneratorMessagePayload): Promise<Chunk> {
+    let generator = null;
+
     switch (WORLD_GENERATION_VERSION) {
         case 1:
-            return response(generationV1(x, z, seed)!);
+            generator = generationV1(x, z, seed, uuid);
+            break;
         case 2:
-            return response(generationV2(x, z, seed)!);
+            generator = generationV2(x, z, seed, uuid);
+            break;
         default:
             throw new Error(`Unknown world generation version: ${WORLD_GENERATION_VERSION}`);
     }
+
+    return await generator;
 }

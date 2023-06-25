@@ -3,12 +3,13 @@ import Block from '@/core/world/Block/Block';
 import ChunkGeometry from '@/core/world/Chunk/ChunkGeometry';
 import { CHUNK_SIZE, WORLD_HEIGHT } from '@/configuration';
 import BlockId from '@/core/world/Block/BlockId';
+import StorageObject, { RawStorageObject } from '@/core/engine/storage/StorageObject';
+import ChunkRepository from '@/core/world/Chunk/ChunkRepository';
 
 export type BlockMap = Map<string, Block | undefined>;
 
-export default class Chunk extends Group {
+export default class Chunk extends Group implements StorageObject {
     private geometries: BufferGeometry[] = [];
-    private dirty = false;
 
     constructor(
         private readonly x: number,
@@ -95,6 +96,13 @@ export default class Chunk extends Group {
         }
 
         ChunkGeometry.build(this);
+    }
+
+    public toStorage(): RawStorageObject {
+        return {
+            id: this.getId(),
+            blocks: this.blocks,
+        }
     }
 
     static toId(x: number | string, z: number | string) {

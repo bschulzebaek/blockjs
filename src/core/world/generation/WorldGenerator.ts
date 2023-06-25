@@ -6,6 +6,7 @@ import createChunkMap from '@/core/world/create-chunk-map';
 import { RENDER_DISTANCE } from '@/settings';
 import { MAX_CHUNK_CACHE } from '@/configuration';
 import FeatureFlags, { Features } from '@/feature-flags';
+import GeneratorMessagePayload from '@/core/world/generation/worker/GeneratorMessagePayload';
 
 const _cache = new Map<string, Chunk>();
 
@@ -14,6 +15,7 @@ const _cache = new Map<string, Chunk>();
 export default class WorldGenerator {
     private promises: Map<string, Promise<Chunk>> = new Map();
     private seed = WorkerContext.config!.getSeed();
+    private uuid = WorkerContext.config!.getUUID();
 
     static createMap(offsetX: number = 0, offsetZ: number = 0) {
         return createChunkMap(RENDER_DISTANCE, offsetX, offsetZ);
@@ -43,10 +45,11 @@ export default class WorldGenerator {
             const worker = new Worker(new URL('./worker/generation-worker.ts', import.meta.url));
             worker.onmessage = this.receiveChunk.bind(this);
             worker.postMessage({
+                uuid: this.uuid,
                 x,
                 z,
                 seed: this.seed,
-            });
+            } as GeneratorMessagePayload);
         });
 
         // @ts-ignore
