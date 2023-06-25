@@ -1,35 +1,34 @@
-import { Camera, Intersection, Raycaster, Vector3 } from 'three';
+import { Camera, Vector3 } from 'three';
 import World from '@/core/world/World';
 import Block from '@/core/world/Block/Block';
-
-function ascSort(a: Intersection, b: Intersection) {
-    return a.distance - b.distance;
-}
 
 function frac(dir: any, a: number) {
     return dir > 0 ? (1 - a % 1) : (a % 1);
 }
 
-export default class BlockRaycaster extends Raycaster {
+export default class BlockRaycaster {
     private origin = new Vector3();
     private direction = new Vector3();
 
     constructor(
         private readonly world: World,
-        public readonly camera: Camera
+        private readonly camera: Camera,
+        private readonly far: number = 10,
     ) {
-        super(undefined, undefined, 0, 10);
+
     }
 
-    /**
-     * Todo: Performance!
-     */
     public intersectWorld(): Block | undefined {
-        this.set(this.camera.getWorldPosition(this.origin), this.camera.getWorldDirection(this.direction));
-
+        // ToDo: Could probably be moved into a custom Camera class and be called in every update, if any more ray casting is needed!
+        this.camera.updateWorldMatrix(true, false);
+        this.origin.setFromMatrixPosition(this.camera.matrixWorld);
+        const elements = this.camera.matrixWorld.elements;
+        this.direction.set(-elements[8], -elements[9], -elements[10]).normalize();
         let distance = this.far;
+
         const { x: px, y: py, z: pz } = this.origin,
             { x: dirX, y: dirY, z: dirZ } = this.direction;
+
         let x = Math.floor(px),
             y = Math.floor(py),
             z = Math.floor(pz);
@@ -78,9 +77,5 @@ export default class BlockRaycaster extends Raycaster {
         }
 
         return block;
-    }
-
-    private testBlock(x: number, y: number, z: number) {
-
     }
 }
