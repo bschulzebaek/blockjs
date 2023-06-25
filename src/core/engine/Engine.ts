@@ -1,11 +1,11 @@
 import World from '@/core/world/World';
 import Loop from '@/core/engine/helper/Loop';
-import { WebGLRenderer } from 'three';
 import WorkerContext from '@/core/engine/WorkerContext';
 import CustomScene from '@/core/engine/scene/CustomScene';
+import CustomRenderer from '@/core/engine/renderer/CustomRenderer';
 
 export default class Engine {
-    private readonly renderer = new WebGLRenderer({ canvas: WorkerContext.canvas! });
+    private readonly renderer = new CustomRenderer(WorkerContext.canvas!);
     private readonly world: World = new World();
     private readonly scene: CustomScene = new CustomScene();
 
