@@ -1,6 +1,6 @@
 import WorkerMessages from '@/core/engine/messages/WorkerMessages';
 import SetupPayload from '@/core/engine/messages/SetupPayload';
-import MessagePayload from '@/shared/worker/MessagePayloadInterface';
+import MessagePayload from '@/core/engine/messages/MessagePayloadInterface';
 import InputPayload from '@/core/engine/messages/InputPayload';
 
 export default class WorkerAdapter {

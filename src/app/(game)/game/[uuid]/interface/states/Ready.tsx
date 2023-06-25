@@ -3,7 +3,7 @@ import { useContext, useEffect } from 'react';
 import WorkerAdapterContext from '@/app/(game)/game/WorkerAdapterContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay } from '@fortawesome/free-solid-svg-icons';
-import styles from '@/styles/component/ready.module.scss';
+import styles from '@/app/styles/component/ready.module.scss';
 
 export default function StateReady() {
     const adapter = useContext(WorkerAdapterContext);

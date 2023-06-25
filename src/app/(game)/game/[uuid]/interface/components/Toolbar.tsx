@@ -1,4 +1,4 @@
-import styles from '@/styles/component/toolbar.module.scss';
+import styles from '@/app/styles/component/toolbar.module.scss';
 import ItemSlot from '@/app/(game)/game/[uuid]/interface/components/ItemSlot';
 import { useEffect, useState } from 'react';
 

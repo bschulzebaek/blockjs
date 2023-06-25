@@ -1,4 +1,4 @@
-import styles from '@/styles/component/item-slot.module.scss';
+import styles from '@/app/styles/component/item-slot.module.scss';
 
 export default function ItemSlot({ active }: { active: boolean }) {
     return (

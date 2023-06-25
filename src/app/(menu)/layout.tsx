@@ -1,7 +1,6 @@
-import '@/styles/index.scss';
-import styles from '@/styles/layout/menu.module.scss';
+import '@/app/styles/index.scss';
+import styles from '@/app/styles/layout/menu.module.scss';
 import Image from 'next/image';
-import backgroundImage from '@/assets/interface/background.jpg';
 
 export const metadata = {
     title: 'BlockJS',
@@ -18,8 +17,10 @@ export default function RootLayout({
         <body suppressHydrationWarning={true} >
         <div className={styles.menuBackground}>
             <Image
-                src={backgroundImage}
+                src={'/interface/background.jpg'}
                 alt="Main menu background image"
+                width={1920}
+                height={1080}
             />
         </div>
 

@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import logo from '@/assets/interface/logo.png';
-import styles from '@/styles/page/main-menu.module.scss';
+import styles from '@/app/styles/page/main-menu.module.scss';
 import RetainQueryLink from '@/app/component/RetainQueryLink';
 
 export default function MenuPage() {
@@ -9,8 +8,10 @@ export default function MenuPage() {
         <>
             <div className={styles.mainMenuLogo}>
                 <Image
-                    src={logo}
+                    src={'/interface/logo.png'}
                     alt=">BlockJS logo"
+                    width={395}
+                    height={78}
                 />
                 <span className={styles.mainMenuLabel}>
                     Minecraft in JavaScript!

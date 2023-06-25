@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import WorldConfigStorage, { WorldConfig } from '@/core/storage/WorldConfigStorage';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import styles from '@/styles/page/main-menu-load.module.scss';
+import styles from '@/app/styles/page/main-menu-load.module.scss';
 import RetainQueryLink from '@/app/component/RetainQueryLink';
 
 export default function LoadPage() {

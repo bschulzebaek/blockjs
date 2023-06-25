@@ -1,5 +1,5 @@
-import '@/styles/index.scss';
-import styles from '@/styles/layout/game.module.scss';
+import '@/app/styles/index.scss';
+import styles from '@/app/styles/layout/game.module.scss';
 
 export const metadata = {
     title: 'BlockJS',

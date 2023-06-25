@@ -1,4 +1,4 @@
-import MessagePayload from '@/shared/worker/MessagePayloadInterface';
+import MessagePayload from '@/core/engine/messages/MessagePayloadInterface';
 import WorkerMessages from '@/core/engine/messages/WorkerMessages';
 import Engine from '@/core/engine/Engine';
 import { WorldConfig } from '@/core/storage/WorldConfigStorage';
