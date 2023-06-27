@@ -1,15 +1,15 @@
-import { BlockMap } from '@/core/world/Chunk/Chunk';
+import { BlockMap } from '@/core/world/chunk/Chunk';
 
-export interface GeometryData {
-    position: Float32Array;
-    normal: Float32Array;
-    uv: Float32Array;
-    color: Float32Array;
+export interface GeometryBuffer {
+    position: ArrayBufferLike;
+    normal: ArrayBufferLike;
+    uv: ArrayBufferLike;
+    color: ArrayBufferLike;
 }
 
 export interface ChunkGeometryData {
-    opaque: GeometryData;
-    transparent: GeometryData;
+    opaque: GeometryBuffer;
+    transparent: GeometryBuffer;
 }
 
 export default interface ChunkPayload {

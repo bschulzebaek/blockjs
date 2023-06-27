@@ -1,7 +1,7 @@
 import { BoxGeometry, BoxHelper, Camera, Mesh, MeshStandardMaterial, Object3D, Vector3 } from 'three';
 import World from '@/core/world/World';
-import BlockRaycaster from '@/core/world/Block/BlockRaycaster';
-import BlockId from '@/core/world/Block/BlockId';
+import BlockRaycaster from '@/core/world/block/BlockRaycaster';
+import BlockId from '@/core/world/block/BlockId';
 
 const CURSOR_OFFSET = new Vector3(0.5, 0.5, 0.5);
 

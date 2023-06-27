@@ -1,8 +1,9 @@
-import Chunk, { BlockMap } from '../../Chunk/Chunk';
-import BlockId from '@/core/world/Block/BlockId';
-import ChunkFactory from '@/core/world/Chunk/ChunkFactory';
-import ChunkRepository from '@/core/world/Chunk/ChunkRepository';
+import Chunk, { BlockMap } from '@/core/world/chunk/Chunk';
+import BlockId from '@/core/world/block/BlockId';
+import ChunkFactory from '@/core/world/chunk/ChunkFactory';
+import ChunkRepository from '@/core/world/chunk/ChunkRepository';
 import StorageAdapter from '@/core/engine/storage/StorageAdapter';
+import ChunkUtils from '@/core/world/chunk/ChunkUtils';
 
 const biomeData = {
     humidity: 0.5,
@@ -29,7 +30,7 @@ const BLOCK_IDS = [
 export default async function generationV1(x: string, z: string, seed: string, uuid: string): Promise<Chunk> {
     const repository = new ChunkRepository(new StorageAdapter(uuid));
     // @ts-ignore
-    const blockMap = (await repository.read(Chunk.toId(x, z)))?.blocks as BlockMap ?? Chunk.getEmptyBlocks();
+    const blockMap = (await repository.read(ChunkUtils.toId(x, z)))?.blocks as BlockMap ?? ChunkUtils.getEmptyBlockMap();
 
     let chunk: Chunk | undefined = undefined;
 
@@ -44,21 +45,6 @@ export default async function generationV1(x: string, z: string, seed: string, u
                 }
 
                 blockMap.set(mapId, { id: blockId });
-            }
-        }
-
-        for (let i = 6; i < 10; i++) {
-            for (let j = 6; j < 10; j++) {
-                for (let k = 6; k < 12; k++) {
-                    const blockId = BLOCK_IDS[Math.floor(Math.random() * BLOCK_IDS.length)];
-                    const mapId = `${i}:${k}:${j}`;
-
-                    if (blockMap.has(mapId)) {
-                        continue;
-                    }
-
-                    blockMap.set(`${i}:${k}:${j}`, { id: blockId });
-                }
             }
         }
 

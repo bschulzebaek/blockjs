@@ -1,24 +1,28 @@
-import Chunk from '@/core/world/Chunk/Chunk';
+import Chunk from '@/core/world/chunk/Chunk';
 import ChunkPayload from '@/core/world/generation/worker/ChunkPayload';
-import WorkerContext from '@/core/engine/WorkerContext';
-import ChunkFactory from '@/core/world/Chunk/ChunkFactory';
-import createChunkMap from '@/core/world/create-chunk-map';
+import ChunkFactory from '@/core/world/chunk/ChunkFactory';
+import createChunkGrid from '@/core/world/create-chunk-grid';
 import { RENDER_DISTANCE } from '@/settings';
 import { MAX_CHUNK_CACHE } from '@/configuration';
-import FeatureFlags, { Features } from '@/feature-flags';
+import FeatureFlags, { Features } from '@/shared/FeatureFlags';
 import GeneratorMessagePayload from '@/core/world/generation/worker/GeneratorMessagePayload';
+import ChunkUtils from '@/core/world/chunk/ChunkUtils';
 
 const _cache = new Map<string, Chunk>();
 
-// todo: Pre-generate chunks around current map
+// todo: Pre-generate chunks around current map when idle
 
 export default class WorldGenerator {
     private promises: Map<string, Promise<Chunk>> = new Map();
-    private seed = WorkerContext.config!.getSeed();
-    private uuid = WorkerContext.config!.getUUID();
+
+    constructor(
+        private readonly seed: string,
+        private readonly uuid: string,
+    ) {
+    }
 
     static createMap(offsetX: number = 0, offsetZ: number = 0) {
-        return createChunkMap(RENDER_DISTANCE, offsetX, offsetZ);
+        return createChunkGrid(RENDER_DISTANCE, offsetX, offsetZ);
     }
 
     public generateChunk(x: string, z: string): Promise<Chunk> {
@@ -26,11 +30,11 @@ export default class WorldGenerator {
             console.debug(`[generateChunk] ${x}:${z}`);
         }
 
-        const id = Chunk.toId(x, z);
+        const id = ChunkUtils.toId(x, z);
         const chunk = _cache.get(id);
 
         if (chunk) {
-            return Promise.resolve(_cache.get(Chunk.toId(x, z))!);
+            return Promise.resolve(_cache.get(ChunkUtils.toId(x, z))!);
         }
 
         if (this.promises.has(id)) {
@@ -64,21 +68,34 @@ export default class WorldGenerator {
             console.debug(`[receiveChunk]`, event);
         }
 
+        let chunkId: string | undefined = undefined;
+
         setTimeout(() => {
-            const chunk = ChunkFactory.createFromPayload(event.data);
-            const promise = this.promises.get(chunk.getId());
+            try {
+                const chunk = ChunkFactory.createFromPayload(event.data);
+                chunkId = chunk.getChunkId();
 
-            _cache.set(chunk.getId(), chunk);
+                const promise = this.promises.get(chunk.getChunkId());
 
-            this.keepCacheLimit();
+                _cache.set(chunk.getChunkId(), chunk);
 
-            if (!promise) {
-                console.debug(event.data);
-                throw new Error('Unknown chunk received');
+                this.keepCacheLimit();
+
+                if (!promise) {
+                    console.debug(event.data);
+                    throw new Error('Unknown chunk received');
+                }
+
+                // @ts-ignore
+                promise.resolver(chunk);
+            } catch(e) {
+                if (chunkId) {
+                    _cache.delete(chunkId);
+                    this.promises.delete(chunkId);
+                }
+
+                console.error(e);
             }
-
-            // @ts-ignore
-            promise.resolver(chunk);
         });
     }
 

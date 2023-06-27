@@ -5,7 +5,7 @@ import ViewContext, { AppViews } from '@/app/(game)/[uuid]/ViewContext';
 import CanvasContext from '@/app/(game)/[uuid]/CanvasContext';
 import Interface from '@/app/(game)/[uuid]/interface/Interface';
 import ViewTransitions from '@/app/(game)/[uuid]/interface/ViewTransitions';
-import FeatureFlags from '@/feature-flags';
+import FeatureFlags from '@/shared/FeatureFlags';
 import WorkerAdapter from '@/app/(game)/[uuid]/WorkerAdapter';
 
 export default function GamePage() {

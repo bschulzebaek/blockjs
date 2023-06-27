@@ -1,6 +1,5 @@
 import { Camera, Euler, Object3D, Quaternion, Vector3 } from 'three';
 import InputMapper from '@/core/engine/helper/InputMapper';
-import WorkerContext from '@/core/engine/WorkerContext';
 
 export enum MovementMode {
     NORMAL = 0,
@@ -108,44 +107,42 @@ export default class PlayerController {
     }
 
     private bindInput() {
-        const inputMapper = WorkerContext.input;
+        InputMapper.subscribeMouseMove(this.onMouseMove.bind(this));
 
-        inputMapper.subscribeMouseMove(this.onMouseMove.bind(this));
-
-        inputMapper.subscribeKeyDown('w', () => {
+        InputMapper.subscribeKeyDown('w', () => {
             this.forward = true;
         });
-        inputMapper.subscribeKeyUp('w', () => {
+        InputMapper.subscribeKeyUp('w', () => {
             this.forward = false;
         });
-        inputMapper.subscribeKeyDown('s', () => {
+        InputMapper.subscribeKeyDown('s', () => {
             this.backward = true;
         });
-        inputMapper.subscribeKeyUp('s', () => {
+        InputMapper.subscribeKeyUp('s', () => {
             this.backward = false;
         });
-        inputMapper.subscribeKeyDown('a', () => {
+        InputMapper.subscribeKeyDown('a', () => {
             this.left = true;
         });
-        inputMapper.subscribeKeyUp('a', () => {
+        InputMapper.subscribeKeyUp('a', () => {
             this.left = false;
         });
-        inputMapper.subscribeKeyDown('d', () => {
+        InputMapper.subscribeKeyDown('d', () => {
             this.right = true;
         });
-        inputMapper.subscribeKeyUp('d', () => {
+        InputMapper.subscribeKeyUp('d', () => {
             this.right = false;
         });
-        inputMapper.subscribeKeyDown(' ', () => {
+        InputMapper.subscribeKeyDown(' ', () => {
             this.up = true;
         });
-        inputMapper.subscribeKeyUp(' ', () => {
+        InputMapper.subscribeKeyUp(' ', () => {
             this.up = false;
         });
-        inputMapper.subscribeKeyDown('shift', () => {
+        InputMapper.subscribeKeyDown('shift', () => {
             this.down = true;
         });
-        inputMapper.subscribeKeyUp('shift', () => {
+        InputMapper.subscribeKeyUp('shift', () => {
             this.down = false;
         });
     }

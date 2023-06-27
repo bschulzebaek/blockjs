@@ -1,4 +1,4 @@
-import { LinearFilter, NearestFilter, RepeatWrapping, Texture } from 'three';
+import { LinearFilter, NearestFilter, Texture } from 'three';
 
 export default class CustomTextureLoader {
     public load(src: string) {

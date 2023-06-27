@@ -1,7 +1,7 @@
-import WorkerMessages from '@/core/engine/messages/WorkerMessages';
-import SetupPayload from '@/core/engine/messages/SetupPayload';
-import MessagePayload from '@/core/engine/messages/MessagePayloadInterface';
-import InputPayload from '@/core/engine/messages/InputPayload';
+import CoreWorkerMessages from '@/shared/CoreWorkerMessages';
+import SetupPayload from '@/core/messages/payloads/SetupPayload';
+import MessagePayload from '@/core/messages/payloads/MessagePayload';
+import InputPayload from '@/core/messages/payloads/InputPayload';
 
 export default class WorkerAdapter {
 
@@ -26,27 +26,27 @@ export default class WorkerAdapter {
         callback(payload);
     }
 
-    public setCallback(name: WorkerMessages, callback: Function) {
+    public setCallback(name: CoreWorkerMessages, callback: Function) {
         this.callbacks.set(name, callback);
     }
 
     public start() {
-        this.postMessage(WorkerMessages.START);
+        this.postMessage(CoreWorkerMessages.START);
     }
 
     public stop() {
-        this.postMessage(WorkerMessages.STOP);
+        this.postMessage(CoreWorkerMessages.STOP);
     }
 
     public setup(payload: SetupPayload, transferables: Transferable[] = []) {
-        this.postMessage(WorkerMessages.SETUP, payload, transferables);
+        this.postMessage(CoreWorkerMessages.SETUP, payload, transferables);
     }
 
     public input(payload: InputPayload) {
-        this.postMessage(WorkerMessages.INPUT_EVENT, payload);
+        this.postMessage(CoreWorkerMessages.INPUT_EVENT, payload);
     }
 
-    private postMessage(action: WorkerMessages, payload?: unknown, transferables: Transferable[] = []) {
+    private postMessage(action: CoreWorkerMessages, payload?: unknown, transferables: Transferable[] = []) {
         this.worker.postMessage({
             action,
             payload,

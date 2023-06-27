@@ -1,6 +1,6 @@
-import InputPayload from '@/core/engine/messages/InputPayload';
+import InputPayload from '@/core/messages/payloads/InputPayload';
 
-export default class InputMapper {
+class InputMapper {
     private keyDownSubscribers: Map<string, Function> = new Map();
     private keyUpSubscribers: Map<string, Function> = new Map();
     private mouseMoveSubscriber: Function|null = null;
@@ -47,3 +47,5 @@ export default class InputMapper {
         }
     }
 }
+
+export default new InputMapper();

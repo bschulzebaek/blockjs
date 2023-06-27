@@ -1,10 +1,11 @@
 'use client';
 import { useEffect, useState } from 'react';
-import WorldConfigStorage, { WorldConfig } from '@/core/WorldConfigStorage';
+import WorldConfigStorage from '@/shared/WorldConfigStorage';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import styles from '@/app/styles/page/main-menu-load.module.scss';
 import RetainQueryLink from '@/app/component/RetainQueryLink';
+import WorldConfig from '@/shared/WorldConfig';
 
 export default function LoadPage() {
     const [loading, setLoading] = useState(true);

@@ -1,13 +1,14 @@
 import { Camera, Object3D, PerspectiveCamera } from 'three';
 import PlayerController from '@/core/components/player/PlayerController';
 import { RESOLUTION } from '@/settings';
-import WorkerContext from '@/core/engine/WorkerContext';
-import Chunk from '@/core/world/Chunk/Chunk';
 import { CHUNK_SIZE, DEFAULT_BLOCK_PLACEMENT } from '@/configuration';
-import UpdateGridEvent from '@/core/components/player/events/UpdateGridEvent';
-import BlockRaycaster from '@/core/world/Block/BlockRaycaster';
+import UpdateGridEvent from '@/core/world/events/UpdateGridEvent';
+import BlockRaycaster from '@/core/world/block/BlockRaycaster';
 import destroyBlock from '@/core/components/player/actions/destroy-block';
 import placeBlock from '@/core/components/player/actions/place-block';
+import ChunkUtils from '@/core/world/chunk/ChunkUtils';
+import WorldService from '@/core/world/WorldService';
+import InputMapper from '@/core/engine/helper/InputMapper';
 
 export default class Player extends Object3D {
     static HEIGHT = 1.8;
@@ -16,7 +17,7 @@ export default class Player extends Object3D {
     private camera: Camera;
     private controller: PlayerController;
 
-    private world = WorkerContext.engine!.getWorld();
+    private world = WorldService.getWorld();
     private raycaster: BlockRaycaster;
 
     constructor(
@@ -67,7 +68,7 @@ export default class Player extends Object3D {
     }
 
     private updateWorldPosition() {
-        const id = Chunk.positionToId(this.position);
+        const id = ChunkUtils.positionToId(this.position);
 
         if (id !== this.lastChunkId) {
             this.lastChunkId = id;
@@ -80,7 +81,7 @@ export default class Player extends Object3D {
     }
 
     private registerActions() {
-        WorkerContext.input.subscribeClick(this.onClick.bind(this));
+        InputMapper.subscribeClick(this.onClick.bind(this));
     }
 
     private onClick(button: number) {

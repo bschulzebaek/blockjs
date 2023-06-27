@@ -1,15 +1,17 @@
-import Chunk, { BlockMap } from '../../Chunk/Chunk';
-import shapeTerrain from './shape-terrain'
-import fillWaterBodies from './fill-water-bodies';
-import paintSurface from './paint-surface';
-import ChunkFactory from '@/core/world/Chunk/ChunkFactory';
-import ChunkRepository from '@/core/world/Chunk/ChunkRepository';
+import Chunk, { BlockMap } from '@/core/world/chunk/Chunk';
+import ChunkRepository from '@/core/world/chunk/ChunkRepository';
 import StorageAdapter from '@/core/engine/storage/StorageAdapter';
+import ChunkUtils from '@/core/world/chunk/ChunkUtils';
+
+import ChunkFactory from '@/core/world/chunk/ChunkFactory';
+import paintSurface from '@/core/world/generation/v2/paint-surface';
+import shapeTerrain from '@/core/world/generation/v2/shape-terrain';
 
 export default async function generationV2(x: string, z: string, seed: string, uuid: string): Promise<Chunk> {
+
     const repository = new ChunkRepository(new StorageAdapter(uuid));
     // @ts-ignore
-    const blocks = (await repository.read(Chunk.toId(x, z)))?.blocks as BlockMap ?? Chunk.getEmptyBlocks();
+    const blocks = (await repository.read(ChunkUtils.toId(x, z)))?.blocks as BlockMap ?? ChunkUtils.getEmptyBlockMap();
 
     const xInt = parseInt(x, 10);
     const zInt = parseInt(z, 10);
@@ -18,7 +20,6 @@ export default async function generationV2(x: string, z: string, seed: string, u
 
     try {
         shapeTerrain(seed, xInt, zInt, blocks);
-        fillWaterBodies(blocks);
         paintSurface(blocks);
 
         chunk = ChunkFactory.create(xInt, zInt, blocks);

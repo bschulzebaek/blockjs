@@ -1,7 +1,7 @@
 import { Vector3 } from 'three';
-import { ChunkDirections, ChunkFaces } from '@/data/chunk-faces';
-import BlockId from '@/core/world/Block/BlockId';
-import SetBlockEvent from '@/core/components/player/events/SetBlockEvent';
+import { ChunkDirections, ChunkFaces } from '@/core/world/chunk/data/chunk-faces';
+import BlockId from '@/core/world/block/BlockId';
+import SetBlockEvent from '@/core/world/block/events/SetBlockEvent';
 
 export default function placeBlock(position: Vector3, direction: ChunkDirections, id: BlockId) {
     const target = position.clone();

@@ -1,11 +1,11 @@
 'use client';
 import { usePathname } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
-import WorldConfigStorage from '@/core/WorldConfigStorage';
+import WorldConfigStorage from '@/shared/WorldConfigStorage';
 import CanvasContext from '@/app/(game)/[uuid]/CanvasContext';
 import WorkerAdapterContext from '@/app/(game)/[uuid]/WorkerAdapterContext';
 import ViewTransitions from '@/app/(game)/[uuid]/interface/ViewTransitions';
-import WorkerMessages from '@/core/engine/messages/WorkerMessages';
+import CoreWorkerMessages from '@/shared/CoreWorkerMessages';
 
 export default function StateSetup() {
     const canvas = useContext(CanvasContext)!;
@@ -19,8 +19,8 @@ export default function StateSetup() {
         offscreen.height = canvas.clientHeight;
         offscreen.width = canvas.clientWidth;
 
-        adapter.setCallback(WorkerMessages.READY, ViewTransitions.to_Ready);
-        adapter.setCallback(WorkerMessages.WORLD_GENERATION_PROGRESS, ({ ready, total }: { ready: number, total: number }) => {
+        adapter.setCallback(CoreWorkerMessages.READY, ViewTransitions.to_Ready);
+        adapter.setCallback(CoreWorkerMessages.WORLD_GENERATION_PROGRESS, ({ ready, total }: { ready: number, total: number }) => {
             setProgress((ready  / total * 100).toFixed(0));
         });
 

@@ -23,11 +23,7 @@ export default class Loop {
             return;
         }
 
-        this.camera = this.scene.getMainCamera();
-
-        if (!this.camera) {
-            throw new Error('Camera has not been set');
-        }
+        this.getCamera();
 
         this.flushAnimation();
         this.paused = false;
@@ -44,16 +40,18 @@ export default class Loop {
         this.flushAnimation();
     }
 
+    public frame() {
+        this.getCamera();
+        this.renderer.render(this.scene, this.camera!);
+    }
+
     private loop(time: number, lastTime: number) {
         this.innerLoop(this.getDelta(time, lastTime));
         this.lastFrame = requestAnimationFrame((newTime) => this.loop(newTime, time));
     }
 
     private innerLoop = (delta: number) => {
-        this.scene.getComponents().iterateDynamic((component) => {
-            component.update(delta);
-        });
-
+        this.scene.update(delta);
         this.renderer.render(this.scene, this.camera!);
     }
 
@@ -63,5 +61,13 @@ export default class Loop {
 
     private flushAnimation() {
         cancelAnimationFrame(this.lastFrame);
+    }
+
+    private getCamera() {
+        this.camera = this.scene.getMainCamera();
+
+        if (!this.camera) {
+            throw new Error('Camera has not been set');
+        }
     }
 }

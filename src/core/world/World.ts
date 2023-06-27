@@ -1,49 +1,21 @@
-import Chunk from '@/core/world/Chunk/Chunk';
-import WorldGenerator from './generation/WorldGenerator';
-import Block from '@/core/world/Block/Block';
+import Chunk from '@/core/world/chunk/Chunk';
+import Block from '@/core/world/block/Block';
 import { CHUNK_SIZE } from '@/configuration';
-import WorkerContext from '@/core/engine/WorkerContext';
-import { Group, Vector3 } from 'three';
-import BlockId from '@/core/world/Block/BlockId';
+import { Group, Object3D, Vector3 } from 'three';
+import ChunkUtils from '@/core/world/chunk/ChunkUtils';
 
-export default class World {
-    private readonly generator: WorldGenerator;
-    private readonly chunks: Map<string, Chunk> = new Map();
-    private pendingChunks: Map<string, undefined> = new Map();
-    private readonly chunkGroup: Group = new Group();
+type ChunkMap = Map<string, Chunk|undefined>;
 
-    constructor() {
-        this.generator = new WorldGenerator();
-        this.pendingChunks = WorldGenerator.createMap(); // Todo: Provide current Player Chunk as offset
+export default class World extends Group {
+    private readonly chunks: ChunkMap = new Map();
 
-        this.chunkGroup.name = 'chunks';
-        this.chunkGroup.position.add(new Vector3(0.5, 0.5, 0.5));
-    }
+    constructor(
+        private pendingChunks: Map<string, undefined>
+    ) {
+        super();
 
-    public async loadPendingChunks() {
-        await Promise.all(Array.from(this.pendingChunks.keys()).map(async (key) => {
-            const [x, z] = key.split(':');
-            const chunk = await this.generator.generateChunk(x, z);
-
-            if (!this.pendingChunks.has(key)) {
-                return;
-            }
-
-            this.chunks.set(key, chunk);
-            this.pendingChunks.delete(key);
-
-            this.chunkGroup.add(chunk);
-
-            this.postProgress();
-        }));
-    }
-
-    public async setup() {
-        await this.loadPendingChunks();
-    }
-
-    public getChunkGroup() {
-        return this.chunkGroup;
+        this.name = 'world';
+        this.position.add(new Vector3(0.5, 0.5, 0.5));
     }
 
     public setPendingChunks(map: Map<string, undefined>) {
@@ -54,12 +26,8 @@ export default class World {
         return this.pendingChunks;
     }
 
-    public getChunks() {
+    public getChunks(): ChunkMap {
         return this.chunks;
-    }
-
-    public getChunkByPosition(x: number, z: number, strict = false) {
-        return this.getChunkById(Chunk.toId(x, z), strict);
     }
 
     public getChunkById(id: string, strict: boolean = false): Chunk | undefined {
@@ -72,53 +40,65 @@ export default class World {
         return chunk;
     }
 
-    private postProgress() {
-        WorkerContext.messageHandler.sendGenerationProgress({
-            total: this.pendingChunks.size + this.chunks.size,
-            ready: this.chunks.size,
-        });
-    }
-
+    /**
+     * Use global coordinates to get the specific block. These will be converted to local chunk coordinates.
+     * Result can be undefined. I.e. the block hasn't existed yet (!= destroyed by Player).
+     */
     public getBlock(x: number, y: number, z: number): Block | undefined {
         const chunkX = Math.floor(x / CHUNK_SIZE);
         const chunkZ = Math.floor(z / CHUNK_SIZE);
-        const chunk = this.chunks.get(Chunk.toId(chunkX, chunkZ));
+        const chunk = this.chunks.get(ChunkUtils.toId(chunkX, chunkZ));
 
         if (!chunk) {
             return undefined;
         }
 
-        return chunk.getBlockLocal(
+        return chunk.getBlock(
             x - chunk.getOffsetX(),
             y,
             z - chunk.getOffsetZ()
         );
     }
 
-    public unloadChunks(ids: string[]) {
-        ids.forEach((id) => {
-            const chunk = this.chunks.get(id);
+    public getStats() {
+        const chunks = this.chunks.size;
+        let blocks = 0;
 
-            if (!chunk) {
-                return;
-            }
-
-            this.chunks.delete(id);
-            this.chunkGroup.remove(chunk);
+        this.chunks.forEach((chunk) => {
+            blocks += chunk!.getBlocks().size;
         });
+
+        return {
+            blocks,
+            chunks,
+            world: this,
+        };
     }
 
-    public setBlock(position: Vector3, blockId: BlockId) {
-        const chunkId = Chunk.positionToId(position);
-        const chunk = this.getChunkById(chunkId);
+    public add(...object: Object3D[]): this {
+        object.forEach((obj) => {
+            if (!(obj instanceof Chunk)) {
+                throw new Error('World can only contain Chunks!');
+            }
 
-        if (!chunk) {
-            return; // todo: Out of bounds
-        }
+            this.chunks.set(obj.getChunkId(), obj);
+            this.pendingChunks.delete(obj.getChunkId());
+            super.add(obj);
+        });
 
-        const blockX = position.x - chunk.getOffsetX(),
-            blockZ = position.z - chunk.getOffsetZ();
+        return this;
+    }
 
-        chunk.setBlock(blockX, position.y, blockZ, blockId);
+    public remove(...object: Object3D[]): this {
+        object.forEach((obj) => {
+            if (!(obj instanceof Chunk)) {
+                throw new Error('World can only contain Chunks!');
+            }
+
+            super.remove(obj);
+            this.chunks.delete(obj.getChunkId());
+        });
+
+        return this;
     }
 }
