@@ -5,6 +5,7 @@ import WorkerContext from '@/core/engine/WorkerContext';
 import SetBlockEvent from '@/core/components/player/events/SetBlockEvent';
 import ChunkRepository from '@/core/world/Chunk/ChunkRepository';
 import StorageAdapter from '@/core/engine/storage/StorageAdapter';
+import BlockId from '@/core/world/Block/BlockId';
 
 class WorldUpdateSubscriber {
     private chunkRepository = new ChunkRepository(new StorageAdapter(WorkerContext.config.getUUID()));

@@ -7,9 +7,7 @@ interface BiomeData {
 }
 
 export default interface Block {
-    biomeData?: BiomeData;
     id: BlockId;
-    x: number;
-    y: number;
-    z: number;
+    changed?: true;
+    biomeData?: BiomeData;
 }

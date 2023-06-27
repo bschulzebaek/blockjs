@@ -40,7 +40,7 @@ export default function paintSurface(blocks: BlockMap) {
             currentY--;
         } while (!block && currentY >= SEA_LEVEL)
 
-        if (block.id=== BlockId.WATER) {
+        if (block.id === BlockId.WATER || block.changed) {
             return;
         }
 

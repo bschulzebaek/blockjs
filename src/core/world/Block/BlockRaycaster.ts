@@ -2,6 +2,7 @@ import { Camera, Vector3 } from 'three';
 import World from '@/core/world/World';
 import Block from '@/core/world/Block/Block';
 import { ChunkDirections } from '@/data/chunk-faces';
+import BlockId from '@/core/world/Block/BlockId';
 
 interface RaycastResult {
     block: Block;
@@ -82,7 +83,7 @@ export default class BlockRaycaster {
 
             const block = this.world.getBlock(x, y, z);
 
-            if (!block) {
+            if (!block || block.id === BlockId.AIR) {
                 continue;
             }
 

@@ -48,8 +48,9 @@ export default function shapeTerrain(seed: string, chunkX: number, chunkZ: numbe
 
     iterateChunk3D((x: number, y: number, z: number) => {
         const blockPosition = Chunk.getBlockPosition(x, y, z);
+        const block = blocks.get(blockPosition);
 
-        if (blocks.has(blockPosition)) {
+        if (block) {
             return;
         }
 
@@ -75,9 +76,6 @@ export default function shapeTerrain(seed: string, chunkX: number, chunkZ: numbe
         }
 
         blocks.set(blockPosition, {
-            x,
-            y,
-            z,
             id: blockId,
             biomeData: {
                 continentalness,

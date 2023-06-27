@@ -20,9 +20,6 @@ export default function fillWaterBodies(blocks: BlockMap) {
 
             if (!block) {
                 blocks.set(key, {
-                    x,
-                    y: currentY,
-                    z,
                     id: BlockId.WATER,
                     biomeData,
                 });

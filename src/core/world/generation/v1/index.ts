@@ -29,7 +29,7 @@ const BLOCK_IDS = [
 export default async function generationV1(x: string, z: string, seed: string, uuid: string): Promise<Chunk> {
     const repository = new ChunkRepository(new StorageAdapter(uuid));
     // @ts-ignore
-    const blocks = (await repository.read(Chunk.toId(x, z)))?.blocks as BlockMap ?? Chunk.getEmptyBlocks();
+    const blockMap = (await repository.read(Chunk.toId(x, z)))?.blocks as BlockMap ?? Chunk.getEmptyBlocks();
 
     let chunk: Chunk | undefined = undefined;
 
@@ -39,11 +39,11 @@ export default async function generationV1(x: string, z: string, seed: string, u
                 const blockId = BLOCK_IDS[Math.floor(Math.random() * BLOCK_IDS.length)];
                 const mapId = `${i}:1:${j}`;
 
-                if (blocks.has(mapId)) {
+                if (blockMap.has(mapId)) {
                     continue;
                 }
 
-                blocks.set(mapId, { x: i, y: 1, z: j, id: blockId });
+                blockMap.set(mapId, { id: blockId });
             }
         }
 
@@ -51,18 +51,18 @@ export default async function generationV1(x: string, z: string, seed: string, u
             for (let j = 6; j < 10; j++) {
                 for (let k = 6; k < 12; k++) {
                     const blockId = BLOCK_IDS[Math.floor(Math.random() * BLOCK_IDS.length)];
-                    const mapId = `${i}:1:${j}`;
+                    const mapId = `${i}:${k}:${j}`;
 
-                    if (blocks.has(mapId)) {
+                    if (blockMap.has(mapId)) {
                         continue;
                     }
 
-                    blocks.set(`${i}:${k}:${j}`, { x: i, y: k, z: j, id: blockId });
+                    blockMap.set(`${i}:${k}:${j}`, { id: blockId });
                 }
             }
         }
 
-        chunk = ChunkFactory.create(parseInt(x, 10), parseInt(z), blocks);
+        chunk = ChunkFactory.create(parseInt(x, 10), parseInt(z), blockMap);
     } catch (e) {
         console.error(e);
         console.debug(`${x}:${z}`, seed);

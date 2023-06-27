@@ -19,7 +19,7 @@ export default async function generationV2(x: string, z: string, seed: string, u
     try {
         shapeTerrain(seed, xInt, zInt, blocks);
         fillWaterBodies(blocks);
-        // paintSurface(blocks); // todo: Doesn't work with current Chunk storage implementation
+        paintSurface(blocks);
 
         chunk = ChunkFactory.create(xInt, zInt, blocks);
     } catch(e) {

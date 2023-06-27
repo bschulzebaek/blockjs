@@ -87,8 +87,12 @@ export default class Chunk extends Group implements StorageObject {
 
     public setBlock(x: number, y: number, z: number, id: BlockId) {
         const position = Chunk.getBlockPosition(x, y, z);
+        const block: Block = {
+            id,
+            changed: true,
+        };
 
-        this.blocks.set(position, { id, x, y, z });
+        this.blocks.set(position, block);
 
         ChunkGeometry.build(this);
     }
