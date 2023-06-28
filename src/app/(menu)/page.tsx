@@ -42,7 +42,7 @@ export default function MenuPage() {
                 <li>
                     <Link href="https://github.com/bschulzebaek/blockjs" target={'_blank'}>
                         <button>
-                            About
+                            GitHub
                         </button>
                     </Link>
 

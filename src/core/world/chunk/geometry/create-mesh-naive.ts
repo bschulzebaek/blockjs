@@ -5,8 +5,10 @@ import { TRANSPARENT_BLOCKS } from '@/core/world/block/block-data';
 import getGeometryData from '@/core/world/chunk/geometry/get-geometry-data';
 import { BufferAttribute, BufferGeometry, Mesh } from 'three';
 import materials from '@/core/world/chunk/geometry/materials';
+import getFaceVisibility from '@/core/world/chunk/geometry/get-face-visibility';
+import World from '@/core/world/World';
 
-export default function createMeshNaive(chunk: Chunk) {
+export default function createMeshNaive(chunk: Chunk, world: World) {
     chunk.children = [];
 
     const positions: number[] = [];
@@ -17,9 +19,7 @@ export default function createMeshNaive(chunk: Chunk) {
     const positions2: number[] = [];
     const normals2: number[] = [];
     const colors2: number[] = [];
-    const uvs2: number[] = [];
-
-    // todo: Get adjacent chunks via seed and check for occlusion
+    const uvs2: number[] = []
 
     ChunkUtils.iterateBlocks(chunk, (x, y, z, block) => {
         if (!block || block.id === BlockId.AIR) {
@@ -27,24 +27,18 @@ export default function createMeshNaive(chunk: Chunk) {
         }
 
         const transparent = TRANSPARENT_BLOCKS.includes(block.id);
-
-        const addFace = (_x: number, _y: number, _z: number) => {
-            const _block = chunk.getBlock(_x, _y, _z);
-
-            if (!_block || TRANSPARENT_BLOCKS.includes(_block.id)) {
-                return true;
-            }
-
-            return !transparent;
-        };
+        const worldX = x + chunk.getOffsetX();
+        const worldZ = z + chunk.getOffsetZ();
 
         const faces = [
-            addFace(x, y, z + 1),
-            addFace(x + 1, y, z),
-            addFace(x, y, z - 1),
-            addFace(x - 1, y, z),
-            addFace(x, y + 1, z),
-            addFace(x, y - 1, z),
+            getFaceVisibility(world, worldX, y, worldZ + 1, transparent),
+            getFaceVisibility(world, worldX + 1, y, worldZ, transparent),
+
+            getFaceVisibility(world, worldX, y, worldZ - 1, transparent),
+            getFaceVisibility(world, worldX - 1, y, worldZ, transparent),
+
+            getFaceVisibility(world, worldX, y + 1, worldZ, transparent),
+            getFaceVisibility(world, worldX, y - 1, worldZ, transparent),
         ];
 
         const data = getGeometryData(x, y, z, faces, block.id);

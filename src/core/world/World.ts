@@ -3,6 +3,7 @@ import Block from '@/core/world/block/Block';
 import { CHUNK_SIZE } from '@/configuration';
 import { Group, Object3D, Vector3 } from 'three';
 import ChunkUtils from '@/core/world/chunk/ChunkUtils';
+import strictModulo from '@/utility/strict-modulo';
 
 type ChunkMap = Map<string, Chunk|undefined>;
 
@@ -53,11 +54,7 @@ export default class World extends Group {
             return undefined;
         }
 
-        return chunk.getBlock(
-            x - chunk.getOffsetX(),
-            y,
-            z - chunk.getOffsetZ()
-        );
+        return chunk.getBlock(strictModulo(x, CHUNK_SIZE), y, strictModulo(z, CHUNK_SIZE));
     }
 
     public getStats() {

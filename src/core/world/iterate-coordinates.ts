@@ -1,4 +1,3 @@
-import World from '@/core/world/World';
 import { CHUNK_SIZE, WORLD_HEIGHT } from '@/configuration';
 
 export function iterateChunk3D(callback: (x: number, y: number, z: number) => void) {

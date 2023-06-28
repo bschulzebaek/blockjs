@@ -1,7 +1,7 @@
 import BlockId from '@/core/world/block/BlockId';
 import { Vector3 } from 'three';
 
-export const WORLD_HEIGHT = 24;
+export const WORLD_HEIGHT = 32;
 export const CHUNK_SIZE = 16;
 
 export const WORLD_GENERATION_VERSION: 1 | 2 | 3 = 2;

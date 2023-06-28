@@ -2,12 +2,13 @@ import ChunkPayload from '@/core/world/generation/worker/ChunkPayload';
 import Chunk, { BlockMap } from '@/core/world/chunk/Chunk';
 import createMeshFromBuffer from '@/core/world/chunk/geometry/create-mesh-from-buffer';
 import createMeshNaive from '@/core/world/chunk/geometry/create-mesh-naive';
+import World from '@/core/world/World';
 
 export default class ChunkFactory {
-    static create(x: number, z: number, blocks: BlockMap) {
+    static createLocal(x: number, z: number, blocks: BlockMap, world: World) {
         const chunk = new Chunk(x, z, blocks);
 
-        createMeshNaive(chunk);
+        createMeshNaive(chunk, world);
 
         return chunk;
     }
@@ -18,5 +19,9 @@ export default class ChunkFactory {
         createMeshFromBuffer(chunk, payload);
 
         return chunk;
+    }
+
+    static createInWorker(x: number, z: number, blocks: BlockMap) {
+        return new Chunk(x, z, blocks);
     }
 }

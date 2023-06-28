@@ -2,6 +2,7 @@ import CustomRenderer from '@/core/engine/renderer/CustomRenderer';
 import Loop from '@/core/engine/helper/Loop';
 import CustomScene from '@/core/engine/scene/CustomScene';
 import WorldConfig from '@/shared/WorldConfig';
+import World from '@/core/world/World';
 
 class GlobalState {
     private config!: WorldConfig;

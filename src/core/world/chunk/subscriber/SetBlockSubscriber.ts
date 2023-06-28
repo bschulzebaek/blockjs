@@ -29,12 +29,14 @@ class SetBlockSubscriber {
         // TODO: Check if position is blocked by player
 
         const blockPosition = new Vector3(position.x - chunk.getOffsetX(), position.y, position.z - chunk.getOffsetZ());
+        const currentBlock = chunk.getBlock(blockPosition.x, blockPosition.y, blockPosition.z);
 
-        if (id !== BlockId.AIR || world.getBlock(blockPosition.x, blockPosition.y, blockPosition.z)?.id !== BlockId.AIR) {
+        if (id !== BlockId.AIR && currentBlock && currentBlock.id !== BlockId.AIR) {
+            console.debug(`Position blocked by block ${currentBlock.id} at position ${blockPosition.x}, ${blockPosition.y}, ${blockPosition.z}`);
             return;
         }
 
-        ChunkService.setBlock(chunk, blockPosition, id);
+        ChunkService.setBlock(chunk, blockPosition, id, world);
 
         this.chunkRepository.write(chunk);
     };

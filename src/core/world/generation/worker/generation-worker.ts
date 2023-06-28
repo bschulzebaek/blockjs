@@ -1,19 +1,37 @@
-import Chunk from '@/core/world/chunk/Chunk';
-import { WORLD_GENERATION_VERSION } from '@/configuration';
-import generationV1 from '@/core/world/generation/v1';
-import generationV2 from '@/core/world/generation/v2';
-import generationV3 from '@/core/world/generation/v3';
 import GeneratorMessagePayload from '@/core/world/generation/worker/GeneratorMessagePayload';
 import ChunkPayload, { ChunkGeometryData } from '@/core/world/generation/worker/ChunkPayload';
 import createBuffer from '@/core/world/chunk/geometry/create-buffer';
+import WorldAccessor from '@/core/world/generation/WorldAccessor';
+import generate from '@/core/world/generation/worker/generate';
+import ChunkFactory from '@/core/world/chunk/ChunkFactory';
 
 onmessage = async (event: MessageEvent<GeneratorMessagePayload>) => {
-    const chunk = await generate(event.data);
+    const accessor = new WorldAccessor(event.data);
+    await accessor.createMap();
 
-    response(chunk);
+    const blockMaps = accessor.getChunkMap();
+
+    blockMaps.forEach((blocks, chunkId) => {
+        generate(blocks, chunkId, event.data.seed);
+    });
+
+    const mainChunk = accessor.getMainChunk();
+    const chunk = ChunkFactory.createInWorker(parseInt(event.data.x), parseInt(event.data.z), mainChunk);
+
+    const payload: ChunkPayload = {
+        x: chunk.getX(),
+        z: chunk.getZ(),
+        blocks: chunk.getBlocks(),
+        geometries: createBuffer(chunk, accessor),
+    };
+
+    // @ts-ignore
+    postMessage(payload, getTransferable(payload.geometries));
+
+    close();
 };
 
-function getBuffer(geometry: ChunkGeometryData): ArrayBuffer[] {
+function getTransferable(geometry: ChunkGeometryData): ArrayBuffer[] {
     return [
         geometry.transparent.color,
         geometry.transparent.normal,
@@ -24,38 +42,4 @@ function getBuffer(geometry: ChunkGeometryData): ArrayBuffer[] {
         geometry.opaque.position,
         geometry.opaque.uv,
     ]
-}
-
-function response(chunk: Chunk) {
-    const payload: ChunkPayload = {
-        x: chunk.getX(),
-        z: chunk.getZ(),
-        blocks: chunk.getBlocks(),
-        geometries: createBuffer(chunk),
-    };
-
-    // @ts-ignore
-    postMessage(payload, getBuffer(payload.geometries));
-
-    close();
-}
-
-async function generate({ seed, x, z, uuid }: GeneratorMessagePayload): Promise<Chunk> {
-    let generator = null;
-
-    switch (WORLD_GENERATION_VERSION) {
-        case 1:
-            generator = generationV1(x, z, seed, uuid);
-            break;
-        case 2:
-            generator = generationV2(x, z, seed, uuid);
-            break;
-        case 3:
-            generator = generationV3(x, z, seed, uuid);
-            break;
-        default:
-            throw new Error(`Unknown world generation version: ${WORLD_GENERATION_VERSION}`);
-    }
-
-    return await generator;
 }

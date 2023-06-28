@@ -1,9 +1,5 @@
-import Chunk, { BlockMap } from '@/core/world/chunk/Chunk';
+import { BlockMap } from '@/core/world/chunk/Chunk';
 import BlockId from '@/core/world/block/BlockId';
-import ChunkFactory from '@/core/world/chunk/ChunkFactory';
-import ChunkRepository from '@/core/world/chunk/ChunkRepository';
-import StorageAdapter from '@/core/engine/storage/StorageAdapter';
-import ChunkUtils from '@/core/world/chunk/ChunkUtils';
 
 const biomeData = {
     humidity: 0.5,
@@ -27,13 +23,7 @@ const BLOCK_IDS = [
     BlockId.CRAFTING_TABLE,
 ];
 
-export default async function generationV1(x: string, z: string, seed: string, uuid: string): Promise<Chunk> {
-    const repository = new ChunkRepository(new StorageAdapter(uuid));
-    // @ts-ignore
-    const blockMap = (await repository.read(ChunkUtils.toId(x, z)))?.blocks as BlockMap ?? ChunkUtils.getEmptyBlockMap();
-
-    let chunk: Chunk | undefined = undefined;
-
+export default async function generationV1(blockMap: BlockMap, chunkId: string, seed: string) {
     try {
         for (let i = 0; i < 16; i++) {
             for (let j = 0; j < 16; j++) {
@@ -47,12 +37,8 @@ export default async function generationV1(x: string, z: string, seed: string, u
                 blockMap.set(mapId, { id: blockId });
             }
         }
-
-        chunk = ChunkFactory.create(parseInt(x, 10), parseInt(z), blockMap);
     } catch (e) {
         console.error(e);
-        console.debug(`${x}:${z}`, seed);
+        console.debug(chunkId, seed);
     }
-
-    return chunk as Chunk;
 }

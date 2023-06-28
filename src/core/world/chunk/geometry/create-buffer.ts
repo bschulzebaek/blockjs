@@ -5,8 +5,9 @@ import getGeometryData from '@/core/world/chunk/geometry/get-geometry-data';
 import { ChunkGeometryData } from '@/core/world/generation/worker/ChunkPayload';
 import ChunkUtils from '@/core/world/chunk/ChunkUtils';
 import getFaceVisibility from '@/core/world/chunk/geometry/get-face-visibility';
+import WorldAccessor from '@/core/world/generation/WorldAccessor';
 
-export default function createBuffer(chunk: Chunk): ChunkGeometryData {
+export default function createBuffer(chunk: Chunk, accessor: WorldAccessor): ChunkGeometryData {
     const positions: number[] = [];
     const normals: number[] = [];
     const colors: number[] = [];
@@ -23,14 +24,18 @@ export default function createBuffer(chunk: Chunk): ChunkGeometryData {
         }
 
         const transparent = TRANSPARENT_BLOCKS.includes(block.id);
+        const worldX = x + chunk.getOffsetX();
+        const worldZ = z + chunk.getOffsetZ();
 
         const faces = [
-            getFaceVisibility(chunk, x, y, z + 1, transparent),
-            getFaceVisibility(chunk, x + 1, y, z, transparent),
-            getFaceVisibility(chunk, x, y, z - 1, transparent),
-            getFaceVisibility(chunk, x - 1, y, z, transparent),
-            getFaceVisibility(chunk, x, y + 1, z, transparent),
-            getFaceVisibility(chunk, x, y - 1, z, transparent),
+            getFaceVisibility(accessor, worldX, y, worldZ + 1, transparent),
+            getFaceVisibility(accessor, worldX + 1, y, worldZ, transparent),
+
+            getFaceVisibility(accessor, worldX, y, worldZ - 1, transparent),
+            getFaceVisibility(accessor, worldX - 1, y, worldZ, transparent),
+
+            getFaceVisibility(accessor, worldX, y + 1, worldZ, transparent),
+            getFaceVisibility(accessor, worldX, y - 1, worldZ, transparent),
         ];
 
         const data = getGeometryData(x, y, z, faces, block.id);

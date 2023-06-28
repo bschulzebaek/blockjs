@@ -25,15 +25,18 @@ class WorldService {
         this.generator = new WorldGenerator(seed, uuid);
         this.world = new World(map); // Todo: Provide current Player Chunk as offset
 
-        await this.loadPendingChunks();
+        await this.loadPendingChunksLocal();
 
         console.debug(`[World generated in ${((performance.now() - start) / 1000).toFixed(3)}s`);
         console.debug(this.world.getStats());
     }
 
-
     public async loadPendingChunks() {
         await Promise.all(Array.from(this.world.getPendingChunks().keys()).map(this.loadChunk));
+    }
+
+    private async loadPendingChunksLocal() {
+        await Promise.all(Array.from(this.world.getPendingChunks().keys()).map(this.loadChunkLocal));
     }
 
     public loadChunk = async (chunkId: string) => {
@@ -42,7 +45,24 @@ class WorldService {
         const pendingChunks = this.world.getPendingChunks();
 
         /**
-         * Ignore this Chunk if multiple Promises are pending (e.g. Player is moving fast and triggers multiple GridUpdate events)
+         * Ignore this Chunk if multiple Promises were pending (e.g. Player is moving fast and triggers multiple GridUpdate events)
+         */
+        if (!pendingChunks.has(chunk.getChunkId())) {
+            return;
+        }
+
+        this.world.add(chunk);
+
+        this.postProgress();
+    }
+
+    private loadChunkLocal = async (chunkId: string) => {
+        const [x, z] = chunkId.split(':');
+        const chunk = await this.generator.generateChunkLocal(x, z);
+        const pendingChunks = this.world.getPendingChunks();
+
+        /**
+         * Ignore this Chunk if multiple Promises were pending (e.g. Player is moving fast and triggers multiple GridUpdate events)
          */
         if (!pendingChunks.has(chunk.getChunkId())) {
             return;
