@@ -3,13 +3,12 @@ import ChunkUtils from '@/core/world/chunk/ChunkUtils';
 import { Vector3 } from 'three';
 import ChunkService from '@/core/world/chunk/ChunkService';
 import ChunkRepository from '@/core/world/chunk/ChunkRepository';
-import StorageAdapter from '@/core/engine/storage/StorageAdapter';
 import WorldService from '@/core/world/WorldService';
 import GlobalState from '@/core/GlobalState';
 import BlockId from '@/core/world/block/BlockId';
 
 class SetBlockSubscriber {
-    private chunkRepository = new ChunkRepository(new StorageAdapter(GlobalState.getConfig().getUUID()));
+    private chunkRepository = new ChunkRepository(GlobalState.getConfig().getUUID());
 
     constructor() {
         addEventListener(SetBlockEvent.NAME, this.onSetBlock as unknown as EventListener);

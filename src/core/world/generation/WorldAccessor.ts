@@ -1,5 +1,4 @@
 import ChunkRepository from '@/core/world/chunk/ChunkRepository';
-import StorageAdapter from '@/core/engine/storage/StorageAdapter';
 import ChunkUtils from '@/core/world/chunk/ChunkUtils';
 import { BlockMap } from '@/core/world/chunk/Chunk';
 import GeneratorMessagePayload from '@/core/world/generation/worker/GeneratorMessagePayload';
@@ -8,7 +7,7 @@ import { CHUNK_SIZE } from '@/configuration';
 import strictModulo from '@/utility/strict-modulo';
 
 export default class WorldAccessor {
-    private readonly repository = new ChunkRepository(new StorageAdapter(this.config.uuid));
+    private readonly repository = new ChunkRepository(this.config.uuid);
 
     private chunkMap: Map<string, BlockMap> = new Map();
     private mainId!: string;

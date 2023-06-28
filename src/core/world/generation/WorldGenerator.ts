@@ -7,8 +7,6 @@ import { MAX_CHUNK_CACHE } from '@/configuration';
 import FeatureFlags, { Features } from '@/shared/FeatureFlags';
 import GeneratorMessagePayload from '@/core/world/generation/worker/GeneratorMessagePayload';
 import ChunkUtils from '@/core/world/chunk/ChunkUtils';
-import WorldService from '@/core/world/WorldService';
-import generate from '@/core/world/generation/worker/generate';
 
 const _cache = new Map<string, Chunk>();
 
@@ -27,9 +25,6 @@ export default class WorldGenerator {
         return createChunkGrid(RENDER_DISTANCE, offsetX, offsetZ);
     }
 
-    /**
-     * Offload Chunk generation and mesh calculation at runtime to a dedicated Worker instead of block the main thread.
-     */
     public generateChunk(x: string, z: string): Promise<Chunk> {
         if (FeatureFlags.get(Features.DEBUG)) {
             console.debug(`[generateChunk] ${x}:${z}`);
@@ -66,33 +61,6 @@ export default class WorldGenerator {
         this.promises.set(`${x}:${z}`, promise);
 
         return promise;
-    }
-
-    /**
-     * To speed up the initial world generation (while the player is still in the loading screen),
-     * all Chunks are created in the same thread, so they can access their neighbours without additional DB queries.
-     */
-    public generateChunkLocal(x: string, z: string): Promise<Chunk> {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                const blockMap = ChunkUtils.getEmptyBlockMap();
-
-                generate(blockMap, ChunkUtils.toId(x, z), this.seed);
-
-                const chunk = ChunkFactory.createLocal(
-                    parseInt(x, 10),
-                    parseInt(z, 10),
-                    blockMap,
-                    WorldService.getWorld()
-                );
-
-                _cache.set(chunk.getChunkId(), chunk);
-
-                this.keepCacheLimit();
-
-                resolve(chunk);
-            });
-        });
     }
 
     private receiveChunk(event: MessageEvent<ChunkPayload>) {

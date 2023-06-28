@@ -11,7 +11,7 @@ export default class World extends Group {
     private readonly chunks: ChunkMap = new Map();
 
     constructor(
-        private pendingChunks: Map<string, undefined>
+        private pendingChunks: ChunkMap
     ) {
         super();
 
@@ -19,7 +19,7 @@ export default class World extends Group {
         this.position.add(new Vector3(0.5, 0.5, 0.5));
     }
 
-    public setPendingChunks(map: Map<string, undefined>) {
+    public setPendingChunks(map: ChunkMap) {
         this.pendingChunks = map;
     }
 

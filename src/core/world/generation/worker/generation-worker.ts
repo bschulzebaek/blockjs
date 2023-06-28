@@ -16,7 +16,7 @@ onmessage = async (event: MessageEvent<GeneratorMessagePayload>) => {
     });
 
     const mainChunk = accessor.getMainChunk();
-    const chunk = ChunkFactory.createInWorker(parseInt(event.data.x), parseInt(event.data.z), mainChunk);
+    const chunk = ChunkFactory.createWithoutMesh(parseInt(event.data.x), parseInt(event.data.z), mainChunk);
 
     const payload: ChunkPayload = {
         x: chunk.getX(),

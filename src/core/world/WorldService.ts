@@ -6,10 +6,6 @@ class WorldService {
     private generator!: WorldGenerator;
     private world!: World;
 
-    constructor() {
-
-    }
-
     public getWorld() {
         if (!this.world) {
             throw new Error('World not initialized');
@@ -25,7 +21,7 @@ class WorldService {
         this.generator = new WorldGenerator(seed, uuid);
         this.world = new World(map); // Todo: Provide current Player Chunk as offset
 
-        await this.loadPendingChunksLocal();
+        await this.loadPendingChunks();
 
         console.debug(`[World generated in ${((performance.now() - start) / 1000).toFixed(3)}s`);
         console.debug(this.world.getStats());
@@ -35,30 +31,9 @@ class WorldService {
         await Promise.all(Array.from(this.world.getPendingChunks().keys()).map(this.loadChunk));
     }
 
-    private async loadPendingChunksLocal() {
-        await Promise.all(Array.from(this.world.getPendingChunks().keys()).map(this.loadChunkLocal));
-    }
-
     public loadChunk = async (chunkId: string) => {
         const [x, z] = chunkId.split(':');
         const chunk = await this.generator.generateChunk(x, z);
-        const pendingChunks = this.world.getPendingChunks();
-
-        /**
-         * Ignore this Chunk if multiple Promises were pending (e.g. Player is moving fast and triggers multiple GridUpdate events)
-         */
-        if (!pendingChunks.has(chunk.getChunkId())) {
-            return;
-        }
-
-        this.world.add(chunk);
-
-        this.postProgress();
-    }
-
-    private loadChunkLocal = async (chunkId: string) => {
-        const [x, z] = chunkId.split(':');
-        const chunk = await this.generator.generateChunkLocal(x, z);
         const pendingChunks = this.world.getPendingChunks();
 
         /**
