@@ -23,7 +23,7 @@ const BLOCK_IDS = [
     BlockId.CRAFTING_TABLE,
 ];
 
-export default async function generationV1(blockMap: BlockMap, chunkId: string, seed: string) {
+export default function generationV1(blockMap: BlockMap, chunkId: string, seed: string) {
     try {
         for (let i = 0; i < 16; i++) {
             for (let j = 0; j < 16; j++) {
@@ -41,4 +41,6 @@ export default async function generationV1(blockMap: BlockMap, chunkId: string, 
         console.error(e);
         console.debug(chunkId, seed);
     }
+
+    return blockMap;
 }

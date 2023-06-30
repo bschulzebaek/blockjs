@@ -5,8 +5,8 @@ import createChunkGrid from '@/core/world/create-chunk-grid';
 import { RENDER_DISTANCE } from '@/settings';
 import { MAX_CHUNK_CACHE } from '@/configuration';
 import FeatureFlags, { Features } from '@/shared/FeatureFlags';
-import GeneratorMessagePayload from '@/core/world/generation/worker/GeneratorMessagePayload';
 import ChunkUtils from '@/core/world/chunk/ChunkUtils';
+import keepCacheLimit from '@/core/world/generation/keep-cache-limit';
 
 const _cache = new Map<string, Chunk>();
 
@@ -14,20 +14,32 @@ const _cache = new Map<string, Chunk>();
 
 export default class WorldGenerator {
     private promises: Map<string, Promise<Chunk>> = new Map();
+    private readonly worker: Worker = new Worker(new URL('./worker/generation-worker.ts', import.meta.url));
 
     constructor(
         private readonly seed: string,
         private readonly uuid: string,
     ) {
+        this.worker.onmessage = this.receiveChunk.bind(this);
     }
 
     static createMap(offsetX: number = 0, offsetZ: number = 0) {
         return createChunkGrid(RENDER_DISTANCE, offsetX, offsetZ);
     }
 
+    public invalidate(chunkId: string) {
+        this.worker.postMessage({
+            action: 'invalidate',
+            payload: {
+                id: chunkId,
+            }
+        });
+    }
+
     public generateChunk(x: string, z: string): Promise<Chunk> {
+        const start = performance.now();
         if (FeatureFlags.get(Features.DEBUG)) {
-            console.debug(`[generateChunk] ${x}:${z}`);
+            console.debug(`[generateChunk2] ${x}:${z}`);
         }
 
         const id = ChunkUtils.toId(x, z);
@@ -46,18 +58,23 @@ export default class WorldGenerator {
         const promise: Promise<Chunk> = new Promise((resolve) => {
             resolver = resolve;
 
-            const worker = new Worker(new URL('./worker/generation-worker.ts', import.meta.url));
-            worker.onmessage = this.receiveChunk.bind(this);
-            worker.postMessage({
-                uuid: this.uuid,
-                x,
-                z,
-                seed: this.seed,
-            } as GeneratorMessagePayload);
+            this.worker.postMessage({
+                action: 'generate',
+                payload: {
+                    id,
+                    uuid: this.uuid,
+                    x,
+                    z,
+                    seed: this.seed,
+                },
+            });
         });
 
         // @ts-ignore
         promise.resolver = resolver;
+        // @ts-ignore
+        promise.start = start;
+
         this.promises.set(`${x}:${z}`, promise);
 
         return promise;
@@ -79,7 +96,7 @@ export default class WorldGenerator {
 
                 _cache.set(chunk.getChunkId(), chunk);
 
-                this.keepCacheLimit();
+                keepCacheLimit(_cache);
 
                 if (!promise) {
                     console.debug(event.data);
@@ -88,6 +105,9 @@ export default class WorldGenerator {
 
                 // @ts-ignore
                 promise.resolver(chunk);
+
+                // @ts-ignore
+                console.debug(`[Chunk ${chunkId}] generated in ${((performance.now() - promise.start) / 1000).toFixed(3)}s`);
             } catch(e) {
                 if (chunkId) {
                     _cache.delete(chunkId);
@@ -97,13 +117,5 @@ export default class WorldGenerator {
                 console.error(e);
             }
         });
-    }
-
-    private keepCacheLimit() {
-        if (_cache.size > MAX_CHUNK_CACHE) {
-            const keys = Array.from(_cache.keys());
-            const key = keys[Math.floor(Math.random() * keys.length)]; // todO: remove distant chunks first!
-            _cache.delete(key);
-        }
     }
 }

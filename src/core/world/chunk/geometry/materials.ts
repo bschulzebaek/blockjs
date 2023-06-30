@@ -1,8 +1,7 @@
 import CustomTextureLoader from '@/utility/TextureLoader';
 import { DoubleSide, MeshBasicMaterial } from 'three';
 
-const textureLoader = new CustomTextureLoader();
-const texture = textureLoader.load('/engine/textures.png');
+const texture = CustomTextureLoader.load('/engine/textures.png');
 
 const materialOptions = {
     map: texture,

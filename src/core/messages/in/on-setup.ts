@@ -31,6 +31,8 @@ export default async function onSetup(payload: SetupPayload) {
     GlobalState.setRenderer(renderer);
     GlobalState.setScene(scene);
     GlobalState.setLoop(loop);
+    GlobalState.setWorld(WorldService.getWorld());
+    GlobalState.setGenerator(WorldService.getGenerator());
 
     import('@/core/engine/load-subscriber');
 

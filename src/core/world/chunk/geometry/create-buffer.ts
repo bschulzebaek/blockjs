@@ -5,7 +5,7 @@ import getGeometryData from '@/core/world/chunk/geometry/get-geometry-data';
 import { ChunkGeometryData } from '@/core/world/generation/worker/ChunkPayload';
 import ChunkUtils from '@/core/world/chunk/ChunkUtils';
 import getFaceVisibility from '@/core/world/chunk/geometry/get-face-visibility';
-import WorldAccessor from '@/core/world/generation/WorldAccessor';
+import WorldAccessor from '@/core/world/WorldAccessor';
 
 export default function createBuffer(chunk: Chunk, accessor: WorldAccessor): ChunkGeometryData {
     const positions: number[] = [];

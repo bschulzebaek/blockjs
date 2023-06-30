@@ -3,7 +3,7 @@ import shapeTerrain from './shape-terrain'
 import fillWaterBodies from './fill-water-bodies';
 import paintSurface from './paint-surface';
 
-export default async function generationV3(blockMap: BlockMap, chunkId: string, seed: string) {
+export default function generationV3(blockMap: BlockMap, chunkId: string, seed: string) {
     const [x, z] = chunkId.split(':');
     const xInt = parseInt(x, 10);
     const zInt = parseInt(z, 10);
@@ -16,4 +16,6 @@ export default async function generationV3(blockMap: BlockMap, chunkId: string, 
         console.error(e);
         console.debug(chunkId, seed);
     }
+
+    return blockMap;
 }

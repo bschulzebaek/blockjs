@@ -1,6 +1,6 @@
 // TODO: Build the actual Settings menu
 
-export const RENDER_DISTANCE = 4;
+export const RENDER_DISTANCE = 2;
 
 export const RESOLUTION = {
     X: 1920, // 2560,

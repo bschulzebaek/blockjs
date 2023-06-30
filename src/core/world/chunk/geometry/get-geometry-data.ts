@@ -57,7 +57,6 @@ const data = [
     { shade: 3, pos: [-1, -1, -1], norm: [0, -1, 0], uv: [1, 0] },
 ];
 
-// todo: Performance!
 export default function getGeometryData(
     x: number,
     y: number,

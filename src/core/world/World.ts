@@ -45,7 +45,7 @@ export default class World extends Group {
      * Use global coordinates to get the specific block. These will be converted to local chunk coordinates.
      * Result can be undefined. I.e. the block hasn't existed yet (!= destroyed by Player).
      */
-    public getBlock(x: number, y: number, z: number): Block | undefined {
+    public getBlock = (x: number, y: number, z: number): Block | undefined => {
         const chunkX = Math.floor(x / CHUNK_SIZE);
         const chunkZ = Math.floor(z / CHUNK_SIZE);
         const chunk = this.chunks.get(ChunkUtils.toId(chunkX, chunkZ));

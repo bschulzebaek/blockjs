@@ -14,6 +14,14 @@ class WorldService {
         return this.world;
     }
 
+    public getGenerator() {
+        if (!this.generator) {
+            throw new Error('Generator not initialized');
+        }
+
+        return this.generator;
+    }
+
     public async setupWorld(uuid: string, seed: string) {
         const start = performance.now();
         const map = WorldGenerator.createMap();
@@ -23,7 +31,7 @@ class WorldService {
 
         await this.loadPendingChunks();
 
-        console.debug(`[World generated in ${((performance.now() - start) / 1000).toFixed(3)}s`);
+        console.debug(`[World] generated in ${((performance.now() - start) / 1000).toFixed(3)}s`);
         console.debug(this.world.getStats());
     }
 

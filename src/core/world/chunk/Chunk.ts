@@ -28,9 +28,6 @@ export default class Chunk extends Group implements StorageObject {
         return this.x;
     }
 
-    /**
-     *
-     */
     public getOffsetX(): number {
         return this.x * CHUNK_SIZE;
     }
