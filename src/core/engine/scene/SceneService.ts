@@ -53,10 +53,10 @@ class SceneService {
     }
 
     private createEnvironment() {
-        // const near = CHUNK_SIZE * RENDER_DISTANCE - CHUNK_SIZE * 2;
-        // const far = CHUNK_SIZE * RENDER_DISTANCE + CHUNK_SIZE;
+        const near = CHUNK_SIZE * RENDER_DISTANCE - CHUNK_SIZE * 2;
+        const far = CHUNK_SIZE * RENDER_DISTANCE + CHUNK_SIZE;
 
-        // this.scene.fog = new Fog(0xf0f0f0, near < 80 ? 80 : near, far < 208 ? 208 : far);
+        this.scene.fog = new Fog(0xf0f0f0, near < 80 ? 80 : near, far < 208 ? 208 : far);
     }
 
     private createDebugHelpers(camera: Camera) {
