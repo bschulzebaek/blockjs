@@ -6,6 +6,8 @@ import { AxesHelper, Camera, CameraHelper, Fog } from 'three';
 import World from '@/core/world/World';
 import { CHUNK_SIZE, PLAYER_START } from '@/configuration';
 import { RENDER_DISTANCE } from '@/settings';
+import ServiceRegistry from '@/core/ServiceRegistry';
+import postInventoryTransfer from '@/core/components/inventory/messages/post-inventory-transfer';
 
 class SceneService {
 
@@ -16,7 +18,7 @@ class SceneService {
 
         scene.add(world);
 
-        const player = this.createPlayer(scene);
+        const player = await this.createPlayer(scene);
         const camera = player.getCamera();
 
         scene.setMainCamera(camera);
@@ -34,11 +36,14 @@ class SceneService {
         this.createEnvironment();
     }
 
-    private createPlayer(scene: CustomScene) {
+    private async createPlayer(scene: CustomScene) {
         const chunkX = Math.floor(PLAYER_START.x / CHUNK_SIZE),
             chunkZ = Math.floor(PLAYER_START.z / CHUNK_SIZE);
 
-        const player = new Player(`${chunkX}:${chunkZ}`);
+        const inventory = await ServiceRegistry.getInventoryService().loadInventory('player');
+        postInventoryTransfer(inventory);
+
+        const player = new Player(inventory, `${chunkX}:${chunkZ}`);
 
         scene.add(player);
         scene.getComponents().addDynamic(player);
@@ -48,10 +53,10 @@ class SceneService {
     }
 
     private createEnvironment() {
-        const near = CHUNK_SIZE * RENDER_DISTANCE - CHUNK_SIZE * 2;
-        const far = CHUNK_SIZE * RENDER_DISTANCE + CHUNK_SIZE;
+        // const near = CHUNK_SIZE * RENDER_DISTANCE - CHUNK_SIZE * 2;
+        // const far = CHUNK_SIZE * RENDER_DISTANCE + CHUNK_SIZE;
 
-        this.scene.fog = new Fog(0xf0f0f0, near < 80 ? 80 : near, far < 208 ? 208 : far);
+        // this.scene.fog = new Fog(0xf0f0f0, near < 80 ? 80 : near, far < 208 ? 208 : far);
     }
 
     private createDebugHelpers(camera: Camera) {

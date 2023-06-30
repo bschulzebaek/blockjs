@@ -9,6 +9,9 @@ import placeBlock from '@/core/components/player/actions/place-block';
 import ChunkUtils from '@/core/world/chunk/ChunkUtils';
 import WorldService from '@/core/world/WorldService';
 import InputMapper from '@/core/engine/helper/InputMapper';
+import Inventory from '@/core/components/inventory/Inventory';
+import BlockId from '@/core/world/block/BlockId';
+import GlobalState from '@/core/GlobalState';
 
 export default class Player extends Object3D {
     static HEIGHT = 1.8;
@@ -21,7 +24,8 @@ export default class Player extends Object3D {
     private raycaster: BlockRaycaster;
 
     constructor(
-        private lastChunkId: string = '0:0'
+        private readonly inventory: Inventory,
+        private lastChunkId: string = '0:0',
     ) {
         super();
         this.name = 'player';
@@ -104,12 +108,17 @@ export default class Player extends Object3D {
     }
 
     private onRightClick() {
-        const result = this.raycaster.intersectWorld();
+        const target = this.raycaster.intersectWorld();
+        const activeItem = this.inventory.getActiveSlot();
 
-        if (!result) {
+        if (!target || !activeItem) {
             return;
         }
 
-        placeBlock(result.position, result.face, DEFAULT_BLOCK_PLACEMENT);
+        placeBlock(target.position, target.face, activeItem.id);
+    }
+
+    public getInventory() {
+        return this.inventory;
     }
 }

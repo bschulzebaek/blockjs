@@ -1,4 +1,3 @@
-import GlobalState from '@/core/GlobalState';
 import SetupPayload from '@/core/messages/payloads/SetupPayload';
 import WorldConfig from '@/shared/WorldConfig';
 import FeatureFlags from '@/shared/FeatureFlags';
@@ -10,6 +9,9 @@ import CustomRenderer from '@/core/engine/renderer/CustomRenderer';
 import Loop from '@/core/engine/helper/Loop';
 import postReady from '@/core/messages/out/post-ready';
 
+import GlobalState from '@/core/GlobalState';
+import loadServices from '@/core/engine/load-services';
+
 export default async function onSetup(payload: SetupPayload) {
     FeatureFlags.setFromSearchParams(new URLSearchParams(payload.parameters));
 
@@ -19,6 +21,7 @@ export default async function onSetup(payload: SetupPayload) {
     const seed = config.getSeed();
 
     await applySchema(uuid);
+    loadServices(uuid);
 
     const renderer = new CustomRenderer(payload.canvas);
     const scene = new CustomScene();
@@ -31,7 +34,6 @@ export default async function onSetup(payload: SetupPayload) {
     GlobalState.setRenderer(renderer);
     GlobalState.setScene(scene);
     GlobalState.setLoop(loop);
-    GlobalState.setWorld(WorldService.getWorld());
     GlobalState.setGenerator(WorldService.getGenerator());
 
     import('@/core/engine/load-subscriber');

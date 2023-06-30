@@ -11,16 +11,23 @@ enum MAPPED_ACTIONS {
 function onMenuKey() {
     const currentView = ViewTransitions.getView();
     switch (currentView) {
-        case AppViews.DEFAULT:
-            ViewTransitions.to_MainMenu();
+        case AppViews.MAIN_MENU:
+            ViewTransitions.to_Default();
             break;
         default:
-            ViewTransitions.to_Default();
+            ViewTransitions.to_MainMenu();
     }
 }
 
 function onInventoryKey() {
-
+    const currentView = ViewTransitions.getView();
+    switch (currentView) {
+        case AppViews.DEFAULT:
+            ViewTransitions.to_Inventory();
+            break;
+        default:
+            ViewTransitions.to_Default();
+    }
 }
 
 function _onKeyDown(event: KeyboardEvent) {

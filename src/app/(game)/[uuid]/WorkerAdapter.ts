@@ -2,6 +2,8 @@ import CoreWorkerMessages from '@/shared/CoreWorkerMessages';
 import SetupPayload from '@/core/messages/payloads/SetupPayload';
 import MessagePayload from '@/core/messages/payloads/MessagePayload';
 import InputPayload from '@/core/messages/payloads/InputPayload';
+import ActiveItemPayload from '@/core/components/inventory/ActiveItemPayload';
+import InventorySwapPayload from '@/core/components/inventory/InventorySwapPayload';
 
 export default class WorkerAdapter {
 
@@ -44,6 +46,14 @@ export default class WorkerAdapter {
 
     public input(payload: InputPayload) {
         this.postMessage(CoreWorkerMessages.INPUT_EVENT, payload);
+    }
+
+    public setActiveItem(payload: ActiveItemPayload) {
+        this.postMessage(CoreWorkerMessages.INVENTORY_SET_INDEX, payload);
+    }
+
+    public swapInventoryPositions(payload: InventorySwapPayload) {
+        this.postMessage(CoreWorkerMessages.INVENTORY_SWAP, payload);
     }
 
     private postMessage(action: CoreWorkerMessages, payload?: unknown, transferables: Transferable[] = []) {

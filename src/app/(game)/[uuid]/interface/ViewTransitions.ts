@@ -83,6 +83,11 @@ class ViewTransitions {
         this.debug('to_MainMenu');
         this.contextSetterFn(AppViews.MAIN_MENU);
     }
+
+    public to_Inventory = () => {
+        this.debug('to_Inventory');
+        this.contextSetterFn(AppViews.INVENTORY);
+    }
 }
 
 export default new ViewTransitions()

@@ -6,6 +6,7 @@ enum AppViews {
     READY = 0,
     DEFAULT = 1,
     MAIN_MENU = 2,
+    INVENTORY = 3,
 }
 
 type ViewContextType = Context<{view: AppViews, setView: (view: AppViews) => void}>;

@@ -1,0 +1,30 @@
+.container {
+    border: 8px solid #ccc;
+    background: #ccc;
+    border-radius: 3px;
+}
+
+.label {
+    padding: 0.25rem;
+}
+
+.craftingArea {
+    //background: #ccc;
+    height: 300px;
+}
+
+.itemGrid {
+
+}
+
+.itemToolbar {
+    border-top: 8px solid #ccc;
+}
+
+.itemGrid,
+.itemToolbar {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    grid-gap: 3px;
+    padding: 6px;
+}

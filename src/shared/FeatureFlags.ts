@@ -5,7 +5,7 @@ enum Features {
 }
 
 const _features = {
-    INVENTORY: false,
+    INVENTORY: true,
     DEBUG: false,
     CURSOR: true,
 }

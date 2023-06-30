@@ -11,11 +11,7 @@ export default class SetBlockEvent extends Event {
         super(SetBlockEvent.NAME);
     }
 
-    public getPosition = () => {
-        return this.position;
-    }
+    public getPosition = (): Vector3 => this.position;
 
-    public getId = () => {
-        return this.id;
-    }
+    public getId = (): BlockId => this.id;
 }

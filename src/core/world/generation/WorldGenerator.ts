@@ -3,14 +3,11 @@ import ChunkPayload from '@/core/world/generation/worker/ChunkPayload';
 import ChunkFactory from '@/core/world/chunk/ChunkFactory';
 import createChunkGrid from '@/core/world/create-chunk-grid';
 import { RENDER_DISTANCE } from '@/settings';
-import { MAX_CHUNK_CACHE } from '@/configuration';
 import FeatureFlags, { Features } from '@/shared/FeatureFlags';
 import ChunkUtils from '@/core/world/chunk/ChunkUtils';
 import keepCacheLimit from '@/core/world/generation/keep-cache-limit';
 
 const _cache = new Map<string, Chunk>();
-
-// todo: Pre-generate chunks around current map when idle
 
 export default class WorldGenerator {
     private promises: Map<string, Promise<Chunk>> = new Map();

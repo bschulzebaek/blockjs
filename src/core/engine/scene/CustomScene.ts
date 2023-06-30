@@ -1,7 +1,8 @@
-import { Camera, Object3D, Scene } from 'three';
+import { Camera, Object3D } from 'three';
 import ComponentRegistry from '@/core/engine/scene/ComponentRegistry';
 
-export default class CustomScene extends Scene {
+// TODO: Strange build constructor issue if extending Scene?!
+export default class CustomScene extends Object3D { // extends Scene {
     private readonly components = new ComponentRegistry();
     private _mainCamera!: Camera;
 

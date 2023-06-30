@@ -12,6 +12,7 @@ export default function MenuPage() {
                     alt=">BlockJS logo"
                     width={395}
                     height={78}
+                    priority={true}
                 />
                 <span className={styles.mainMenuLabel}>
                     Minecraft in JavaScript!

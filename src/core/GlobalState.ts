@@ -4,6 +4,7 @@ import CustomScene from '@/core/engine/scene/CustomScene';
 import WorldConfig from '@/shared/WorldConfig';
 import World from '@/core/world/World';
 import WorldGenerator from '@/core/world/generation/WorldGenerator';
+import Player from '@/core/components/player/Player';
 
 class GlobalState {
     private config!: WorldConfig;
@@ -50,12 +51,8 @@ class GlobalState {
         return this.loop;
     }
 
-    public setWorld(world: World) {
-        this.world = world;
-    }
-
     public getWorld() {
-        return this.world;
+        return this.scene.getObjectByName('world') as World;
     }
 
     public setGenerator(generator: WorldGenerator) {
@@ -64,6 +61,10 @@ class GlobalState {
 
     public getGenerator() {
         return this.generator;
+    }
+
+    public getPlayer() {
+        return this.scene.getObjectByName('player') as Player;
     }
 }
 

@@ -1,6 +1,7 @@
 import { IDBPDatabase, openDB } from 'idb';
 import ChunkRepository from '@/core/world/chunk/ChunkRepository';
 import StorageAdapter from '@/core/engine/storage/StorageAdapter';
+import InventoryRepository from '@/core/components/inventory/InventoryRepository';
 
 interface StoreConfig {
     name: string;
@@ -10,6 +11,9 @@ interface StoreConfig {
 const DEFAULT_STORAGE: StoreConfig[] = [{
     name: ChunkRepository.STORE_NAME,
     keyPath: ChunkRepository.KEY_PATH,
+}, {
+    name: InventoryRepository.STORE_NAME,
+    keyPath: InventoryRepository.KEY_PATH,
 }];
 
 export default async function applySchema(worldId: string) {

@@ -1,12 +1,14 @@
 'use client';
 import { useContext, useEffect } from 'react';
-import StateSetup from '@/app/(game)/[uuid]/interface/states/Setup';
-import StateDefault from '@/app/(game)/[uuid]/interface/states/Default';
-import StateMainMenu from '@/app/(game)/[uuid]/interface/states/MainMenu';
 import ViewContext, { AppViews } from '@/app/(game)/[uuid]/ViewContext';
-import StateReady from '@/app/(game)/[uuid]/interface/states/Ready';
-import StateTeardown from '@/app/(game)/[uuid]/interface/states/Teardown';
 import ViewTransitions from '@/app/(game)/[uuid]/interface/ViewTransitions';
+
+import SetupView from '@/app/(game)/[uuid]/interface/views/SetupView';
+import MainMenuView from '@/app/(game)/[uuid]/interface/views/MainMenuView';
+import DefaultView from '@/app/(game)/[uuid]/interface/views/DefaultView';
+import ReadyView from '@/app/(game)/[uuid]/interface/views/ReadyView';
+import InventoryView from '@/core/components/inventory/ui/InventoryView';
+import TeardownView from '@/app/(game)/[uuid]/interface/views/TeardownView';
 
 export default function Interface() {
     const { view } = useContext(ViewContext);
@@ -21,15 +23,17 @@ export default function Interface() {
 
     switch (view) {
         case AppViews.SETUP:
-            return <StateSetup />;
+            return <SetupView />;
         case AppViews.READY:
-            return <StateReady />;
+            return <ReadyView />;
         case AppViews.DEFAULT:
-            return <StateDefault />;
+            return <DefaultView />;
+        case AppViews.INVENTORY:
+            return <InventoryView />;
         case AppViews.MAIN_MENU:
-            return <StateMainMenu />;
+            return <MainMenuView />;
         case AppViews.TEARDOWN:
-            return <StateTeardown />;
+            return <TeardownView />;
         default:
             throw new Error(`Unknown app view "${view}"!`);
     }
