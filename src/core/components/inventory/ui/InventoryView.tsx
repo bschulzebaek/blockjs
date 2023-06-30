@@ -36,7 +36,7 @@ export default function InventoryView() {
                 active={false}
                 key={index + '-grid'}
                 item={item}
-                draggable={true}
+                draggable={!!item}
                 onDragStart={() => onDragStart(index + 9)}
                 /*
                 // @ts-ignore */
@@ -55,7 +55,7 @@ export default function InventoryView() {
                 active={activeIndex === index}
                 key={index + '-toolbar'}
                 item={item}
-                draggable={true}
+                draggable={!!item}
                 onDragStart={() => onDragStart(index)}
                 /*
                 // @ts-ignore */

@@ -42,6 +42,6 @@ export default class InventoryService {
 
         const inventory = new Inventory(id, slots);
 
-        this.repository.write(inventory);
+        return this.repository.write(inventory);
     }
 }

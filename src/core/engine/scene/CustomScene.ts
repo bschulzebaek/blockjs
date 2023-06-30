@@ -1,7 +1,7 @@
-import { Camera, Scene } from 'three';
+import { Camera, Object3D } from 'three';
 import ComponentRegistry from '@/core/engine/scene/ComponentRegistry';
 
-export default class CustomScene extends Scene {
+export default class CustomScene extends Object3D {
     private readonly components = new ComponentRegistry();
     private _mainCamera!: Camera;
 
