@@ -6,6 +6,7 @@ import { RENDER_DISTANCE } from '@/settings';
 import FeatureFlags, { Features } from '@/shared/FeatureFlags';
 import ChunkUtils from '@/core/world/chunk/ChunkUtils';
 import keepCacheLimit from '@/core/world/generation/keep-cache-limit';
+import CoreWorkerMessages from '@/shared/CoreWorkerMessages';
 
 const _cache = new Map<string, Chunk>();
 
@@ -26,17 +27,17 @@ export default class WorldGenerator {
 
     public invalidate(chunkId: string) {
         this.worker.postMessage({
-            action: 'invalidate',
+            action: CoreWorkerMessages.CHUNK_INVALIDATE,
             payload: {
                 id: chunkId,
-            }
+            },
         });
     }
 
     public generateChunk(x: string, z: string): Promise<Chunk> {
         const start = performance.now();
         if (FeatureFlags.get(Features.DEBUG)) {
-            console.debug(`[generateChunk2] ${x}:${z}`);
+            console.debug(`[generateChunk] ${x}:${z}`);
         }
 
         const id = ChunkUtils.toId(x, z);
@@ -56,7 +57,7 @@ export default class WorldGenerator {
             resolver = resolve;
 
             this.worker.postMessage({
-                action: 'generate',
+                action: CoreWorkerMessages.CHUNK_GENERATE,
                 payload: {
                     id,
                     uuid: this.uuid,
@@ -105,7 +106,7 @@ export default class WorldGenerator {
 
                 // @ts-ignore
                 console.debug(`[Chunk ${chunkId}] generated in ${((performance.now() - promise.start) / 1000).toFixed(3)}s`);
-            } catch(e) {
+            } catch (e) {
                 if (chunkId) {
                     _cache.delete(chunkId);
                     this.promises.delete(chunkId);

@@ -8,6 +8,7 @@ import loadChunksIntoCache from '@/core/world/generation/worker/load-chunks-into
 import ChunkFactory from '@/core/world/chunk/ChunkFactory';
 import { BlockMap } from '@/core/world/chunk/Chunk';
 import createBuffer from '@/core/world/chunk/geometry/create-buffer';
+import CoreWorkerMessages from '@/shared/CoreWorkerMessages';
 
 let repository: ChunkRepository;
 
@@ -15,10 +16,10 @@ onmessage = (event: MessageEvent<MessagePayload>) => {
     const payload = event.data.payload as GeneratorMessagePayload;
 
     switch (event.data.action) {
-        case 'invalidate':
+        case CoreWorkerMessages.CHUNK_INVALIDATE:
             BlockCache.delete(payload.id);
             break;
-        case 'generate':
+        case CoreWorkerMessages.CHUNK_GENERATE:
             processGeneration(payload as GeneratorMessagePayload);
             break;
         default:

@@ -48,7 +48,7 @@ export default class Chunk extends Group implements StorageObject {
      * Use local coordinates (0 ≤ x ≤ 15 | 0 ≤ y ≤ ? | 0 ≤ z ≤ 15) to get the specific block.
      * Result can be undefined. I.e. the block hasn't existed yet (!= destroyed by Player).
      */
-    public getBlock(x: number, y: number, z: number): Block | undefined {
+    public getBlock = (x: number, y: number, z: number): Block | undefined => {
         return this.blocks.get(`${x}:${y}:${z}`);
     }
 
