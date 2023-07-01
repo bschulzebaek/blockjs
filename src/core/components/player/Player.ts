@@ -1,7 +1,6 @@
 import { Camera, Object3D, PerspectiveCamera } from 'three';
 import PlayerController from '@/core/components/player/PlayerController';
-import { RESOLUTION } from '@/settings';
-import { CHUNK_SIZE, DEFAULT_BLOCK_PLACEMENT } from '@/configuration';
+import { CHUNK_SIZE } from '@/configuration';
 import UpdateGridEvent from '@/core/world/events/UpdateGridEvent';
 import BlockRaycaster from '@/core/world/block/BlockRaycaster';
 import destroyBlock from '@/core/components/player/actions/destroy-block';
@@ -10,7 +9,6 @@ import ChunkUtils from '@/core/world/chunk/ChunkUtils';
 import WorldService from '@/core/world/WorldService';
 import InputMapper from '@/core/engine/helper/InputMapper';
 import Inventory from '@/core/components/inventory/Inventory';
-import BlockId from '@/core/world/block/BlockId';
 import GlobalState from '@/core/GlobalState';
 
 export default class Player extends Object3D {
@@ -55,11 +53,15 @@ export default class Player extends Object3D {
     }
 
     private createCamera() {
+        const settings = GlobalState.getSettings();
+        const resX = settings.getResolutionX();
+        const resY = settings.getResolutionY();
+
         const camera = new PerspectiveCamera(
             90,
-            RESOLUTION.X / RESOLUTION.Y,
+            resX / resY,
             0.01,
-            CHUNK_SIZE /* * RENDER_DISTANCE */ * 10 + CHUNK_SIZE,
+            CHUNK_SIZE * GlobalState.getSettings().getRenderDistance() + CHUNK_SIZE * 2,
         );
 
         camera.position.set(

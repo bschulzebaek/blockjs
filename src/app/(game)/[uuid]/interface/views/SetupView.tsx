@@ -6,6 +6,7 @@ import CanvasContext from '@/app/(game)/[uuid]/CanvasContext';
 import WorkerAdapterContext from '@/app/(game)/[uuid]/WorkerAdapterContext';
 import ViewTransitions from '@/app/(game)/[uuid]/interface/ViewTransitions';
 import CoreWorkerMessages from '@/shared/CoreWorkerMessages';
+import SettingsStorage from '@/shared/settings/SettingsStorage';
 
 export default function SetupView() {
     const canvas = useContext(CanvasContext)!;
@@ -29,6 +30,7 @@ export default function SetupView() {
                 parameters: location.search,
                 canvas: offscreen,
                 config,
+                settings: SettingsStorage.get().toObject(),
             }, [ offscreen ]);
         });
     }, []);

@@ -10,7 +10,9 @@ export default class ChunkUtils {
             y < 0 || y >= WORLD_HEIGHT ||
             z < 0 || z >= CHUNK_SIZE
         )) {
-            throw new Error(`Block position out of bounds: ${x}:${y}:${z}`);
+            console.debug(`Block position out of bounds: ${x}:${y}:${z}`);
+
+            return undefined;
         }
 
         return `${x}:${y}:${z}`;

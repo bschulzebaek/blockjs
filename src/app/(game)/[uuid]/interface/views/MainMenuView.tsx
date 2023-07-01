@@ -26,6 +26,17 @@ export default function MainMenuView() {
                     </li>
                 </ul>
             </div>
+            <div className={styles.controls}>
+                <h3>Controls</h3>
+
+                <ul>
+                    <li>Move: W,A,S,D</li>
+                    <li>Up: Space</li>
+                    <li>Down: Shift</li>
+                    <li>Inventory: E</li>
+                    <li>Select Item: 1-9 | Scroll</li>
+                </ul>
+            </div>
         </>
     );
 }

@@ -27,9 +27,15 @@ export default function Toolbar() {
     }
 
     function onKeyDown(event: KeyboardEvent) {
-        const index = parseInt(event.key);
+        let index = parseInt(event.key);
 
-        if (isNaN(index) || index === activeSlot) {
+        if (isNaN(index) || index - 1 === activeSlot) {
+            return;
+        }
+
+        index--;
+
+        if (index < 0) {
             return;
         }
 

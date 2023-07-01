@@ -19,7 +19,10 @@ export default class InventoryService {
             console.debug(data);
         }
 
-        const inventory = data ? new Inventory(id, data?.slots, data?.activeIndex) : new Inventory(id);
+        const inventory = data ? new Inventory(id, data?.slots, data?.activeIndex) : (
+            id === 'player' ? this.__createDebugInventory(id) : new Inventory(id)
+        );
+
         this.registry.set(id, inventory);
 
         return inventory;
@@ -42,6 +45,8 @@ export default class InventoryService {
 
         const inventory = new Inventory(id, slots);
 
-        return this.repository.write(inventory);
+        this.repository.write(inventory);
+
+        return inventory;
     }
 }

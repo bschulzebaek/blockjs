@@ -1,4 +1,5 @@
 import WorldConfig from '@/shared/WorldConfig';
+import SettingsObject from '@/shared/settings/SettingsObject';
 
 export default interface SetupPayload {
     canvas: OffscreenCanvas;
@@ -8,4 +9,5 @@ export default interface SetupPayload {
         seed: string;
     };
     parameters: string;
+    settings: SettingsObject;
 }

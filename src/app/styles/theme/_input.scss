@@ -12,6 +12,7 @@ input {
     text-shadow: 2px 2px #000a;
     border: 1px solid transparent;
     transition: border-color .15s ease;
+    margin: 0;
 }
 
 input:focus,
@@ -21,4 +22,51 @@ input:hover {
 
 ::-webkit-input-placeholder {
     color: #999;
+}
+
+label {
+
+}
+
+.input-group {
+    position: relative;
+    background: rgba(0, 0, 0, .3);
+    padding: 0.25rem;
+
+    > input {
+        background: transparent;
+        padding: 0;
+        border: none;
+    }
+
+    > .label-name {
+        position: absolute;
+        top: 0;
+        transform: translate(0, -100%);
+        font-size: 0.8rem;
+    }
+
+    > .label-value {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
+
+input[type=range] {
+    background: transparent;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 1.5rem;
+    width: 1rem;
+
+
+    background: #999 url('/interface/button_background.png') center / cover;
+    image-rendering: pixelated;
+    border: 2px solid #000;
+    border-radius: 2px;
+    box-shadow: inset -2px -4px #0006, inset 2px 2px #fff7;
 }

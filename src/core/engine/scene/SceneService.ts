@@ -5,7 +5,6 @@ import CustomScene from '@/core/engine/scene/CustomScene';
 import { AxesHelper, Camera, CameraHelper, Fog } from 'three';
 import World from '@/core/world/World';
 import { CHUNK_SIZE, PLAYER_START } from '@/configuration';
-import { RENDER_DISTANCE } from '@/settings';
 import ServiceRegistry from '@/core/ServiceRegistry';
 import postInventoryTransfer from '@/core/components/inventory/messages/post-inventory-transfer';
 
@@ -53,8 +52,9 @@ class SceneService {
     }
 
     private createEnvironment() {
-        // const near = CHUNK_SIZE * RENDER_DISTANCE - CHUNK_SIZE * 2;
-        // const far = CHUNK_SIZE * RENDER_DISTANCE + CHUNK_SIZE;
+        // const renderDistance = GlobalState.getSettings().getRenderDistance();
+        // const near = CHUNK_SIZE * renderDistance - CHUNK_SIZE * 2;
+        // const far = CHUNK_SIZE * renderDistance + CHUNK_SIZE;
         //
         // this.scene.fog = new Fog(0xf0f0f0, near < 80 ? 80 : near, far < 208 ? 208 : far);
     }

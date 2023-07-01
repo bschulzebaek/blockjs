@@ -2,37 +2,42 @@ import ChunkRepository from '@/core/world/chunk/ChunkRepository';
 import { BlockCache, GenerationCache } from '@/core/world/generation/worker/caches';
 import ChunkUtils from '@/core/world/chunk/ChunkUtils';
 import generate from '@/core/world/generation/worker/generate';
-import keepCacheLimit from '@/core/world/generation/keep-cache-limit';
 
 const promises = new Map<string, Promise<any>>();
 
 export default async function loadChunksIntoCache(repository: ChunkRepository, x: number, z: number, seed: string) {
+    const id = ChunkUtils.toId(x, z);
+
     const chunkIds = [
-        `${x}:${z}`,
+        id,
         `${x + 1}:${z}`,
         `${x - 1}:${z}`,
         `${x}:${z + 1}`,
         `${x}:${z - 1}`,
     ];
 
-    await Promise.all(chunkIds.map(async (chunkId) => {
-        if (BlockCache.has(chunkId)) {
-            return;
-        }
+    await Promise.all(chunkIds.map((chunkId) => {
+        return new Promise(async (resolve) => {
+            if (BlockCache.has(chunkId)) {
+                resolve(null);
+            }
 
-        if (promises.has(chunkId)) {
-            await promises.get(chunkId);
+            if (promises.has(chunkId)) {
+                await promises.get(chunkId);
 
-            return;
-        }
+                resolve(null);
+            }
 
-        const promise = repository.read(chunkId);
+            const promise = repository.read(chunkId);
 
-        promises.set(chunkId, promise);
+            promises.set(chunkId, promise);
 
-        const blocks = (await promise)?.blocks ?? ChunkUtils.getEmptyBlockMap();
+            const blocks = (await promise)?.blocks ?? ChunkUtils.getEmptyBlockMap();
 
-        BlockCache.set(chunkId, blocks);
+            BlockCache.set(chunkId, blocks);
+
+            resolve(null);
+        });
     }));
 
     chunkIds.forEach((chunkId) => {
@@ -42,6 +47,4 @@ export default async function loadChunksIntoCache(repository: ChunkRepository, x
 
         GenerationCache.set(chunkId, generate(new Map(BlockCache.get(chunkId)), chunkId, seed));
     });
-
-    keepCacheLimit(BlockCache);
 }

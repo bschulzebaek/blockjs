@@ -27,11 +27,16 @@ $size: 4rem;
     padding: 3px;
     width: calc(100% - 6px);
     height: calc(100% - 6px);
+    position: relative;
 
     > img {
-        width: 100%;
-        height: 100%;
         image-rendering: pixelated;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: calc(#{$size} - 1rem);
+        height: calc(#{$size} - 1rem);
     }
 }
 

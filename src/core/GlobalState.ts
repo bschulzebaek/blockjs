@@ -5,8 +5,10 @@ import WorldConfig from '@/shared/WorldConfig';
 import World from '@/core/world/World';
 import WorldGenerator from '@/core/world/generation/WorldGenerator';
 import Player from '@/core/components/player/Player';
+import Settings from '@/shared/settings/Settings';
 
 class GlobalState {
+    private settings!: Settings;
     private config!: WorldConfig;
     private renderer!: CustomRenderer;
     private scene!: CustomScene;
@@ -19,53 +21,33 @@ class GlobalState {
         globalThis.__state = this;
     }
 
-    public setConfig(config: WorldConfig) {
-        this.config = config;
-    }
+    public setSettings = (settings: Settings) => this.settings = settings;
 
-    public getConfig() {
-        return this.config;
-    }
+    public getSettings = () => this.settings;
 
-    public setRenderer(renderer: CustomRenderer) {
-        this.renderer = renderer;
-    }
+    public setConfig = (config: WorldConfig) => this.config = config;
 
-    public getRenderer() {
-        return this.renderer;
-    }
+    public getConfig = () => this.config;
 
-    public setScene(scene: CustomScene) {
-        this.scene = scene;
-    }
+    public setRenderer = (renderer: CustomRenderer) => this.renderer = renderer;
 
-    public getScene() {
-        return this.scene;
-    }
+    public getRenderer = () => this.renderer;
 
-    public setLoop(loop: Loop) {
-        this.loop = loop;
-    }
+    public setScene = (scene: CustomScene) => this.scene = scene;
 
-    public getLoop() {
-        return this.loop;
-    }
+    public getScene = () => this.scene;
 
-    public getWorld() {
-        return this.scene.getObjectByName('world') as World;
-    }
+    public setLoop = (loop: Loop) => this.loop = loop;
 
-    public setGenerator(generator: WorldGenerator) {
-        this.generator = generator;
-    }
+    public getLoop = () => this.loop;
 
-    public getGenerator() {
-        return this.generator;
-    }
+    public getWorld = () => this.scene.getObjectByName('world') as World;
 
-    public getPlayer() {
-        return this.scene.getObjectByName('player') as Player;
-    }
+    public setGenerator = (generator: WorldGenerator) => this.generator = generator;
+
+    public getGenerator = () => this.generator;
+
+    public getPlayer = () => this.scene.getObjectByName('player') as Player;
 }
 
 export default new GlobalState();

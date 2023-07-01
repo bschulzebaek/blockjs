@@ -14,9 +14,13 @@ export default function GameLayout({
     return (
         <html lang="en">
         <body suppressHydrationWarning={true} >
-        <canvas className={styles.gameLayoutCanvas}></canvas>
-        <div className={styles.gameLayoutAdditional}>
-            {children}
+        <div className={styles.gameLayout}>
+            <div className={styles.canvasWrapper}>
+                <canvas className={styles.gameLayoutCanvas}></canvas>
+            </div>
+            <div className={styles.gameLayoutAdditional}>
+                {children}
+            </div>
         </div>
         </body>
         </html>

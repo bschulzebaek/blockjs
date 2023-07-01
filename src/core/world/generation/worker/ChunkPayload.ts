@@ -17,4 +17,5 @@ export default interface ChunkPayload {
     z: number;
     blocks: BlockMap;
     geometries: ChunkGeometryData;
+    failed?: boolean;
 }

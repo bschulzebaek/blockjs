@@ -1,3 +1,16 @@
 .container {
     top: 30%;
 }
+
+.controls {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: .5rem;
+    margin: .5rem;
+    opacity: 0.7;
+
+    ul > li {
+        justify-content: start;
+    }
+}

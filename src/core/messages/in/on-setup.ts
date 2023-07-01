@@ -11,12 +11,14 @@ import postReady from '@/core/messages/out/post-ready';
 
 import GlobalState from '@/core/GlobalState';
 import loadServices from '@/core/engine/load-services';
-import ServiceRegistry from '@/core/ServiceRegistry';
+import Settings from '@/shared/settings/Settings';
 
 export default async function onSetup(payload: SetupPayload) {
     FeatureFlags.setFromSearchParams(new URLSearchParams(payload.parameters));
 
     const config = WorldConfig.fromObject(payload.config as { uuid: string, seed: string, name: string });
+    GlobalState.setConfig(config);
+    GlobalState.setSettings(Settings.fromObject(payload.settings));
 
     const uuid = config.getUUID();
     const seed = config.getSeed();
@@ -28,12 +30,9 @@ export default async function onSetup(payload: SetupPayload) {
     const scene = new CustomScene();
     const loop = new Loop(renderer, scene);
 
-    // @ts-ignore
-    await ServiceRegistry.getInventoryService().__createDebugInventory('player');
     await WorldService.setupWorld(uuid, seed);
     await SceneService.setupScene(scene, WorldService.getWorld());
 
-    GlobalState.setConfig(config);
     GlobalState.setRenderer(renderer);
     GlobalState.setScene(scene);
     GlobalState.setLoop(loop);

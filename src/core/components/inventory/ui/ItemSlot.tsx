@@ -28,9 +28,9 @@ export default function ItemSlot({ active, item, ...rest }: {
                     }
                 </span>
 
-                <span className={styles.quantity}>
-                    {item ? item.quantity : null}
-                </span>
+                {/*<span className={styles.quantity}>*/}
+                {/*    {item ? item.quantity : null}*/}
+                {/*</span>*/}
             </div>
         </div>
     );

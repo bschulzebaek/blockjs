@@ -9,7 +9,8 @@ import World from '@/core/world/World';
 
 export default class ChunkService {
     static setBlock(chunk: Chunk, position: Vector3, id: BlockId, world: World) {
-        const positionString = ChunkUtils.getBlockPosition(position, true);
+        const positionString = ChunkUtils.getBlockPosition(position)!;
+
         const block: Block = {
             id,
             changed: true,

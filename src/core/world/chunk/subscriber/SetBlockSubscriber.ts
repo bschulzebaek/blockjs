@@ -31,8 +31,7 @@ class SetBlockSubscriber {
         const currentBlock = chunk.getBlock(blockPosition.x, blockPosition.y, blockPosition.z);
 
         if (id !== BlockId.AIR && currentBlock && currentBlock.id !== BlockId.AIR) {
-            console.debug(`Position blocked by block ${currentBlock.id} at position ${blockPosition.x}, ${blockPosition.y}, ${blockPosition.z}`);
-            return;
+            return console.debug(`Position "${blockPosition.x}:${blockPosition.y}:${blockPosition.z}" blocked by block "${currentBlock.id}"`);
         }
 
         ChunkService.setBlock(chunk, blockPosition, id, world);

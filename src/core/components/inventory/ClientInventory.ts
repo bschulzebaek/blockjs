@@ -5,7 +5,7 @@ import WorkerAdapter from '@/app/(game)/[uuid]/WorkerAdapter';
 export default class ClientInventory {
     private readonly id: string;
     private readonly slots: Array<InventorySlot | null>;
-    private readonly activeIndex: number;
+    private activeIndex: number;
 
     constructor(data: InventoryObject) {
         this.id = data.id;
@@ -22,7 +22,7 @@ export default class ClientInventory {
     }
 
     public setActiveIndex(index: number, adapter: WorkerAdapter) {
-        // this.activeIndex = index;
+        this.activeIndex = index;
         adapter.setActiveItem({ index });
     }
 
