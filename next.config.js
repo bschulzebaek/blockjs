@@ -4,9 +4,11 @@ const path = require('path');
 const nextConfig = {
     sassOptions: {
         includePaths: [
-            path.join(__dirname, 'src/styles'),
+            path.join(__dirname, 'app/styles'),
+            path.join(__dirname, 'src/interface'),
         ]
-    }
+    },
+    
 }
 
 module.exports = nextConfig
