@@ -1,5 +1,5 @@
 import { CHUNK_SIZE } from '@/configuration';
-import Block from '@/framework/world/block/Block';
+import BlockFactory from '@/framework/world/block/BlockFactory';
 import SetBlockEvent from '@/framework/world/block/events/SetBlockEvent';
 import Chunk from '@/framework/world/chunk/Chunk';
 import ChunkUtils from '@/framework/world/chunk/ChunkUtils';
@@ -36,10 +36,10 @@ class SetBlockSubscriber {
             return console.debug(`Position "${position.x}:${position.y}:${position.z}" blocked by block "${currentBlock.id}"`);
         }
 
-        const block: Block = {
+        const block = BlockFactory.create({
             id,
             changed: true,
-        };
+        });
 
         chunk.setBlock(position, block);
 

@@ -1,4 +1,5 @@
 import { LOG_CHUNK_GENERATION_TIME } from '@/configuration';
+import createLightMap from '@/framework/light/create-light-map';
 import GeneratorMessagePayload from '@/framework/world/generation/worker/GeneratorMessagePayload';
 import { BlockCache, GenerationCache } from '@/framework/world/generation/worker/caches';
 import ChunkRepository from '@/framework/world/chunk/ChunkRepository';
@@ -9,7 +10,7 @@ import getMergedBlocks from '@/framework/world/generation/worker/get-merged-bloc
 import createBuffer from '@/framework/world/chunk/geometry/create-buffer';
 import getBlockFromCache from '@/framework/world/generation/worker/get-block-from-cache';
 import keepCacheLimit from '@/framework/world/generation/worker/keep-cache-limit';
-import { ChunkGeometryData } from '@/framework/world/generation/worker/ChunkPayload';
+import ChunkPayload, { ChunkGeometryData } from '@/framework/world/generation/worker/ChunkPayload';
 
 let repository: ChunkRepository;
 
@@ -41,11 +42,14 @@ export default function processGeneration({ id, x, z, seed, uuid }: GeneratorMes
             return resolve(null);
         }
 
-        const response = {
-            x,
-            z,
+        await createLightMap(chunk, getBlockFromCache);
+
+        const response: ChunkPayload = {
+            x: xInt,
+            z: zInt,
             blocks: chunk.getBlocks(),
             geometries: createBuffer(chunk, getBlockFromCache),
+            lightMap: chunk.getLightMap(),
         };
 
         // @ts-ignore

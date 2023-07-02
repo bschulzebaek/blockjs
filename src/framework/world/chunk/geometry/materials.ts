@@ -5,7 +5,7 @@ const texture = CustomTextureLoader.load('/engine/textures.png');
 
 const materialOptions = {
     map: texture,
-    vertexColors: false,
+    vertexColors: true,
 };
 
 const materials = {

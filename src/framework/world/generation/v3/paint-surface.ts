@@ -1,3 +1,4 @@
+import BlockFactory from '@/framework/world/block/BlockFactory';
 import ChunkUtils from '@/framework/world/chunk/ChunkUtils';
 import { SEA_LEVEL,  } from './parameters';
 import BlockId from '@/framework/world/block/BlockId';
@@ -34,9 +35,11 @@ export default function paintSurface(blocks: BlockMap) {
     iterateChunk2D((x: number, z: number) => {
         let currentY = WORLD_HEIGHT - 1;
         let block: Block | undefined;
+        let position = '';
 
         do {
-            block = blocks.get(ChunkUtils.localCoordinatesToBlockId(x, currentY, z))!;
+            position = ChunkUtils.localCoordinatesToBlockId(x, currentY, z);
+            block = blocks.get(position)!;
 
             currentY--;
         } while (!block && currentY >= SEA_LEVEL)
@@ -45,6 +48,6 @@ export default function paintSurface(blocks: BlockMap) {
             return;
         }
 
-        block.id = getBlockId(block);
+        blocks.set(position, BlockFactory.update(block, { id: getBlockId(block) }));
     });
 }

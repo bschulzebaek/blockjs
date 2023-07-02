@@ -9,6 +9,8 @@ const queue = new ProcessingQueue<Chunk>(_updateMeshInstance);
 export default function updateMeshInstance(chunk: Chunk) {
     GlobalState.getGenerator().invalidate(chunk.getChunkId());
     queue.addData(chunk);
+
+    // TODO: Update local LightMap by using "propagateNeighbours" function from src\framework\light\create-light-map.ts
 }
 
 function _updateMeshInstance(chunk: Chunk) {

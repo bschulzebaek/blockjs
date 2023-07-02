@@ -16,7 +16,7 @@ export default async function lifecycleSetup(payload: SetupPayload) {
     await stepSetupServices();
     await stepSceneReady();
 
-    console.debug(`[Setup] Finished in ${((performance.now() - start) / 1000).toFixed(3)}s`);
+    console.debug(`[Setup] Done in ${((performance.now() - start) / 1000).toFixed(3)}s`);
     postReady();
 }
 

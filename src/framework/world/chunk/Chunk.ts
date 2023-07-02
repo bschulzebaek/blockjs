@@ -1,3 +1,4 @@
+import LightMap from '@/framework/light/LightMap';
 import strictModulo from '@/shared/math/strict-modulo';
 import { Group, Vector3 } from 'three';
 import Block from '@/framework/world/block/Block';
@@ -14,6 +15,7 @@ export default class Chunk extends Group implements StorageObject {
         private readonly x: number,
         private readonly z: number,
         private readonly blocks: BlockMap,
+        private readonly lightMap: LightMap = new Map(),
     ) {
         super();
         this.chunkId = ChunkUtils.chunkCoordinatesToChunkId(x, z);
@@ -21,29 +23,19 @@ export default class Chunk extends Group implements StorageObject {
         this.position.set(this.getOffsetX(), 0, this.getOffsetZ());
     }
 
-    public getChunkId() {
-        return this.chunkId;
-    }
+    public getChunkId = () => this.chunkId;
 
-    public getX(): number {
-        return this.x;
-    }
+    public getX = (): number => this.x;
 
-    public getOffsetX(): number {
-        return this.x * CHUNK_SIZE;
-    }
+    public getOffsetX =(): number => this.x * CHUNK_SIZE;
 
-    public getZ(): number {
-        return this.z;
-    }
+    public getZ = (): number => this.z;
 
-    public getOffsetZ(): number {
-        return this.z * CHUNK_SIZE;
-    }
+    public getOffsetZ = (): number => this.z * CHUNK_SIZE;
 
-    public getBlocks(): BlockMap {
-        return this.blocks;
-    }
+    public getBlocks = (): BlockMap => this.blocks;
+
+    public getLightMap = (): LightMap => this.lightMap;
 
     public setBlock(position: Vector3, block: Block) {
         const local = position.clone();
@@ -53,10 +45,6 @@ export default class Chunk extends Group implements StorageObject {
         this.blocks.set(ChunkUtils.vectorToBlockId(local), block);
     }
 
-    /**
-     * Use local coordinates (0 ≤ x ≤ 15 | 0 ≤ y ≤ ? | 0 ≤ z ≤ 15) to get the specific block.
-     * Result can be undefined. I.e. the block hasn't existed yet (!= destroyed by Player).
-     */
     public getBlockByVector = (position: Vector3): Block | undefined => {
         const local = position.clone();
         local.x = strictModulo(local.x - this.getOffsetX(), CHUNK_SIZE);
@@ -65,12 +53,16 @@ export default class Chunk extends Group implements StorageObject {
         return this.blocks.get(ChunkUtils.vectorToBlockId(local));
     }
 
+    public getBlockByCoordinates = (x: number, y: number, z: number): Block | undefined => {
+        return this.blocks.get(ChunkUtils.worldCoordinatesToBlockId(x - this.getOffsetX(), y, z - this.getOffsetZ()));
+    }
+
     /**
      * Use local coordinates (0 ≤ x ≤ 15 | 0 ≤ y ≤ ? | 0 ≤ z ≤ 15) to get the specific block.
      * Result can be undefined. I.e. the block hasn't existed yet (!= destroyed by Player).
      */
-    public getBlockByCoordinates = (x: number, y: number, z: number): Block | undefined => {
-        return this.blocks.get(ChunkUtils.worldCoordinatesToBlockId(x - this.getOffsetX(), y, z - this.getOffsetZ()));
+    public getBlockByLocalCoordinates = (x: number, y: number, z: number): Block | undefined => {
+        return this.blocks.get(ChunkUtils.localCoordinatesToBlockId(x, y, z));
     }
 
     public toStorage(): RawStorageObject {

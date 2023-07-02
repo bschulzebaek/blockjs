@@ -12,6 +12,7 @@ export default function LoadPage() {
     const [worlds, setWorlds] = useState<WorldConfig[]>([]);
 
     function deleteWorld(uuid: string) {
+        console.log('TODO: Delete from IndexedDB!');
         WorldConfigStorage.delete(uuid).then(() => {
             setWorlds((worlds) => {
                 return worlds.filter((world) => world.getUUID() !== uuid);

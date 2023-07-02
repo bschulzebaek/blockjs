@@ -1,5 +1,13 @@
 import { DynamicComponent } from '@/engine/scene/ComponentRegistry';
-import { BoxGeometry, BoxHelper, Camera, Mesh, MeshStandardMaterial, Object3D, Vector3 } from 'three';
+import {
+    BoxGeometry,
+    BoxHelper,
+    Camera,
+    Mesh,
+    Vector3,
+    Group,
+    MeshBasicMaterial,
+} from 'three';
 import type World from '@/framework/world/World';
 import BlockRaycaster from '@/framework/world/block/BlockRaycaster';
 import BlockId from '@/framework/world/block/BlockId';
@@ -14,7 +22,7 @@ const NON_HIGHLIGHTABLE_BLOCKS: BlockId[] = [
     BlockId.FLOWING_LAVA,
 ];
 
-export default class Cursor extends Object3D implements DynamicComponent {
+export default class Cursor extends Group implements DynamicComponent {
     private readonly raycaster: BlockRaycaster;
 
     constructor(
@@ -24,10 +32,10 @@ export default class Cursor extends Object3D implements DynamicComponent {
         super();
 
         const geometry = new BoxGeometry(1.001, 1.001, 1.001);
-        const material = new MeshStandardMaterial({
+        const material = new MeshBasicMaterial({
             color: 0xffffff,
             transparent: true,
-            opacity: 0.15,
+            opacity: 0.05,
         });
         const mesh = new Mesh(geometry, material);
         const outline =  new BoxHelper(mesh, 0x333333);

@@ -1,3 +1,4 @@
+import BlockFactory from '@/framework/world/block/BlockFactory';
 import { createNoise2D } from 'simplex-noise';
 import { BlockMap } from '@/framework/world/chunk/Chunk';
 import Alea from 'alea';
@@ -77,13 +78,11 @@ export default function shapeTerrain(seed: string, chunkX: number, chunkZ: numbe
             return;
         }
 
-        blocks.set(blockPosition, {
-            id: blockId,
-            biomeData: {
+        blocks.set(blockPosition, BlockFactory.create({ id: blockId, biomeData: {
                 continentalness,
                 humidity: Math.round(noise2dHumidity(blockX, blockZ) * 100) / 100,
                 temperature: Math.round(noise2dTemperature(x, z) * 100) / 100,
-            },
-        });
+            }
+        }));
     });
 }

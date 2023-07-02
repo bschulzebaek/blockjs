@@ -1,3 +1,6 @@
+import LightIntensity from '@/framework/light/LightIntensity';
+import LightLevel from '@/framework/light/LightLevel';
+import LightMap from '@/framework/light/LightMap';
 import BlockId from '@/framework/world/block/BlockId';
 import { BlockUV } from '@/framework/world/block/data/block-uv';
 
@@ -57,11 +60,13 @@ const data = [
     { shade: 3, pos: [-1, -1, -1], norm: [0, -1, 0], uv: [1, 0] },
 ];
 
+
 export default function getGeometryData(
     x: number,
     y: number,
     z: number,
     faces: boolean[],
+    lightLevel: LightLevel[],
     blockId: BlockId,
 ) {
     const positions = [];
@@ -88,7 +93,8 @@ export default function getGeometryData(
 
             uvs.push(u / 16, v / 16);
 
-            const shade = [1, 0.8, 0.5, 0.3][vertex.shade];
+            const shade = LightIntensity[lightLevel[face]];
+
             colors.push(shade, shade, shade);
         }
     }

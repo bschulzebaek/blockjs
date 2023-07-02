@@ -1,6 +1,7 @@
+import LightLevel from '@/framework/light/LightLevel';
 import BlockId from './BlockId';
 
-interface BiomeData {
+export interface BiomeData {
     continentalness: number;
     humidity: number;
     temperature: number;
@@ -8,6 +9,8 @@ interface BiomeData {
 
 export default interface Block {
     id: BlockId;
-    changed?: true;
+    transparent: boolean;
+    changed?: boolean;
     biomeData?: BiomeData;
+    lightLevel: LightLevel;
 }

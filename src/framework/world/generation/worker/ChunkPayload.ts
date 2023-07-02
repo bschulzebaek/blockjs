@@ -1,3 +1,4 @@
+import LightMap from '@/framework/light/LightMap';
 import { BlockMap } from '@/framework/world/chunk/Chunk';
 
 export interface GeometryBuffer {
@@ -17,5 +18,6 @@ export default interface ChunkPayload {
     z: number;
     blocks: BlockMap;
     geometries: ChunkGeometryData;
+    lightMap: LightMap;
     failed?: boolean;
 }

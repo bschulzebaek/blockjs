@@ -1,3 +1,4 @@
+import BlockFactory from '@/framework/world/block/BlockFactory';
 import ChunkUtils from '@/framework/world/chunk/ChunkUtils';
 import { iterateChunk2D } from '../../iterate-coordinates';
 import { SEA_LEVEL } from './parameters';
@@ -20,10 +21,7 @@ export default function fillWaterBodies(blocks: BlockMap) {
             const block = blocks.get(position);
 
             if (!block) {
-                blocks.set(position, {
-                    id: BlockId.WATER,
-                    biomeData,
-                });
+                blocks.set(position, BlockFactory.create({ id: BlockId.WATER, biomeData }));
             }
 
             currentY--;

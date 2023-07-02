@@ -1,6 +1,8 @@
+import LightLevel from '@/framework/light/LightLevel';
 import Chunk from '@/framework/world/chunk/Chunk';
 import BlockId from '@/framework/world/block/BlockId';
 import { TRANSPARENT_BLOCKS } from '@/framework/world/block/block-data';
+import getFaceLightLevel from '@/framework/world/chunk/geometry/get-face-light-level';
 import getGeometryData from '@/framework/world/chunk/geometry/get-geometry-data';
 import { ChunkGeometryData } from '@/framework/world/generation/worker/ChunkPayload';
 import ChunkUtils from '@/framework/world/chunk/ChunkUtils';
@@ -28,17 +30,32 @@ export default function createBuffer(chunk: Chunk, accessor: WorldAccessor): Chu
         const worldZ = z + chunk.getOffsetZ();
 
         const faces = [
-            getFaceVisibility(accessor, worldX, y, worldZ + 1, transparent),
-            getFaceVisibility(accessor, worldX + 1, y, worldZ, transparent),
-
-            getFaceVisibility(accessor, worldX, y, worldZ - 1, transparent),
-            getFaceVisibility(accessor, worldX - 1, y, worldZ, transparent),
-
-            getFaceVisibility(accessor, worldX, y + 1, worldZ, transparent),
-            getFaceVisibility(accessor, worldX, y - 1, worldZ, transparent),
+            getFaceVisibility(accessor, worldX, y, worldZ + 1, transparent, block.id),
+            getFaceVisibility(accessor, worldX + 1, y, worldZ, transparent, block.id),
+            getFaceVisibility(accessor, worldX, y, worldZ - 1, transparent, block.id),
+            getFaceVisibility(accessor, worldX - 1, y, worldZ, transparent, block.id),
+            getFaceVisibility(accessor, worldX, y + 1, worldZ, transparent, block.id),
+            getFaceVisibility(accessor, worldX, y - 1, worldZ, transparent, block.id),
         ];
 
-        const data = getGeometryData(x, y, z, faces, block.id);
+        const lightLevel = [
+            getFaceLightLevel(chunk, x, y, z + (transparent ? 0 : 1)),
+            getFaceLightLevel(chunk, x + (transparent ? 0 : 1), y, z),
+            getFaceLightLevel(chunk, x, y, z - (transparent ? 0 : 1)),
+            getFaceLightLevel(chunk, x - (transparent ? 0 : 1), y, z),
+            getFaceLightLevel(chunk, x, y + (transparent ? 0 : 1), z),
+            getFaceLightLevel(chunk, x, y - (transparent ? 0 : 1), z),
+
+            // TODO: Use World coordinates and WorldAccessor
+            // getFaceLightLevel(accessor, worldX, y, worldZ + (transparent ? 0 : 1)),
+            // getFaceLightLevel(accessor, worldX + (transparent ? 0 : 1), y, worldZ),
+            // getFaceLightLevel(accessor, worldX, y, worldZ - (transparent ? 0 : 1)),
+            // getFaceLightLevel(accessor, worldX - (transparent ? 0 : 1), y, worldZ),
+            // getFaceLightLevel(accessor, worldX, y + (transparent ? 0 : 1), worldZ),
+            // getFaceLightLevel(accessor, worldX, y - (transparent ? 0 : 1), worldZ),
+        ];
+
+        const data = getGeometryData(x, y, z, faces, lightLevel, block.id);
 
         if (transparent) {
             positions2.push(...data.positions);

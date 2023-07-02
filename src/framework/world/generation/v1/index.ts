@@ -1,11 +1,6 @@
+import BlockFactory from '@/framework/world/block/BlockFactory';
 import { BlockMap } from '@/framework/world/chunk/Chunk';
 import BlockId from '@/framework/world/block/BlockId';
-
-const biomeData = {
-    humidity: 0.5,
-    temperature: 0.5,
-    continentalness: 0.5
-};
 
 const BLOCK_IDS = [
     BlockId.STONE,
@@ -34,7 +29,7 @@ export default function generationV1(blockMap: BlockMap, chunkId: string, seed: 
                     continue;
                 }
 
-                blockMap.set(mapId, { id: blockId });
+                blockMap.set(mapId, BlockFactory.create({ id: blockId }));
             }
         }
     } catch (e) {

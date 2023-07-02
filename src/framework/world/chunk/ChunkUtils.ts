@@ -78,4 +78,24 @@ export default class ChunkUtils {
             );
         });
     }
+
+    static getFacingCoordinates(x: number, y: number, z: number) {
+        return [
+            [x, y, z + 1],
+            [x, y, z - 1],
+            [x + 1, y, z],
+            [x - 1, y, z],
+            [x, y + 1, z],
+            [x, y - 1, z],
+        ];
+    }
+
+    static getFacingHorizontalCoordinates(x: number, y: number, z: number) {
+        return [
+            [x, y, z + 1],
+            [x, y, z - 1],
+            [x + 1, y, z],
+            [x - 1, y, z],
+        ];
+    }
 }

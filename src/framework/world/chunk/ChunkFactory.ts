@@ -4,7 +4,7 @@ import createMeshFromBuffer from '@/framework/world/chunk/geometry/create-mesh-f
 
 export default class ChunkFactory {
     static createFromPayload(payload: ChunkPayload) {
-        const chunk = new Chunk(payload.x, payload.z, payload.blocks);
+        const chunk = new Chunk(payload.x, payload.z, payload.blocks, payload.lightMap);
 
         createMeshFromBuffer(chunk, payload.geometries);
 
