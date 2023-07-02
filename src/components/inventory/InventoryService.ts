@@ -4,7 +4,7 @@ import Inventory from '@/components/inventory/Inventory';
 import postInventoryTransfer from '@/components/inventory/messages/post-inventory-transfer';
 import Player from '@/components/player/Player';
 import GlobalState from '@/engine/worker/states/GlobalState';
-import BlockId from '@/world/block/BlockId';
+import BlockId from '@/framework/world/block/BlockId';
 import FeatureFlags, { Features } from '@/framework/feature-flags/FeatureFlags';
 
 export default class InventoryService {
@@ -34,6 +34,29 @@ export default class InventoryService {
         return this.registry.get(id);
     }
 
+    public setActiveInventoryItem(payload: ActiveItemPayload) {
+        const inventory = this.getInventory('player');
+
+        if (!inventory) {
+            throw new Error('Player inventory not found');
+        }
+
+        inventory.setActiveIndex(payload.index);
+    }
+
+    public async getPlayerInventory() {
+        const id = 'player';
+        const data = await this.repository.read(id);
+
+        const inventory = data ? new Inventory(id, data?.slots, data?.activeIndex) : (
+            id === 'player' ? await this.__createDebugInventory(id) : new Inventory(id)
+        );
+
+        this.registry.set(id, inventory);
+
+        return inventory;
+    }
+
     private async __createDebugInventory(id: string) {
         const slots = new Array(36).fill(null);
 
@@ -50,35 +73,5 @@ export default class InventoryService {
         await this.repository.write(inventory);
 
         return inventory;
-    }
-
-    /**
-     * TODO: Depends on EntityService being setup first
-     */
-    public async setup() {
-        const scene = GlobalState.getScene();
-
-        const id = 'player';
-        const data = await this.repository.read(id);
-
-        const inventory = data ? new Inventory(id, data?.slots, data?.activeIndex) : (
-            id === 'player' ? await this.__createDebugInventory(id) : new Inventory(id)
-        );
-
-        this.registry.set(id, inventory);
-        const player = scene.getObjectByName(id) as Player;
-
-        player.setInventory(inventory);
-        postInventoryTransfer(inventory);
-    }
-
-    public setActiveInventoryItem(payload: ActiveItemPayload) {
-        const inventory = this.getInventory('player');
-
-        if (!inventory) {
-            throw new Error('Player inventory not found');
-        }
-
-        inventory.setActiveIndex(payload.index);
     }
 }

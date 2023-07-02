@@ -1,15 +1,14 @@
-import Player from '@/components/player/Player';
-import CustomScene from '@/engine/scene/CustomScene';
+import PlayerFactory from '@/components/player/PlayerFactory';
 import Entity from '@/framework/entities/Entity';
 import EntityStorageObject from '@/framework/entities/EntityStorageObject';
 
 export default class EntityFactory {
-    static fromStorageObject(storageObject: EntityStorageObject, scene: CustomScene): Entity {
+    static async fromStorageObject(storageObject: EntityStorageObject): Promise<Entity> {
         const type = storageObject.type;
 
         switch (type) {
             case 'player':
-                return Player.fromStorageObject(storageObject, scene);
+                return await PlayerFactory.fromStorageObject(storageObject);
             default:
                 throw new Error(`Unknown entity of type "${type}"`);
         }

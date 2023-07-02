@@ -1,12 +1,10 @@
 import type EntityService from '@/framework/entities/EntityService';
-import type WorldService from '@/world/WorldService';
-import type ChunkService from '@/world/chunk/ChunkService';
+import type WorldService from '@/framework/world/WorldService';
 import type InventoryService from '@/components/inventory/InventoryService';
 import type SceneService from '@/engine/scene/SceneService';
 
 class ServiceRegistry {
     private world!: WorldService;
-    private chunk!: ChunkService;
     private inventory!: InventoryService;
     private scene!: SceneService;
     private entity!: EntityService;
@@ -19,10 +17,6 @@ class ServiceRegistry {
     public setWorldService = (world: WorldService) => this.world = world;
 
     public getWorldService = () => this.world;
-
-    public setChunkService = (chunk: ChunkService) => this.chunk = chunk;
-
-    public getChunkService = () => this.chunk;
 
     public setInventoryService = (inventory: InventoryService) => this.inventory = inventory;
 

@@ -5,6 +5,10 @@ export default class SettingsStorage {
     static LS_KEY = 'settings';
 
     static get() {
+        if (typeof localStorage === 'undefined') {
+            return Settings.fromObject(DEFAULT_SETTINGS);
+        }
+
         const settings = JSON.parse(localStorage.getItem(SettingsStorage.LS_KEY) || '{}');
 
         return Settings.fromObject({

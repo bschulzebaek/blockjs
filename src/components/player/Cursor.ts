@@ -1,8 +1,8 @@
 import { DynamicComponent } from '@/engine/scene/ComponentRegistry';
 import { BoxGeometry, BoxHelper, Camera, Mesh, MeshStandardMaterial, Object3D, Vector3 } from 'three';
-import type World from '@/world/World';
-import BlockRaycaster from '@/world/block/BlockRaycaster';
-import BlockId from '@/world/block/BlockId';
+import type World from '@/framework/world/World';
+import BlockRaycaster from '@/framework/world/block/BlockRaycaster';
+import BlockId from '@/framework/world/block/BlockId';
 
 const CURSOR_OFFSET = new Vector3(0.5, 0.5, 0.5);
 

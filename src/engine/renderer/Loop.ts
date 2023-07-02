@@ -1,3 +1,4 @@
+import CustomRenderer from '@/engine/renderer/CustomRenderer';
 import { Camera, WebGLRenderer } from 'three';
 import CustomScene from '@/engine/scene/CustomScene';
 
@@ -6,12 +7,13 @@ export default class Loop {
     private lastFrame: number = 0;
 
     private camera: Camera | null = null
+    private readonly renderer: CustomRenderer;
 
     constructor(
-        private readonly renderer: WebGLRenderer,
+        canvas: HTMLCanvasElement | OffscreenCanvas,
         private readonly scene: CustomScene,
     ) {
-
+        this.renderer = new CustomRenderer(canvas);
     }
 
     public setCamera(camera: Camera) {

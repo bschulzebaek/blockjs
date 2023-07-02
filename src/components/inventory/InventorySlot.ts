@@ -1,4 +1,4 @@
-import BlockId from '@/world/block/BlockId';
+import BlockId from '@/framework/world/block/BlockId';
 
 export default interface InventorySlot {
     id: BlockId;

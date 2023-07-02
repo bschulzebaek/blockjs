@@ -8,9 +8,16 @@ export default class SetupEvent extends Event {
 
     constructor(
         private readonly payload: SetupPayload,
+        private readonly promises: Promise<any>[] = [],
     ) {
         super(SetupEvent.NAME);
     }
 
     public getPayload = () => this.payload;
+
+    public addPromise(promise: Promise<any>) {
+        this.promises.push(promise);
+    }
+
+    public getPromises = () => this.promises;
 }

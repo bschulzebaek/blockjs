@@ -10,7 +10,7 @@ class InventoryUpdateSubscriber {
     }
 
     private onUpdateInventory = (event: InventoryUpdateEvent) => {
-        console.log(event);
+        this.repository.write(event.getInventory());
     }
 }
 

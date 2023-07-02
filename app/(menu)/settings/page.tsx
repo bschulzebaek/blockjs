@@ -4,14 +4,14 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import SettingsStorage from '@/shared/settings/SettingsStorage';
 import { DEFAULT_SETTINGS } from '@/shared/settings/default-settings';
 
+const settings = SettingsStorage.get();
+
 export default function SettingsPage() {
-    const [renderDistance, setRenderDistance] = useState(0);
-    const [resolutionX, setResolutionX] = useState(0);
-    const [resolutionY, setResolutionY] = useState(0);
+    const [renderDistance, setRenderDistance] = useState(settings.getRenderDistance());
+    const [resolutionX, setResolutionX] = useState(settings.getResolutionX());
+    const [resolutionY, setResolutionY] = useState(settings.getResolutionY());
 
     useEffect(() => {
-        const settings = SettingsStorage.get();
-
         settings.setRenderDistance(renderDistance);
         settings.setResolutionX(resolutionX);
         settings.setResolutionY(resolutionY);
@@ -19,14 +19,6 @@ export default function SettingsPage() {
         SettingsStorage.save(settings);
 
     }, [ renderDistance, resolutionX, resolutionY ]);
-
-    useEffect(() => {
-        const settings = SettingsStorage.get();
-
-        setRenderDistance(settings.getRenderDistance());
-        setResolutionX(settings.getResolutionX());
-        setResolutionY(settings.getResolutionY());
-    }, []);
 
     function _setRenderDistance(event: ChangeEvent) {
         let value = parseInt((event.target as HTMLInputElement).value);

@@ -7,7 +7,7 @@ import SetupView from './views/setup/SetupView';
 import MainMenuView from './views/main-menu/MainMenuView';
 import DefaultView from './views/default/DefaultView';
 import ReadyView from './views/ready/ReadyView';
-import InventoryView from '@/components/inventory/interface/InventoryView';
+import InventoryView from './views/inventory/InventoryView';
 import TeardownView from './views/teardown/TeardownView';
 
 export default function Interface() {

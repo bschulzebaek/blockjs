@@ -1,20 +1,17 @@
 import Inventory from '@/components/inventory/Inventory';
 import destroyBlock from '@/components/player/actions/destroy-block';
 import placeBlock from '@/components/player/actions/place-block';
-import getStartLocation from '@/components/player/get-start-location';
 import PlayerController from '@/components/player/PlayerController';
 import { CHUNK_SIZE } from '@/configuration';
-import CustomScene from '@/engine/scene/CustomScene';
 import GlobalState from '@/engine/worker/states/GlobalState';
 import InputMapper from '@/engine/worker/utility/InputMapper';
 import Entity from '@/framework/entities/Entity';
-import EntityStorageObject from '@/framework/entities/EntityStorageObject';
 import RawEntityStorageObject from '@/framework/entities/EntityStorageObject';
 import EntityTypes from '@/framework/entities/EntityTypes';
-import BlockRaycaster from '@/world/block/BlockRaycaster';
-import ChunkUtils from '@/world/chunk/ChunkUtils';
-import UpdateGridEvent from '@/world/events/UpdateGridEvent';
-import { Camera, Vector3, Euler } from 'three';
+import BlockRaycaster from '@/framework/world/block/BlockRaycaster';
+import ChunkUtils from '@/framework/world/chunk/ChunkUtils';
+import UpdateGridEvent from '@/framework/world/events/UpdateGridEvent';
+import { Camera, Vector3 } from 'three';
 
 export default class Player extends Entity {
     static ID = 'player';
@@ -61,19 +58,19 @@ export default class Player extends Entity {
         this.camera = camera;
     }
 
-    public setPosition(x: number, y: number, z: number) {
-        this.position.set(x, y, z);
+    public setPosition(position: Vector3) {
+        this.position.copy(position);
     }
 
     private updateWorldPosition() {
-        const id = ChunkUtils.positionToId(this.position);
+        const id = ChunkUtils.vectorToChunkId(this.position);
 
         if (id !== this.lastChunkId) {
             this.lastChunkId = id;
 
             dispatchEvent(new UpdateGridEvent(
-                Math.floor(this.position.x / CHUNK_SIZE),
-                Math.floor(this.position.z / CHUNK_SIZE),
+                this.position.x,
+                this.position.z,
             ));
         }
     }
@@ -114,14 +111,6 @@ export default class Player extends Entity {
 
     public setInventory = (inventory: Inventory) => this.inventory = inventory;
 
-    public getInventory = () => {
-        if (!this.inventory) {
-            throw new Error('Player inventory not set');
-        }
-
-        return this.inventory;
-    }
-
     public toStorage(): RawEntityStorageObject {
         const { x, y, z } = this.position;
         const { x: rx, y: ry, z: rz } = this.rotation;
@@ -138,22 +127,7 @@ export default class Player extends Entity {
                 x: rx,
                 y: ry,
                 z: rz,
-            }
+            },
         };
-    }
-
-    static fromStorageObject(obj: EntityStorageObject, scene: CustomScene) {
-        const position = new Vector3(obj.position.x, obj.position.y, obj.position.z);
-        const rotation = new Euler(obj.rotation.x, obj.rotation.y, obj.rotation.z);
-
-        const player = new Player(scene.getMainCamera(), position);
-
-        player.rotation.copy(rotation);
-
-        return player;
-    }
-
-    static createNew(scene: CustomScene) {
-        return new Player(scene.getMainCamera(), getStartLocation(scene));
     }
 }

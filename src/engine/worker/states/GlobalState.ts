@@ -1,17 +1,17 @@
-import CustomRenderer from '@/engine/renderer/CustomRenderer';
 import Loop from '@/engine/renderer/Loop';
 import CustomScene from '@/engine/scene/CustomScene';
+import WorldGenerator from '@/framework/world/generation/WorldGenerator';
 import WorldConfig from '@/shared/world-config/WorldConfig';
 import Settings from '@/shared/settings/Settings';
-import World from '@/world/World';
+import World from '@/framework/world/World';
 
 class GlobalState {
     private settings!: Settings;
     private config!: WorldConfig;
-    private renderer!: CustomRenderer;
     private scene!: CustomScene;
     private loop!: Loop;
     private world!: World;
+    private generator!: WorldGenerator;
 
     constructor() {
         // @ts-ignore
@@ -26,10 +26,6 @@ class GlobalState {
 
     public getConfig = () => this.config;
 
-    public setRenderer = (renderer: CustomRenderer) => this.renderer = renderer;
-
-    public getRenderer = () => this.renderer;
-
     public setScene = (scene: CustomScene) => this.scene = scene;
 
     public getScene = () => this.scene;
@@ -40,7 +36,11 @@ class GlobalState {
 
     public setWorld = (world: World) => this.world = world;
 
-    public getWorld = () => this.world
+    public getWorld = () => this.world;
+
+    public setGenerator = (generator: WorldGenerator) => this.generator = generator;
+
+    public getGenerator = () => this.generator;
 }
 
 export default new GlobalState();

@@ -1,7 +1,7 @@
 import GlobalState from '@/engine/worker/states/GlobalState';
 import EntityRepository from '@/framework/entities/EntityRepository';
 import { IDBPDatabase, openDB } from 'idb';
-import ChunkRepository from '@/world/chunk/ChunkRepository';
+import ChunkRepository from '@/framework/world/chunk/ChunkRepository';
 import StorageAdapter from '@/framework/storage/StorageAdapter';
 import InventoryRepository from '@/components/inventory/InventoryRepository';
 

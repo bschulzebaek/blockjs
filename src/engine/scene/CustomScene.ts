@@ -1,5 +1,5 @@
 import Player from '@/components/player/Player';
-import World from '@/world/World';
+import World from '@/framework/world/World';
 import { Camera, Object3D } from 'three';
 import ComponentRegistry, { DynamicComponent, StaticComponent } from '@/engine/scene/ComponentRegistry';
 

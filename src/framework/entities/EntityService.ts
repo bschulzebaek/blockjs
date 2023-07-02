@@ -1,4 +1,5 @@
 import Player from '@/components/player/Player';
+import PlayerFactory from '@/components/player/PlayerFactory';
 import { CHUNK_SIZE } from '@/configuration';
 import GlobalState from '@/engine/worker/states/GlobalState';
 import Entity from '@/framework/entities/Entity';
@@ -19,18 +20,18 @@ export default class EntityService {
         const scene = GlobalState.getScene();
         const entities = await this.repository.readAll();
 
-        entities.forEach((entity) => {
-            const _entity = EntityFactory.fromStorageObject(entity, scene);
+        await Promise.all(entities.map(async (entity) => {
+            const _entity = await EntityFactory.fromStorageObject(entity);
 
             if (!_entity) {
                 throw new Error(`Unknown entity of type "${entity.type}"`);
             }
 
             this.registry.set(entity.id, _entity);
-        });
+        }));
 
         if (!this.registry.has('player')) {
-            this.registry.set('player', Player.createNew(scene));
+            this.registry.set('player', await PlayerFactory.createNew());
         }
 
         Array.from(this.registry.values()).forEach((entity) => {
