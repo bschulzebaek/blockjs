@@ -2,14 +2,14 @@ enum Features {
     INVENTORY = 'INVENTORY',
     DEBUG = 'DEBUG',
     CURSOR = 'CURSOR',
-    LIGHT_MAP = 'LIGHT_MAP',
+    LIGHT = 'LIGHT',
 }
 
 const _features = {
     DEBUG: false,
     INVENTORY: true,
     CURSOR: true,
-    LIGHT_MAP: true,
+    LIGHT: false,
 }
 
 class FeatureFlags {

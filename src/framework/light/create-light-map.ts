@@ -19,7 +19,7 @@ interface LightNodeTask {
 const queue = new ProcessingQueue<LightNodeTask>(propagateNeighbours);
 
 export default async function createLightMap(chunk: Chunk, accessor: WorldAccessor) {
-    if (!FeatureFlags.get(Features.LIGHT_MAP)) {
+    if (!FeatureFlags.get(Features.LIGHT)) {
         return setFallbackLight(chunk);
     }
 
@@ -87,7 +87,6 @@ function applySkyMask(chunk: Chunk) {
                 }
 
                 lightMap.set(_position, _level);
-
 
                 queue.addDataBeforeStart({
                     x: _x,
