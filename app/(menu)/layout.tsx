@@ -1,5 +1,6 @@
 import '../styles/index.scss';
 import styles from '../styles/layout/menu.module.scss';
+import { Analytics } from '@vercel/analytics/react';
 import Image from 'next/image';
 
 export const metadata = {
@@ -14,7 +15,7 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-        <body suppressHydrationWarning={true} >
+        <body suppressHydrationWarning={true}>
         <div className={styles.menuBackground}>
             <Image
                 src={'/interface/background.jpg'}
@@ -27,6 +28,7 @@ export default function RootLayout({
         <main className={styles.menuContent}>
             {children}
         </main>
+        <Analytics/>
         </body>
         </html>
     );
