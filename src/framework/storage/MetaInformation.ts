@@ -6,4 +6,6 @@ type MetaInformation = {
     updatedAt: number;
 };
 
-export default MetaInformation;
+export {
+    type MetaInformation as default
+}

@@ -20,8 +20,9 @@ onUnmounted(() => {
     Lifecycle.destroySession();
 });
 
-onMounted(() => {
-    Lifecycle.initSession(route.params.id, canvas.value);
+onMounted(async () => {
+    await Lifecycle.initSession(route.params.id as string, canvas.value as HTMLCanvasElement);
+    await Lifecycle.startSession();
 });
 
 </script>

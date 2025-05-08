@@ -9,11 +9,11 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import type MetaInformation from '../../framework/storage/MetaInformation.ts';
-import generateSeed from '../../lib/generate-seed.ts';
 import ReservedFileNames from '../../framework/storage/reserved-file-names.ts';
+import generateSeed from '../../lib/generate-seed.ts';
 
 const router = useRouter();
 const name = ref('New World');

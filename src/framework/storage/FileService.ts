@@ -1,11 +1,18 @@
 import type MetaInformation from './MetaInformation.ts';
 import OPFSAdapter from './OPFSAdapter.ts';
 import ReservedFileNames from './reserved-file-names.ts';
+import AppInitEvent from '../lifecycle/app/AppInitEvent.ts';
 
 export default class FileService {
     private adapter = new OPFSAdapter();
+    
+    constructor() {
+        window.addEventListener(AppInitEvent.NAME, ((event: AppInitEvent) => {
+            event.tasks.push(this.init());
+        }) as EventListener);
+    }
 
-    public async init() {
+    private init = async () => {
         await this.adapter.init();
     }
     

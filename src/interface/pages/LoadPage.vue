@@ -12,7 +12,7 @@
                     name: 'session', 
                     params: { 
                         id: world.id, 
-                    } 
+                    },
                 }"
                 style="display: flex; flex-direction: column;"
             >
