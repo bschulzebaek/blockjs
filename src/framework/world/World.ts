@@ -21,13 +21,11 @@ export default class World extends Group {
 
     public init = async () => {
         await this.chunkWorker.init();
-        // Calculate initial grid and trigger initial chunk loading
         this.refreshGrid();
         await this.hydrate();
     }
     
     public hydrate = async () => {
-        // First, sort chunks by distance from center
         const sortedGrid = Array.from(this.grid).sort((a, b) => {
             const [ax, ay, az] = a.split(':').map((n) => parseInt(n, 10));
             const [bx, by, bz] = b.split(':').map((n) => parseInt(n, 10));
@@ -38,17 +36,13 @@ export default class World extends Group {
             return aDistance - bDistance;
         });
 
-        // Convert grid positions to chunk coordinates
         const chunksToGenerate = sortedGrid.map(position => {
             const [x, y, z] = position.split(':').map((n) => parseInt(n, 10));
             return { x, y, z };
         });
 
-        // Generate all chunks in the worker
         await this.chunkWorker.generateChunks(chunksToGenerate);
-        console.debug('[World] All chunks generated');
 
-        // Create meshes for chunks that don't exist yet
         const chunksToLoad = chunksToGenerate.filter(({ x, y, z }) => !this.getObjectByName(`${x}:${y}:${z}`));
         
         for (const { x, y, z } of chunksToLoad) {
@@ -57,13 +51,9 @@ export default class World extends Group {
                 const chunk = new Chunk(x, y, z);
                 chunk.hydrate(chunkData);
                 this.add(chunk);
-                console.debug(`[World] Created mesh for chunk at ${x}:${y}:${z}`);
             }
         }
-        
-        console.debug('[World] All meshes created');
 
-        // Only after all new chunks are loaded, refresh the grid to unload old chunks
         this.refreshGrid();
     }
 
@@ -81,8 +71,6 @@ export default class World extends Group {
         if (!chunk) {
             throw new Error(`Chunk at ${chunkX}:${chunkY}:${chunkZ} is not loaded!`);
         }
-
-        console.debug(`[World] Setting block ${x}:${y}:${z} -> ${block}`);
 
         await this.chunkWorker.setBlock(x, y, z, block);
         
@@ -128,8 +116,16 @@ export default class World extends Group {
     
     private refreshGrid = () => {
         const grid = this.calculateGrid();
+        const chunksToRemove = new Set<string>();
         
-        // First add new chunks to the grid
+        if (this.unloadChunks) {
+            this.grid.forEach((chunkId) => {
+                if (!grid.has(chunkId)) {
+                    chunksToRemove.add(chunkId);
+                }
+            });
+        }
+        
         if (this.loadChunks) {
             grid.forEach((chunkId) => {
                 if (!this.grid.has(chunkId)) {
@@ -138,12 +134,16 @@ export default class World extends Group {
             });
         }
         
-        // Then unload chunks that are too far away
         if (this.unloadChunks) {
-            this.grid.forEach((chunkId) => {
-                if (!grid.has(chunkId)) {
-                    this.grid.delete(chunkId);
-                    (this.getObjectByName(chunkId) as Chunk)?.destroy()
+            chunksToRemove.forEach((chunkId) => {
+                this.grid.delete(chunkId);
+                const chunk = this.getObjectByName(chunkId) as Chunk;
+                if (chunk) {
+                    chunk.destroy();
+                    const gc = (globalThis as any).gc;
+                    if (typeof gc === 'function') {
+                        gc();
+                    }
                 }
             });
         }
@@ -176,17 +176,15 @@ export default class World extends Group {
     }
 
     public updateCenter = (newCenter: Vector3) => {
-        // Calculate current chunk coordinates
         const currentChunkX = Math.floor(newCenter.x / CHUNK.WIDTH);
+        const currentChunkY = Math.floor(newCenter.y / CHUNK.HEIGHT);
         const currentChunkZ = Math.floor(newCenter.z / CHUNK.WIDTH);
         const lastChunkX = Math.floor(this.center.x / CHUNK.WIDTH);
+        const lastChunkY = Math.floor(this.center.y / CHUNK.HEIGHT);
         const lastChunkZ = Math.floor(this.center.z / CHUNK.WIDTH);
 
-        // Check if we've crossed a chunk boundary
-        if (currentChunkX !== lastChunkX || currentChunkZ !== lastChunkZ) {
+        if (currentChunkX !== lastChunkX || currentChunkY !== lastChunkY || currentChunkZ !== lastChunkZ) {
             this.center.copy(newCenter);
-            
-            // Refresh the grid and reload chunks
             this.hydrate().catch(error => {
                 console.error('[World] Error updating chunks:', error);
             });

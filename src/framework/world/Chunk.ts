@@ -1,4 +1,4 @@
-import { Object3D } from 'three';
+import { Object3D, Mesh, Material, BufferGeometry } from 'three';
 import { CHUNK } from '../../defaults.const.ts';
 import type GenerationResponse from './worker/GenerationResponse.ts';
 import createMesh from './geometry/create-mesh.ts';
@@ -63,6 +63,42 @@ export default class Chunk extends Object3D {
     }
 
     public destroy() {
+        // Remove and dispose of opaque mesh
+        const opaqueMesh = this.getObjectByName(Chunk.MESH_OPAQUE) as Mesh<BufferGeometry, Material | Material[]>;
+        if (opaqueMesh) {
+            opaqueMesh.removeFromParent();
+            if (opaqueMesh.geometry) {
+                opaqueMesh.geometry.dispose();
+            }
+            if (opaqueMesh.material) {
+                if (Array.isArray(opaqueMesh.material)) {
+                    opaqueMesh.material.forEach(material => material.dispose());
+                } else {
+                    opaqueMesh.material.dispose();
+                }
+            }
+        }
+
+        // Remove and dispose of transparent mesh
+        const transparentMesh = this.getObjectByName(Chunk.MESH_TRANSPARENT) as Mesh<BufferGeometry, Material | Material[]>;
+        if (transparentMesh) {
+            transparentMesh.removeFromParent();
+            if (transparentMesh.geometry) {
+                transparentMesh.geometry.dispose();
+            }
+            if (transparentMesh.material) {
+                if (Array.isArray(transparentMesh.material)) {
+                    transparentMesh.material.forEach(material => material.dispose());
+                } else {
+                    transparentMesh.material.dispose();
+                }
+            }
+        }
+
+        // Clear the blocks array
+        this.blocks = new Uint8Array(0);
+
+        // Remove from parent
         this.removeFromParent();
     }
 

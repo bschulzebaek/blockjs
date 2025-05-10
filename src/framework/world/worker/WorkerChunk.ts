@@ -12,6 +12,7 @@ export default class WorkerChunk {
     public x: number;
     public y: number;
     public z: number;
+    public isModified = false;
     
     constructor(
         x: number,
@@ -19,12 +20,14 @@ export default class WorkerChunk {
         z: number,
         blocks: Uint8Array = new Uint8Array(CHUNK.WIDTH * CHUNK.HEIGHT * CHUNK.WIDTH),
         blockData = new Map<string, unknown>(),
+        isModified = false,
     ) {
         this.x = x;
         this.y = y;
         this.z = z;
         this.blocks = blocks;
         this.blockData = blockData;
+        this.isModified = isModified;
     }
     
     static getId(x: number, y: number, z: number): string {
