@@ -3,8 +3,8 @@ import DynamicEntityContainer from './DynamicEntityContainer.ts';
 
 export default class Scene extends ThreeScene {
     public dynamicEntities: DynamicEntityContainer; 
-    public camera = new PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000);
-    private renderer = new WebGLRenderer({
+    public camera = new PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.01, 1000);
+    public renderer = new WebGLRenderer({
         canvas: BlockJS.canvas as HTMLCanvasElement,
         antialias: true,
     });
@@ -16,12 +16,6 @@ export default class Scene extends ThreeScene {
         
         this.dynamicEntities = new DynamicEntityContainer();
         this.add(this.dynamicEntities);
-        
-        window.addEventListener('resize', () => {
-            this.camera.aspect = window.innerWidth / window.innerHeight;
-            this.camera.updateProjectionMatrix();
-            this.renderer.setSize(window.innerWidth, window.innerHeight);
-        });
     }
 
     public start = async () => {

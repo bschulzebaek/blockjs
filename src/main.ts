@@ -1,3 +1,7 @@
-import './subscriber';
-import './framework/BlockJS';
-import './interface';
+import loadSubscriber from './subscriber.ts';
+
+await loadSubscriber().then(() => {
+    import('./framework/BlockJS');
+    import('./interface');
+})
+

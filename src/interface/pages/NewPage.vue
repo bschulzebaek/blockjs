@@ -13,11 +13,23 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import type MetaInformation from '../../framework/storage/MetaInformation.ts';
 import ReservedFileNames from '../../framework/storage/reserved-file-names.ts';
-import generateSeed from '../../lib/generate-seed.ts';
 
 const router = useRouter();
 const name = ref('New World');
 const seed = ref('');
+
+const CHARACTERS = 'abcdef01234567890123456789';
+const SEED_LENGTH = 16;
+
+function generateSeed(): string {
+    let seed = '';
+
+    for (let i = 0; i < SEED_LENGTH; i++) {
+        seed += CHARACTERS.charAt(Math.floor(Math.random() * CHARACTERS.length));
+    }
+
+    return seed;
+}
 
 async function onSubmit() {
     if (!name.value) {

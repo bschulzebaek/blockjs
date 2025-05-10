@@ -1,7 +1,7 @@
 <template>
     <canvas ref="canvas"/>
-    <loading-view v-if="state === SessionStates.LOADING"/>
-    <default-view v-else-if="state === SessionStates.DEFAULT"/>
+    <loading-view v-if="state === SceneStates.LOADING"/>
+    <default-view v-else-if="state === SceneStates.DEFAULT"/>
 </template>
 
 <script setup lang="ts">
@@ -9,22 +9,32 @@ import { onMounted, onUnmounted, useTemplateRef } from 'vue';
 import { useRoute } from 'vue-router';
 import LoadingView from '../views/LoadingView.vue';
 import DefaultView from '../views/DefaultView.vue';
-import { useSessionState, SessionStates } from '../composables/session-state.ts';
-import Lifecycle from '../../framework/lifecycle/Lifecycle.ts';
+import { useSceneState, SceneStates } from '../composables/scene-state.ts';
+import EventHelper from '../../events/EventHelper.ts';
+import SceneLoadEvent from '../../events/scene/SceneLoadEvent.ts';
+import SceneStartEvent from '../../events/scene/SceneStartEvent.ts';
+import SceneDestroyEvent from '../../events/scene/SceneDestroyEvent.ts';
+import SceneCollectEvent from '../../events/scene/SceneCollectEvent.ts';
 
 const canvas = useTemplateRef('canvas')
 const route = useRoute();
-const { state } = useSessionState();
-
-onUnmounted(() => {
-    Lifecycle.destroySession();
-});
+const { state } = useSceneState();
 
 onMounted(async () => {
-    await Lifecycle.initSession(route.params.id as string, canvas.value as HTMLCanvasElement);
-    await Lifecycle.startSession();
+    BlockJS.id = route.params.id as string;
+    BlockJS.canvas = canvas.value as HTMLCanvasElement;
+
+    await EventHelper.publish(SceneLoadEvent);
+    await EventHelper.publish(SceneCollectEvent);
+    await EventHelper.publish(SceneStartEvent);
 });
 
+onUnmounted(async () => {
+    await EventHelper.publish(SceneDestroyEvent);
+
+    BlockJS.canvas = null;
+    BlockJS.id = null;
+});
 </script>
 
 <style scoped>

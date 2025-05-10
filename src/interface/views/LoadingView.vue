@@ -1,5 +1,5 @@
 <template>
-   <loading class="center-absolute"/> 
+    <loading class="center-absolute"/>
 </template>
 
 <script setup>

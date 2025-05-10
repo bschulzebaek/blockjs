@@ -1,0 +1,195 @@
+import { Group, Vector3 } from 'three';
+import Chunk from './Chunk.ts';
+import Grid2D from './Grid2D.ts';
+import { CHUNK, RENDER_DISTANCE_VERTICAL, WORLD_MAX_CHUNK_Y } from '../../defaults.const.ts';
+import ChunkWorkerAdapter from './worker/ChunkWorkerAdapter.ts';
+import { BlockIds, type BlockId } from '../../../data/block-ids.ts';
+
+export default class World extends Group {
+    public readonly type = 'World';
+    public readonly name = 'World';
+    public readonly grid = new Set<string>();
+    
+    public readonly castShadow = false;
+    public readonly receiveShadow = false;
+    
+    public center = new Vector3(0, 0, 0);
+    
+    private chunkWorker = new ChunkWorkerAdapter();
+    private loadChunks = true;
+    private unloadChunks = true;
+
+    public init = async () => {
+        await this.chunkWorker.init();
+        // Calculate initial grid and trigger initial chunk loading
+        this.refreshGrid();
+        await this.hydrate();
+    }
+    
+    public hydrate = async () => {
+        // First, sort chunks by distance from center
+        const sortedGrid = Array.from(this.grid).sort((a, b) => {
+            const [ax, ay, az] = a.split(':').map((n) => parseInt(n, 10));
+            const [bx, by, bz] = b.split(':').map((n) => parseInt(n, 10));
+
+            const aDistance = this.center.distanceTo(new Vector3(ax, ay, az));
+            const bDistance = this.center.distanceTo(new Vector3(bx, by, bz));
+
+            return aDistance - bDistance;
+        });
+
+        // Convert grid positions to chunk coordinates
+        const chunksToGenerate = sortedGrid.map(position => {
+            const [x, y, z] = position.split(':').map((n) => parseInt(n, 10));
+            return { x, y, z };
+        });
+
+        // Generate all chunks in the worker
+        await this.chunkWorker.generateChunks(chunksToGenerate);
+        console.debug('[World] All chunks generated');
+
+        // Create meshes for chunks that don't exist yet
+        const chunksToLoad = chunksToGenerate.filter(({ x, y, z }) => !this.getObjectByName(`${x}:${y}:${z}`));
+        
+        for (const { x, y, z } of chunksToLoad) {
+            const chunkData = await this.chunkWorker.getChunkData(x, y, z);
+            if (chunkData) {
+                const chunk = new Chunk(x, y, z);
+                chunk.hydrate(chunkData);
+                this.add(chunk);
+                console.debug(`[World] Created mesh for chunk at ${x}:${y}:${z}`);
+            }
+        }
+        
+        console.debug('[World] All meshes created');
+
+        // Only after all new chunks are loaded, refresh the grid to unload old chunks
+        this.refreshGrid();
+    }
+
+    public getBlock = async (x: number, y: number, z: number) => {
+        return this.chunkWorker.getBlock(x, y, z);
+    }
+
+    public setBlock = async (x: number, y: number, z: number, block: BlockId) => {
+        const chunkX = Math.floor(x / CHUNK.WIDTH);
+        const chunkY = Math.floor(y / CHUNK.HEIGHT);
+        const chunkZ = Math.floor(z / CHUNK.WIDTH);
+
+        const chunk = this.getObjectByName(`${chunkX}:${chunkY}:${chunkZ}`) as Chunk;
+
+        if (!chunk) {
+            throw new Error(`Chunk at ${chunkX}:${chunkY}:${chunkZ} is not loaded!`);
+        }
+
+        console.debug(`[World] Setting block ${x}:${y}:${z} -> ${block}`);
+
+        await this.chunkWorker.setBlock(x, y, z, block);
+        
+        // Get the local position within the chunk
+        const localX = x - chunk.getOffsetX();
+        const localY = y - chunk.getOffsetY();
+        const localZ = z - chunk.getOffsetZ();
+
+        // Check if the block is on a chunk boundary
+        const isOnBoundary = 
+            localX === 0 || localX === CHUNK.WIDTH - 1 ||
+            localY === 0 || localY === CHUNK.HEIGHT - 1 ||
+            localZ === 0 || localZ === CHUNK.WIDTH - 1;
+
+        // Update the current chunk
+        const chunkData = await this.chunkWorker.getChunkData(chunkX, chunkY, chunkZ);
+        if (chunkData) {
+            chunk.hydrate(chunkData);
+        }
+
+        // If the block is on a boundary, update neighboring chunks
+        if (isOnBoundary) {
+            const neighbors = [
+                [chunkX - 1, chunkY, chunkZ],
+                [chunkX + 1, chunkY, chunkZ],
+                [chunkX, chunkY - 1, chunkZ],
+                [chunkX, chunkY + 1, chunkZ],
+                [chunkX, chunkY, chunkZ - 1],
+                [chunkX, chunkY, chunkZ + 1],
+            ];
+
+            for (const [nx, ny, nz] of neighbors) {
+                const neighborChunk = this.getObjectByName(`${nx}:${ny}:${nz}`) as Chunk;
+                if (neighborChunk) {
+                    const neighborData = await this.chunkWorker.getChunkData(nx, ny, nz);
+                    if (neighborData) {
+                        neighborChunk.hydrate(neighborData);
+                    }
+                }
+            }
+        }
+    }
+    
+    private refreshGrid = () => {
+        const grid = this.calculateGrid();
+        
+        // First add new chunks to the grid
+        if (this.loadChunks) {
+            grid.forEach((chunkId) => {
+                if (!this.grid.has(chunkId)) {
+                    this.grid.add(chunkId);
+                }
+            });
+        }
+        
+        // Then unload chunks that are too far away
+        if (this.unloadChunks) {
+            this.grid.forEach((chunkId) => {
+                if (!grid.has(chunkId)) {
+                    this.grid.delete(chunkId);
+                    (this.getObjectByName(chunkId) as Chunk)?.destroy()
+                }
+            });
+        }
+    }
+    
+    private calculateGrid(): Set<string> {
+        const centerChunkX = Math.floor(this.center.x / CHUNK.WIDTH);
+        const centerChunkZ = Math.floor(this.center.z / CHUNK.WIDTH);
+        const grid2d = Grid2D(BlockJS.settings?.renderDistance!, centerChunkX, centerChunkZ);
+        const grid3d = new Set<string>();
+       
+        let yMin = Math.floor(this.center.y / CHUNK.HEIGHT) - RENDER_DISTANCE_VERTICAL;
+        let yMax = Math.floor(this.center.y / CHUNK.HEIGHT) + RENDER_DISTANCE_VERTICAL;
+       
+        if (yMin < 0) {
+            yMin = 0;
+        }
+        
+        if (yMax > WORLD_MAX_CHUNK_Y) {
+            yMax = WORLD_MAX_CHUNK_Y;
+        }
+        
+        grid2d.forEach(([x, z]) => {
+            for (let y = yMin; y <= yMax; y++) {
+                grid3d.add(Chunk.getId(x, y, z));
+            }
+        });
+       
+        return grid3d;
+    }
+
+    public updateCenter = (newCenter: Vector3) => {
+        // Calculate current chunk coordinates
+        const currentChunkX = Math.floor(newCenter.x / CHUNK.WIDTH);
+        const currentChunkZ = Math.floor(newCenter.z / CHUNK.WIDTH);
+        const lastChunkX = Math.floor(this.center.x / CHUNK.WIDTH);
+        const lastChunkZ = Math.floor(this.center.z / CHUNK.WIDTH);
+
+        // Check if we've crossed a chunk boundary
+        if (currentChunkX !== lastChunkX || currentChunkZ !== lastChunkZ) {
+            this.center.copy(newCenter);
+            
+            // Refresh the grid and reload chunks
+            this.hydrate().catch(error => {
+                console.error('[World] Error updating chunks:', error);
+            });
+        }
+    }
+}

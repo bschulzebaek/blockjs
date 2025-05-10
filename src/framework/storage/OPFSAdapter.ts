@@ -25,7 +25,8 @@ export default class OPFSAdapter {
         }
         
         const dirs = [];
-        
+       
+        // @ts-ignore
         for await (const entry of this.root.values()) {
             if (entry instanceof FileSystemDirectoryHandle) {
                 dirs.push(entry);
