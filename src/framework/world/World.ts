@@ -45,16 +45,18 @@ export default class World extends Group {
             return aDistance - bDistance;
         });
 
-        const chunksToGenerate = sortedGrid.map(position => {
-            const [x, y, z] = position.split(':').map((n) => parseInt(n, 10));
-            return { x, y, z };
-        });
+        const chunksToGenerate = sortedGrid
+            .filter(position => !this.getObjectByName(position))
+            .map(position => {
+                const [x, y, z] = position.split(':').map((n) => parseInt(n, 10));
+                return { x, y, z };
+            });
 
-        await this.chunkWorker.generateChunks(chunksToGenerate);
+        if (chunksToGenerate.length > 0) {
+            await this.chunkWorker.generateChunks(chunksToGenerate);
+        }
 
-        const chunksToLoad = chunksToGenerate.filter(({ x, y, z }) => !this.getObjectByName(`${x}:${y}:${z}`));
-        
-        for (const { x, y, z } of chunksToLoad) {
+        for (const { x, y, z } of chunksToGenerate) {
             const chunkData = await this.chunkWorker.getChunkData(x, y, z);
             if (chunkData) {
                 const chunk = new Chunk(x, y, z);
@@ -66,8 +68,18 @@ export default class World extends Group {
         this.refreshGrid();
     }
 
-    public getBlock = async (x: number, y: number, z: number) => {
-        return this.chunkWorker.getBlock(x, y, z);
+    public getBlock = (x: number, y: number, z: number) => {
+        const chunkX = Math.floor(x / CHUNK.WIDTH);
+        const chunkY = Math.floor(y / CHUNK.HEIGHT);
+        const chunkZ = Math.floor(z / CHUNK.WIDTH);
+
+        const chunk = this.getObjectByName(`${chunkX}:${chunkY}:${chunkZ}`) as Chunk;
+
+        if (!chunk) {
+            return BlockIds.AIR;
+        }
+
+        return chunk.getBlockAbsolute(x, y, z);
     }
 
     public setBlock = async (x: number, y: number, z: number, block: BlockId) => {
@@ -83,24 +95,20 @@ export default class World extends Group {
 
         await this.chunkWorker.setBlock(x, y, z, block);
         
-        // Get the local position within the chunk
         const localX = x - chunk.getOffsetX();
         const localY = y - chunk.getOffsetY();
         const localZ = z - chunk.getOffsetZ();
 
-        // Check if the block is on a chunk boundary
         const isOnBoundary = 
             localX === 0 || localX === CHUNK.WIDTH - 1 ||
             localY === 0 || localY === CHUNK.HEIGHT - 1 ||
             localZ === 0 || localZ === CHUNK.WIDTH - 1;
 
-        // Update the current chunk
         const chunkData = await this.chunkWorker.getChunkData(chunkX, chunkY, chunkZ);
         if (chunkData) {
             chunk.hydrate(chunkData);
         }
 
-        // If the block is on a boundary, update neighboring chunks
         if (isOnBoundary) {
             const neighbors = [
                 [chunkX - 1, chunkY, chunkZ],
@@ -187,19 +195,5 @@ export default class World extends Group {
     public updateCenter = (newCenter: Vector3) => {
         this.center.copy(newCenter);
         void this.hydrate();
-    }
-
-    public getBlockSync = (x: number, y: number, z: number): BlockId => {
-        const chunkX = Math.floor(x / CHUNK.WIDTH);
-        const chunkY = Math.floor(y / CHUNK.HEIGHT);
-        const chunkZ = Math.floor(z / CHUNK.WIDTH);
-
-        const chunk = this.getObjectByName(`${chunkX}:${chunkY}:${chunkZ}`) as Chunk;
-        
-        if (!chunk) {
-            return BlockIds.AIR;
-        }
-
-        return chunk.getBlockAbsolute(x, y, z);
     }
 }

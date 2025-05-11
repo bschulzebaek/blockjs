@@ -29,6 +29,8 @@ const config: StateConfig<BlockJSState> = {
                 throw new Error('BlockJS.id or BlockJS.canvas is not set!');
             }
             
+            BlockJS.container.FileService.setWorldId(BlockJS.id);
+            
             const fileContent = await BlockJS.container.FileService.readWorldFile(ReservedFileNames.META);
             BlockJS.meta = JSON.parse(fileContent);
 

@@ -1,17 +1,17 @@
-import type { BlockId } from '../../../../data/block-ids.ts';
-import { CHUNK, CHUNK_GENERATOR, WORLD_MAX_CHUNK_Y } from '../../../defaults.const.ts';
+import type { BlockId } from '../../../data/block-ids.ts';
+import { CHUNK, CHUNK_GENERATOR, WORLD_MAX_CHUNK_Y } from '../../defaults.const.ts';
 import { Vector3 } from 'three';
-import type WorkerWorld from '../WorkerWorld.ts';
-import WorkerChunk from '../WorkerChunk.ts';
-import createGeometry from '../create-geometry.ts';
-import CoordinatesHelper from '../../../lib/CoordinatesHelper.ts';
+import type WorkerWorld from './WorkerWorld.ts';
+import WorkerChunk from './WorkerChunk.ts';
+import createGeometry from './create-geometry.ts';
+import CoordinatesHelper from '../../lib/CoordinatesHelper.ts';
+import ChunkStorage from './ChunkStorage.ts';
 
-export class ChunkManager {
+export class ChunkService {
     private readonly world: WorkerWorld;
+    private readonly storage = new ChunkStorage();
     
-    constructor(
-        world: WorkerWorld,
-    ) {
+    constructor(world: WorkerWorld) {
         this.world = world;
     }
 
@@ -49,16 +49,10 @@ export class ChunkManager {
         }
 
         const index = this.chunkCoordsToIndex(position.x, position.y, position.z);
-        const defaultBlocks = CHUNK_GENERATOR.generate(chunkX, chunkY, chunkZ);
-        const defaultBlockId = defaultBlocks[index];
 
         // Update the block in the chunk
         chunk.blocks[index] = id;
-        
-        // Mark as modified only if the block is different from the default
-        if (id !== defaultBlockId) {
-            chunk.isModified = true;
-        }
+        chunk.isModified = true;
 
         // Get all chunks that need to be updated (current chunk and affected neighbors)
         const chunksToUpdate = this.getAffectedChunks(chunkX, chunkY, chunkZ, position);
@@ -124,20 +118,16 @@ export class ChunkManager {
                 if (this.world.has(aX, aY, aZ)) {
                     return;
                 }
-
+                
                 // Try to load chunk modifications from storage first
-                // const savedData = await this.storage.loadChunk(aX, aY, aZ);
-                // if (savedData) {
-                //     const { blocks } = ChunkSerializer.deserializeChunkData(savedData, aX, aY, aZ);
-                //     const chunk = new WorkerChunk(aX, aY, aZ, blocks, new Map(), true);
-                //     this.world.add(chunk);
-                //     return;
-                // }
+                const savedData = await this.storage.load(aX, aY, aZ);
+                
+                if (savedData) {
+                    return this.world.add(new WorkerChunk(aX, aY, aZ, savedData.blocks, new Map(), true));
+                }
 
                 // If no saved chunk exists, use the default generation
-                const blocks = CHUNK_GENERATOR.generate(aX, aY, aZ);
-                const chunk = new WorkerChunk(aX, aY, aZ, blocks, new Map(), false);
-                this.world.add(chunk);
+                this.world.add(new WorkerChunk(aX, aY, aZ, CHUNK_GENERATOR.generate(aX, aY, aZ), new Map(), false));
             });
 
         await Promise.all(promises);
@@ -150,9 +140,8 @@ export class ChunkManager {
         chunk.ready = true;
     }
 
-    public async saveChunk(_chunk: WorkerChunk): Promise<void> {
-        // const serializedData = ChunkSerializer.serializeChunkData(chunk);
-        // await this.storage.saveChunk(chunk.x, chunk.y, chunk.z, serializedData, chunk.isModified);
+    private saveChunk(chunk: WorkerChunk): Promise<void> {
+        return this.storage.save(chunk);
     }
 
     private worldToChunkCoords(x: number, y: number, z: number): Vector3 {

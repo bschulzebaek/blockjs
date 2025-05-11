@@ -4,9 +4,14 @@ import ReservedFileNames from './reserved-file-names.ts';
 
 export default class FileService {
     private adapter = new OPFSAdapter();
+    private worldId: string | null = null;
 
     public init = async () => {
         await this.adapter.init();
+    }
+    
+    public setWorldId = (worldId: string) => {
+        this.worldId = worldId;
     }
 
     public async readFile(name: string, create = false) {
@@ -20,8 +25,7 @@ export default class FileService {
     }
 
     public async readWorldFile(name: string, create = false) {
-        const worldId = BlockJS.getWorldId();
-        const dir = await this.adapter.getDirectory(worldId, false);
+        const dir = await this.adapter.getDirectory(this.worldId!, false);
         const fileHandle = await dir.getFileHandle(name, {
             create,
         });

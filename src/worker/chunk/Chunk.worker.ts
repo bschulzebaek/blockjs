@@ -1,17 +1,17 @@
 import { expose, transfer } from 'comlink';
 import type ChunkWorkerInterface from './ChunkWorkerInterface.ts';
 import type { BlockId } from '../../../data/block-ids.ts';
-import { BlockIds } from '../../../data/block-ids.ts';
-import { CHUNK } from '../../defaults.const.ts';
 import WorkerWorld from './WorkerWorld.ts';
 import type WorkerChunk from './WorkerChunk.ts';
-import { ChunkManager } from './chunk/ChunkManager.ts';
+import { ChunkService } from './ChunkService.ts';
 import type ChunkData from '../../framework/chunk/ChunkData.ts';
+import FileService from '../../framework/storage/FileService.ts';
 
 class ChunkWorker implements ChunkWorkerInterface {
     public id = '';
     public world = new WorkerWorld();
-    private chunkManager!: ChunkManager;
+    public fileService = new FileService();
+    private chunkService = new ChunkService(this.world);
 
     constructor() {
         // @ts-ignore
@@ -20,37 +20,26 @@ class ChunkWorker implements ChunkWorkerInterface {
 
     public async init(worldId: string): Promise<void> {
         this.id = worldId;
-        this.chunkManager = new ChunkManager(this.world);
+        await this.fileService.init();
+        this.fileService.setWorldId(worldId);
     }
 
     public async generateChunks(chunks: Array<{ x: number, y: number, z: number }>): Promise<void> {
-        await this.chunkManager.generateChunks(chunks);
+        await this.chunkService.generateChunks(chunks);
     }
 
     public async getChunkData(x: number, y: number, z: number): Promise<ChunkData | null> {
         const chunk = this.world.get(x, y, z);
+        
         if (!chunk || !chunk.ready) {
             return null;
         }
+        
         return this.getResponse(chunk);
     }
 
-    public async getBlock(x: number, y: number, z: number): Promise<BlockId> {
-        const chunk = this.world.get(
-            Math.floor(x / CHUNK.WIDTH),
-            Math.floor(y / CHUNK.HEIGHT),
-            Math.floor(z / CHUNK.WIDTH)
-        );
-        
-        if (!chunk) {
-            return BlockIds.AIR;
-        }
-
-        return chunk.getBlockAbsolute(x, y, z);
-    }
-
     public async setBlock(x: number, y: number, z: number, id: BlockId): Promise<void> {
-        await this.chunkManager.setBlock(x, y, z, id);
+        await this.chunkService.setBlock(x, y, z, id);
     }
 
     private getResponse(chunk: WorkerChunk): ChunkData {
@@ -90,15 +79,6 @@ class ChunkWorker implements ChunkWorkerInterface {
         const dst = new ArrayBuffer(source.byteLength);
         new Float32Array(dst).set(new Float32Array(source));
         return dst;
-    }
-
-    public async invalidateChunk(x: number, y: number, z: number): Promise<void> {
-        const chunk = this.world.get(x, y, z);
-        if (chunk) {
-            chunk.ready = false;
-            await this.chunkManager.generateMesh(chunk);
-            await this.chunkManager.saveChunk(chunk);
-        }
     }
 }
 

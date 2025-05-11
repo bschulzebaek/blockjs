@@ -24,14 +24,6 @@ export default class ChunkWorkerAdapter {
         return this.worker.getChunkData(x, y, z);
     }
     
-    public invalidateChunk = async (x: number, y: number, z: number) => {
-        await this.worker.invalidateChunk(x, y, z);
-    }
-    
-    public getBlock = async (x: number, y: number, z: number): Promise<BlockId> => {
-        return this.worker.getBlock(x, y, z);
-    }
-    
     public setBlock = async (x: number, y: number, z: number, id: BlockId): Promise<void> => {
         await this.worker.setBlock(x, y, z, id);
     }
