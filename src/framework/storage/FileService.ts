@@ -4,15 +4,26 @@ import ReservedFileNames from './reserved-file-names.ts';
 
 export default class FileService {
     private adapter = new OPFSAdapter();
-    
+
     public init = async () => {
         await this.adapter.init();
     }
-    
-    public async readFile(name: string, directoryId?: string, create = false) {
-        const dir = await this.adapter.getDirectory(directoryId, false);
-        const fileHandle = await dir.getFileHandle(name, { 
-            create, 
+
+    public async readFile(name: string, create = false) {
+        const dir = await this.adapter.getDirectory(undefined, false);
+        const fileHandle = await dir.getFileHandle(name, {
+            create,
+        });
+        
+        const file = await fileHandle.getFile();
+        return file.text();
+    }
+
+    public async readWorldFile(name: string, create = false) {
+        const worldId = BlockJS.getWorldId();
+        const dir = await this.adapter.getDirectory(worldId, false);
+        const fileHandle = await dir.getFileHandle(name, {
+            create,
         });
         
         const file = await fileHandle.getFile();

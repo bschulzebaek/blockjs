@@ -35,7 +35,7 @@ onMounted(() => {
 });
 
 async function fetchWorlds() {
-    const files = await BlockJS.fs.getAllMetaFiles();
+    const files = await BlockJS.container.FileService.getAllMetaFiles();
 
     worlds.value = files.sort((a, b) => {
         return b.updatedAt - a.updatedAt;

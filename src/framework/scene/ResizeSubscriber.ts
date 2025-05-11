@@ -1,5 +1,6 @@
 window.addEventListener('resize', () => {
-    const { canvas, scene } = BlockJS;
+    const canvas = BlockJS.canvas;
+    const scene = BlockJS.container.Scene;
 
     if (!canvas || !scene) {
         return;

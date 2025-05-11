@@ -1,6 +1,6 @@
 <template>
     <h1>Settings</h1>
-    
+
     <div style="display: flex; flex-direction: column; gap: 0.5rem; padding: 1rem;">
         <label for="renderDistance">Render Distance</label>
         <input v-model="settings.renderDistance" id="renderDistance" type="number" min="1" max="32" step="1">
@@ -11,11 +11,15 @@
 
 <script setup lang="ts">
 import ReservedFileNames from '../../framework/storage/reserved-file-names.ts';
+import { ref, onMounted } from 'vue';
+let settings = ref({});
 
-const settings = BlockJS.settings;
+onMounted(async () => {
+    settings.value = BlockJS.settings;
+});
 
 function onSave() {
-    BlockJS.settings = settings;
-    BlockJS.fs.writeFile(ReservedFileNames.SETTINGS, JSON.stringify(settings));
+    BlockJS.settings = settings.value;
+    BlockJS.container.FileService.writeFile(ReservedFileNames.SETTINGS, JSON.stringify(settings.value));
 }
 </script>

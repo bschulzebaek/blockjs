@@ -21,18 +21,20 @@ const faceNames = {
 }
 
 export default class Cursor extends Object3D {
-    public name = 'cursor';
-    private raycaster: BlockRaycaster;
+    public readonly type = 'cursor';
+    
     public visible = false;
     public result: RaycastResult | null = null;
 
     public block: BlockId = BlockIds.AIR;
     public facing = faceNames['-1'];
 
-    constructor() {
+    private raycaster: BlockRaycaster;
+
+    constructor(raycaster: BlockRaycaster) {
         super();
 
-        this.raycaster = new BlockRaycaster(BlockJS.world!, BlockJS.scene!.camera);
+        this.raycaster = raycaster;
 
         const geometry = new BoxGeometry(1.001, 1.001, 1.001);
         const material = new MeshStandardMaterial({
@@ -41,7 +43,7 @@ export default class Cursor extends Object3D {
             opacity: 0.15,
         });
         const mesh = new Mesh(geometry, material);
-        const outline =  new BoxHelper(mesh, 0x333333);
+        const outline = new BoxHelper(mesh, 0x333333);
 
         this.add(mesh, outline);
     }

@@ -1,8 +1,8 @@
-import { Group, Object3D } from 'three';
+import { Group } from 'three';
 
-type DynamicEntity = Object3D & {
-    update: () => void | Promise<void>;
-}
+type DynamicEntity = {
+    update?: () => void | Promise<void>;
+} & Group;
 
 export default class DynamicEntityContainer extends Group {
     public readonly type = 'DynamicEntityContainer';

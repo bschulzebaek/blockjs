@@ -1,3 +1,3 @@
-export default interface GenerationInterface {
+export default interface GeneratorInterface {
     generate(x: number, y: number, z: number): Uint8Array;
 }

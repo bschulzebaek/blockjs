@@ -1,7 +1,3 @@
-import EventHelper from '../../events/EventHelper.ts';
-import SceneStopEvent from '../../events/scene/SceneStopEvent.ts';
-import SceneStartEvent from '../../events/scene/SceneStartEvent.ts';
-
 type KeyDownHandler = (event: KeyboardEvent) => void;
 type KeyUpHandler = (event: KeyboardEvent) => void;
 type MouseEventHandler = (event: MouseEvent) => void;
@@ -13,6 +9,7 @@ const InputAction = {
     MOVE_RIGHT: 'move_right',
     MOVE_UP: 'move_up',
     MOVE_DOWN: 'move_down',
+    SPRINT: 'sprint',
 }
 
 type InputActionName = typeof InputAction[keyof typeof InputAction];
@@ -24,12 +21,9 @@ const defaultKeyMapping: Record<InputActionName, string> = {
     [InputAction.MOVE_RIGHT]: 'KeyD',
     [InputAction.MOVE_UP]: 'Space',
     [InputAction.MOVE_DOWN]: 'ShiftLeft',
+    [InputAction.SPRINT]: 'ControlLeft',
 };
 
-/**
- * A helper for binding specific in-game actions to a configurable user input.
- * Actions are only called if the scene is active and the pointer is locked to the main canvas.
- */
 class InputMapper {
     private leftClickHandler: MouseEventHandler | null = null;
     private rightClickHandler: MouseEventHandler | null = null;
@@ -51,14 +45,6 @@ class InputMapper {
         document.addEventListener('pointerlockchange', () => {
             this.lockActive = document.pointerLockElement !== null;
             this.updateListeners();
-        });
-
-        EventHelper.subscribe(SceneStartEvent.NAME, () => {
-            this.start();
-        });
-    
-        EventHelper.subscribe(SceneStopEvent.NAME, () => {
-            this.stop();
         });
     }
 
@@ -90,12 +76,12 @@ class InputMapper {
         this.rightClickHandler = handler;
     }
 
-    private start = () => {
+    public start = () => {
         this.sceneActive = true;
         this.updateListeners();
     }
 
-    private stop = () => {
+    public stop = () => {
         this.sceneActive = false;
         this.updateListeners();
     }

@@ -1,9 +1,10 @@
 import { Group, Vector3 } from 'three';
-import Chunk from './Chunk.ts';
+import Chunk from '../chunk/Chunk.ts';
 import Grid2D from './Grid2D.ts';
 import { CHUNK, RENDER_DISTANCE_VERTICAL, WORLD_MAX_CHUNK_Y } from '../../defaults.const.ts';
-import ChunkWorkerAdapter from './worker/ChunkWorkerAdapter.ts';
 import { BlockIds, type BlockId } from '../../../data/block-ids.ts';
+import OutOfBoundsError from './OutOfBoundsError.ts';
+import type ChunkWorkerAdapter from '../../worker/chunk/ChunkWorkerAdapter.ts';
 
 export default class World extends Group {
     public readonly type = 'World';
@@ -15,12 +16,20 @@ export default class World extends Group {
     
     public center = new Vector3(0, 0, 0);
     
-    private chunkWorker = new ChunkWorkerAdapter();
     private loadChunks = true;
     private unloadChunks = true;
+    
+    private readonly chunkWorker: ChunkWorkerAdapter;
 
+    constructor(chunkWorker: ChunkWorkerAdapter) {
+        super();
+        
+        this.chunkWorker = chunkWorker;
+    }
+    
     public init = async () => {
         await this.chunkWorker.init();
+        // TODO: get initial center position -> refreshGrid
         this.refreshGrid();
         await this.hydrate();
     }
@@ -69,7 +78,7 @@ export default class World extends Group {
         const chunk = this.getObjectByName(`${chunkX}:${chunkY}:${chunkZ}`) as Chunk;
 
         if (!chunk) {
-            throw new Error(`Chunk at ${chunkX}:${chunkY}:${chunkZ} is not loaded!`);
+            throw new OutOfBoundsError(x, y, z);
         }
 
         await this.chunkWorker.setBlock(x, y, z, block);
@@ -176,18 +185,21 @@ export default class World extends Group {
     }
 
     public updateCenter = (newCenter: Vector3) => {
-        const currentChunkX = Math.floor(newCenter.x / CHUNK.WIDTH);
-        const currentChunkY = Math.floor(newCenter.y / CHUNK.HEIGHT);
-        const currentChunkZ = Math.floor(newCenter.z / CHUNK.WIDTH);
-        const lastChunkX = Math.floor(this.center.x / CHUNK.WIDTH);
-        const lastChunkY = Math.floor(this.center.y / CHUNK.HEIGHT);
-        const lastChunkZ = Math.floor(this.center.z / CHUNK.WIDTH);
+        this.center.copy(newCenter);
+        void this.hydrate();
+    }
 
-        if (currentChunkX !== lastChunkX || currentChunkY !== lastChunkY || currentChunkZ !== lastChunkZ) {
-            this.center.copy(newCenter);
-            this.hydrate().catch(error => {
-                console.error('[World] Error updating chunks:', error);
-            });
+    public getBlockSync = (x: number, y: number, z: number): BlockId => {
+        const chunkX = Math.floor(x / CHUNK.WIDTH);
+        const chunkY = Math.floor(y / CHUNK.HEIGHT);
+        const chunkZ = Math.floor(z / CHUNK.WIDTH);
+
+        const chunk = this.getObjectByName(`${chunkX}:${chunkY}:${chunkZ}`) as Chunk;
+        
+        if (!chunk) {
+            return BlockIds.AIR;
         }
+
+        return chunk.getBlockAbsolute(x, y, z);
     }
 }

@@ -5,35 +5,37 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, useTemplateRef } from 'vue';
-import { useRoute } from 'vue-router';
+import { onMounted, onUnmounted, useTemplateRef, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import LoadingView from '../views/LoadingView.vue';
 import DefaultView from '../views/DefaultView.vue';
-import { useSceneState, SceneStates } from '../composables/scene-state.ts';
-import EventHelper from '../../events/EventHelper.ts';
-import SceneLoadEvent from '../../events/scene/SceneLoadEvent.ts';
-import SceneStartEvent from '../../events/scene/SceneStartEvent.ts';
-import SceneDestroyEvent from '../../events/scene/SceneDestroyEvent.ts';
-import SceneCollectEvent from '../../events/scene/SceneCollectEvent.ts';
 
-const canvas = useTemplateRef('canvas')
+const SceneStates = {
+    LOADING: 'loading',
+    DEFAULT: 'default'
+} as const;
+
+const router = useRouter();
+const canvas = useTemplateRef('canvas');
 const route = useRoute();
-const { state } = useSceneState();
+const state = ref(SceneStates.LOADING);
 
 onMounted(async () => {
     BlockJS.id = route.params.id as string;
     BlockJS.canvas = canvas.value as HTMLCanvasElement;
 
-    await EventHelper.publish(SceneLoadEvent);
-    await EventHelper.publish(SceneCollectEvent);
-    await EventHelper.publish(SceneStartEvent);
+    await StateMachine.transition('SCENE_INIT');
+    await StateMachine.transition('SCENE_ACTIVE');
+    state.value = SceneStates.DEFAULT;
 });
 
 onUnmounted(async () => {
-    await EventHelper.publish(SceneDestroyEvent);
-
-    BlockJS.canvas = null;
     BlockJS.id = null;
+
+    await StateMachine.transition('SCENE_DESTROY');
+    await StateMachine.transition('APP_READY');
+
+    router.push('/');
 });
 </script>
 

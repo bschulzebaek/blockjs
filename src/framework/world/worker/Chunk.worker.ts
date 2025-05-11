@@ -6,15 +6,12 @@ import { BlockIds } from '../../../../data/block-ids.ts';
 import { CHUNK } from '../../../defaults.const.ts';
 import WorkerWorld from './WorkerWorld.ts';
 import type WorkerChunk from './WorkerChunk.ts';
-import FileService from '../../storage/FileService.ts';
-import { ChunkStorage } from './storage/ChunkStorage.ts';
 import { ChunkManager } from './chunk/ChunkManager.ts';
 
 class ChunkWorker implements ChunkWorkerInterface {
     public id = '';
     public world = new WorkerWorld();
     private chunkManager!: ChunkManager;
-    private storage!: ChunkStorage;
 
     constructor() {
         // @ts-ignore
@@ -23,10 +20,7 @@ class ChunkWorker implements ChunkWorkerInterface {
 
     public async init(worldId: string): Promise<void> {
         this.id = worldId;
-        const fileService = new FileService();
-        this.storage = new ChunkStorage(fileService, worldId);
-        this.chunkManager = new ChunkManager(this.world, this.storage);
-        await this.storage.init();
+        this.chunkManager = new ChunkManager(this.world);
     }
 
     public async generateChunks(chunks: Array<{ x: number, y: number, z: number }>): Promise<void> {

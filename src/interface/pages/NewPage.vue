@@ -45,7 +45,7 @@ async function onSubmit() {
         updatedAt: createdAt,
     };
     
-    await BlockJS.fs.writeFile(ReservedFileNames.META, JSON.stringify(meta), meta.id);
+    await BlockJS.container.FileService.writeFile(ReservedFileNames.META, JSON.stringify(meta), meta.id);
     
     router.push({
         name: 'session',

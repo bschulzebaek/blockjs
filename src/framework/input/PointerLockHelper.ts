@@ -1,6 +1,3 @@
-import EventHelper from '../../events/EventHelper.ts';
-import SceneLoadEvent from '../../events/scene/SceneLoadEvent.ts';
-
 class PointerLockHelper {
     static LOCK_LIMIT_MS = 1400; // Chrome prevents too frequent requests, 1 per ~1400ms is the limit
     static LOCK_RETRY_DELAY_MS = 200;
@@ -14,11 +11,9 @@ class PointerLockHelper {
             this.lastChange = Date.now();
             this.lockPromise = null;
         });
-        
-        EventHelper.subscribe(SceneLoadEvent.NAME, this.registerLockEvent);
     }
 
-    private registerLockEvent = () => {
+    public init = () => {
         BlockJS.canvas!.addEventListener('click', this.request);
     }
     

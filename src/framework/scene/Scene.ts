@@ -1,21 +1,26 @@
-import { Scene as ThreeScene, WebGLRenderer, PerspectiveCamera } from 'three';
+import { Scene as ThreeScene, WebGLRenderer, Object3D, PerspectiveCamera } from 'three';
 import DynamicEntityContainer from './DynamicEntityContainer.ts';
 
 export default class Scene extends ThreeScene {
-    public dynamicEntities: DynamicEntityContainer; 
-    public camera = new PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.01, 1000);
-    public renderer = new WebGLRenderer({
+    public camera: PerspectiveCamera;
+
+    private readonly renderer = new WebGLRenderer({
         canvas: BlockJS.canvas as HTMLCanvasElement,
         antialias: true,
     });
+    private readonly dynamicEntities = new DynamicEntityContainer();
     
-    constructor() {
+    constructor(camera: PerspectiveCamera) {
         super();
 
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.camera = camera;
         
-        this.dynamicEntities = new DynamicEntityContainer();
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.add(this.dynamicEntities);
+    }
+
+    public addDynamicEntity = (entity: Object3D) => {
+        this.dynamicEntities.add(entity);
     }
 
     public start = async () => {

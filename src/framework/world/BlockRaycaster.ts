@@ -58,7 +58,7 @@ export default class BlockRaycaster {
         let dist = 0;
 
         for (let i = 0; i < this.far * 3; i++) {
-            const block = await this.world.getBlock(voxel.x, voxel.y, voxel.z);
+            const block = this.world.getBlockSync(voxel.x, voxel.y, voxel.z);
             if (block !== BlockIds.AIR) {
                 return {
                     block,

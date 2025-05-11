@@ -1,51 +1,38 @@
-import { type Camera, Object3D, Vector3, Euler } from 'three';
-import CreativeControls from './CreativeControls.ts';
+import { type Camera, Object3D, Vector3 } from 'three';
 import { CHUNK, PLACED_BLOCK_ID } from '../../defaults.const.ts';
-import type Cursor from './Cursor.ts';
 import { BlockIds } from '../../../data/block-ids.ts';
 import { ChunkFaces } from '../../../data/chunk-faces.ts';
-import { WorldDataStorage } from '../../framework/storage/WorldDataStorage.ts';
+import { PLAYER_CONTROLS } from '../../defaults.const.ts';
+import type Controls from './Controls.ts';
+import type Cursor from './Cursor.ts';
+import type InputMapper from '../../framework/input/InputMapper.ts';
+import type World from '../../framework/world/World.ts';
 
 export default class PlayerContainer extends Object3D {
-    public readonly type = 'Player';
-    public readonly name = 'Player';
+    public readonly type = 'player';
 
     private chunkPosition = new Vector3(0, 0, 0);
-    private storage: WorldDataStorage;
-
-    private readonly controls: CreativeControls;
+    
     private readonly cursor: Cursor;
-    private readonly camera: Camera;
+    private readonly controls: Controls;
+    private readonly world: World;
 
-    constructor(camera: Camera, cursor: Cursor) {
+    constructor(camera: Camera, cursor: Cursor, input: InputMapper, world: World) {
         super();
 
+        this.controls = new PLAYER_CONTROLS(this, camera);
         this.cursor = cursor;
-        this.camera = camera;
-        this.storage = new WorldDataStorage(BlockJS.fs, BlockJS.id!);
-        this.controls = new CreativeControls(this, camera);
+        this.world = world;
 
-        BlockJS.input.bindLeftClick(this.onLeftClick);
-        BlockJS.input.bindRightClick(this.onRightClick);
+        input.bindLeftClick(this.onLeftClick);
+        input.bindRightClick(this.onRightClick);
 
+        camera.rotation.copy(this.rotation);
         camera.position.y = 1.8;
+        
         camera.updateWorldMatrix(true, true);
         
         this.add(camera);
-        this.loadPosition();
-    }
-
-    private async loadPosition() {
-        await this.storage.init();
-        const data = this.storage.getPlayerData();
-        
-        if (data) {
-            const [x, y, z] = data.position;
-            const [rotX, rotY] = data.rotation;
-            this.position.set(x, y, z);
-            this.rotation.y = rotY;
-            this.camera.rotation.x = rotX;
-        }
     }
 
     public onLeftClick = (_: MouseEvent) => {
@@ -55,7 +42,7 @@ export default class PlayerContainer extends Object3D {
             return;
         }
 
-        BlockJS.world!.setBlock(this.cursor.position.x, this.cursor.position.y, this.cursor.position.z, BlockIds.AIR);
+        void this.world.setBlock(this.cursor.position.x, this.cursor.position.y, this.cursor.position.z, BlockIds.AIR);
     }
 
     public onRightClick = (_: MouseEvent) => {
@@ -65,7 +52,6 @@ export default class PlayerContainer extends Object3D {
             return;
         }
 
-        const world = BlockJS.world;
         const position = this.cursor.position;
         const dir = this.cursor.result!.face;
         const target = position.clone();
@@ -76,11 +62,10 @@ export default class PlayerContainer extends Object3D {
         target.y = position.y + n[1];
         target.z = position.z + n[2];
         
-        world!.setBlock(target.x, target.y, target.z, PLACED_BLOCK_ID);
+        this.world.setBlock(target.x, target.y, target.z, PLACED_BLOCK_ID);
     }
 
     public update() {
-        // Update controls first to get latest rotation changes
         this.controls.update();
 
         const chunkX = Math.floor(this.position.x / CHUNK.WIDTH);
@@ -94,38 +79,7 @@ export default class PlayerContainer extends Object3D {
 
         if (chunkChanged) {
             this.chunkPosition.set(chunkX, chunkY, chunkZ);
-            BlockJS.world!.updateCenter(this.position);
+            this.world.updateCenter(this.position);
         }
-
-        // Always update the storage with current state
-        this.storage.updatePlayerState(
-            this.position,
-            {
-                x: this.camera.rotation.x,
-                y: this.rotation.y
-            }
-        );
     }
-
-    public dispose() {
-        this.storage.dispose();
-    }
-
-    // private addDebugGui() {
-    //     const gui = window.BlockJS.ServiceContainer.DebugHelper.gui.addFolder('Player');
-    //
-    //     gui.add(this.position, 'x').name('Position X').listen();
-    //     gui.add(this.position, 'y').name('Position Y').listen();
-    //     gui.add(this.position, 'z').name('Position Z').listen();
-    //
-    //     gui.add(this.controls, 'movementSpeedMultiplier').name('Movement Speed').min(0.1).max(10).step(0.1);
-    //
-    //     gui.add(this.cursor.position, 'x').name('Looking at X').listen();
-    //     gui.add(this.cursor.position, 'y').name('Looking at Y').listen();
-    //     gui.add(this.cursor.position, 'z').name('Looking at Z').listen();
-    //     gui.add(this.cursor, 'block').name('Block ID').listen();
-    //     gui.add(this.cursor, 'facing').name('Side').listen();
-    //
-    //     gui.close();
-    // }
 }

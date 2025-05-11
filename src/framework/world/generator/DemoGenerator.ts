@@ -1,9 +1,9 @@
-import type GenerationInterface from './GeneratorInterface.ts';
+import type GeneratorInterface from './GeneratorInterface.ts';
 import { CHUNK } from '../../../defaults.const.ts';
 import { BlockIds } from '../../../../data/block-ids.ts';
-import CoordinatesHelper from '../CoordinatesHelper.ts';
+import CoordinatesHelper from '../../../lib/CoordinatesHelper.ts';
 
-export default class DemoGenerator implements GenerationInterface {
+export default class DemoGenerator implements GeneratorInterface {
     public generate(_x: number, _y: number, _z: number): Uint8Array {
         const blocks = new Uint8Array(CHUNK.WIDTH * CHUNK.HEIGHT * CHUNK.WIDTH);
 

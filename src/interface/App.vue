@@ -6,13 +6,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import Loading from './components/Loading.vue';
-import EventHelper from '../events/EventHelper.ts';
-import AppInitEvent from '../events/app/AppInitEvent.ts';
 
 let appReady = ref(false);
 
 onMounted(async () => {
-    await EventHelper.publish(AppInitEvent);
+    await StateMachine.waitForTransition();
+
+    await StateMachine.transition('APP_READY');
     appReady.value = true;
 });
 </script>

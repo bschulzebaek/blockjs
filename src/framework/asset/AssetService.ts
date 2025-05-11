@@ -1,8 +1,14 @@
-import { Texture } from 'three';
+import { Texture} from 'three';
 
-const AssetName = {
+export const AssetName = {
     BLOCK_ATLAS: 'block-atlas',
-};
+    SKYBOX_RIGHT: 'skybox-right',
+    SKYBOX_LEFT: 'skybox-left',
+    SKYBOX_TOP: 'skybox-top',
+    SKYBOX_BOTTOM: 'skybox-bottom',
+    SKYBOX_FRONT: 'skybox-front',
+    SKYBOX_BACK: 'skybox-back',
+}
 
 type AssetNameType = typeof AssetName[keyof typeof AssetName];
 
@@ -18,15 +24,39 @@ type Asset = {
 
 const assets: Asset[] = [{
     name: AssetName.BLOCK_ATLAS,
-    path: './textures.png',
+    path: 'textures.png',
+    type: AssetType.TEXTURE,
+}, {
+    name: AssetName.SKYBOX_RIGHT,
+    path: 'skybox/right.png',
+    type: AssetType.TEXTURE,
+}, {
+    name: AssetName.SKYBOX_LEFT,
+    path: 'skybox/left.png',
+    type: AssetType.TEXTURE,
+}, {
+    name: AssetName.SKYBOX_TOP,
+    path: 'skybox/top.png',
+    type: AssetType.TEXTURE,
+}, {
+    name: AssetName.SKYBOX_BOTTOM,
+    path: 'skybox/bottom.png',
+    type: AssetType.TEXTURE,
+}, {
+    name: AssetName.SKYBOX_FRONT,
+    path: 'skybox/front.png',
+    type: AssetType.TEXTURE,
+}, {
+    name: AssetName.SKYBOX_BACK,
+    path: 'skybox/back.png',
     type: AssetType.TEXTURE,
 }];
 
-class AssetService {
+export default class AssetService {
     static DIRECTORY = '/assets/';
     
-    private assets: Map<string, Texture> = new Map();
-    
+    private assets = new Map<AssetNameType, Texture>();
+
     constructor() {
         this.initAssets();
     }
@@ -43,30 +73,18 @@ class AssetService {
         });
     }
 
-    public preload = async () => {
-        let promises: Promise<void>[] = [];
-
-        assets.forEach((asset) => {
-            switch (asset.type) {
-                case AssetType.TEXTURE:
-                    promises.push(this.loadTexture(asset));
-                    break;
-                default:
-                    throw new Error(`Unknown asset loader: ${asset.type}!`);
-            }
-        });
-
-        return Promise.all(promises);
+    public async init(): Promise<void> {
+        await Promise.all(assets.map(this.loadTexture));
     }
 
-    private async loadTexture(asset: Asset) {
+    private loadTexture = async ({ name, path }: Asset) => {
         try {
-            if (!this.assets.has(asset.name)) {
-                throw new Error(`Asset not found: ${asset.name}!`);
+            if (!this.assets.has(name)) {
+                throw new Error(`Asset not found: ${name}!`);
             }
 
-            const texture = this.assets.get(asset.name)!;
-            const src = this.getPath(asset);
+            const texture = this.assets.get(name)!;
+            const src = this.getPath(path);
 
             const response = await fetch(src),
                 blob = await response.blob();
@@ -74,22 +92,16 @@ class AssetService {
             texture.image = await createImageBitmap(blob);
             texture.needsUpdate = true;
         } catch(e) {
-            console.error(`Failed to load asset: ${asset.name}!`);
+            console.error(`Failed to load asset: ${name}!`);
             console.error(e);
         }
     }
 
-    private getPath(asset: Asset) {
-        return `${AssetService.DIRECTORY}${asset.path}`;
+    private getPath(path: string) {
+        return `${AssetService.DIRECTORY}${path}`;
     }
     
     public get = (name: AssetNameType) => {
         return this.assets.get(name)!;
     }
-}
-
-export {
-    AssetService as default,
-    AssetName,
-    
 }
