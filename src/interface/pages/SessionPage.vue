@@ -1,7 +1,7 @@
 <template>
     <canvas ref="canvas"/>
     <loading-view v-if="state === STATES.SCENE_LOADING"/>
-    <default-view v-else-if="state === STATES.SCENE_DEFAULT"/>
+    <default-view v-else-if="state === STATES.SCENE_ACTIVE"/>
     <pause-view v-else-if="state === STATES.SCENE_PAUSED"/>
 </template>
 

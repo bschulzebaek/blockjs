@@ -8,7 +8,9 @@ export interface EntityState {
     type: string;
     position: [number, number, number];
     rotation: [number, number, number];
-    data?: Record<string, unknown>;
+    data?: {
+        [key: string]: unknown;
+    };
 }
 
 /**

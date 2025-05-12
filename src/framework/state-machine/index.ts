@@ -50,6 +50,8 @@ const config: StateConfig<BlockJSState> = {
 
             await BlockJS.container.EntityManager.loadEntities();
 
+            BlockJS.container.World.updateCenter(BlockJS.container.Player.position);
+
             await Promise.all([
                 BlockJS.container.World.init(),
                 BlockJS.container.AssetService.init(),

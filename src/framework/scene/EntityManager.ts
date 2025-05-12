@@ -4,7 +4,7 @@ import type { EntityState, SerializableEntity } from "./SerializableEntity";
 import { v4 as uuidv4 } from 'uuid';
 
 export default class EntityManager {
-    static FILE_NAME = 'entities.json';
+    static FILE_NAME = 'entities';
 
     private scene: Scene;
     private fileService: FileService;
@@ -19,7 +19,8 @@ export default class EntityManager {
 
         try {
             const fileContent = await this.fileService.readWorldFile(EntityManager.FILE_NAME);
-            entities = JSON.parse(fileContent);
+            const decompressedContent = await this.decompressData(fileContent);
+            entities = JSON.parse(decompressedContent);
         } catch (e) {
             entities = this.getDefaultEntityStates();
         } finally {
@@ -41,8 +42,10 @@ export default class EntityManager {
     public async saveEntities() {
         const entities = this.getSerializableEntities();
         const entityStates = entities.map((entity) => entity.serialize());
+        const jsonData = JSON.stringify(entityStates);
+        const compressedData = await this.compressData(jsonData);
 
-        await this.fileService.writeFile(EntityManager.FILE_NAME, JSON.stringify(entityStates), BlockJS.getWorldId());
+        await this.fileService.writeFile(EntityManager.FILE_NAME, compressedData, BlockJS.getWorldId());
     }
 
     public getSerializableEntities(): SerializableEntity[] {
@@ -66,8 +69,65 @@ export default class EntityManager {
                 type: 'FollowCube',
                 position: [Math.random() * 100, 20, Math.random() * 100],
                 rotation: [0, 0, 0],
+                data: {
+                    baseColor: Math.random() * 0xffffff,
+                    currentColor: Math.random() * 0xffffff,
+                },
             });
         }
         return entities;
+    }
+
+    private async compressData(data: string): Promise<string> {
+        const compressed = new CompressionStream('gzip');
+        const writer = compressed.writable.getWriter();
+        const chunks: Uint8Array[] = [];
+        
+        writer.write(new TextEncoder().encode(data));
+        writer.close();
+
+        const reader = compressed.readable.getReader();
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            chunks.push(value);
+        }
+
+        const totalLength = chunks.reduce((sum, chunk) => sum + chunk.length, 0);
+        const result = new Uint8Array(totalLength);
+        let offset = 0;
+        for (const chunk of chunks) {
+            result.set(chunk, offset);
+            offset += chunk.length;
+        }
+
+        return btoa(String.fromCharCode(...result));
+    }
+
+    private async decompressData(base64: string): Promise<string> {
+        const compressed = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+        const decompressed = new DecompressionStream('gzip');
+        const writer = decompressed.writable.getWriter();
+        const chunks: Uint8Array[] = [];
+
+        writer.write(compressed);
+        writer.close();
+
+        const reader = decompressed.readable.getReader();
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            chunks.push(value);
+        }
+
+        const totalLength = chunks.reduce((sum, chunk) => sum + chunk.length, 0);
+        const result = new Uint8Array(totalLength);
+        let offset = 0;
+        for (const chunk of chunks) {
+            result.set(chunk, offset);
+            offset += chunk.length;
+        }
+
+        return new TextDecoder().decode(result);
     }
 }

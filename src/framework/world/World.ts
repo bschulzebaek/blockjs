@@ -15,6 +15,8 @@ export default class World extends Group {
     public readonly receiveShadow = false;
     
     public center = new Vector3(0, 0, 0);
+
+    private initialized = false;
     
     private loadChunks = true;
     private unloadChunks = true;
@@ -29,9 +31,10 @@ export default class World extends Group {
     
     public init = async () => {
         await this.chunkWorker.init();
-        // TODO: get initial center position -> refreshGrid
         this.refreshGrid();
         await this.hydrate();
+
+        this.initialized = true;
     }
     
     public hydrate = async () => {
@@ -194,6 +197,11 @@ export default class World extends Group {
 
     public updateCenter = (newCenter: Vector3) => {
         this.center.copy(newCenter);
+
+        if (!this.initialized) {
+            return;
+        }
+
         void this.hydrate();
     }
 }

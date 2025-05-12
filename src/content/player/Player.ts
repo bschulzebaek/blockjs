@@ -41,7 +41,6 @@ export default class Player extends Object3D implements SerializableEntity {
         this.add(camera);
 
         this.updateChunkPosition();
-        this.world.updateCenter(this.position);
     }
 
     public serialize(): EntityState {
@@ -50,12 +49,19 @@ export default class Player extends Object3D implements SerializableEntity {
             type: this.type,
             position: vector3ToTuple(this.position),
             rotation: [this.rotation.x, this.rotation.y, this.rotation.z],
+            data: {
+                cameraPitch: this.camera.rotation.x
+            }
         };
     }
 
     public deserialize(state: EntityState): void {
         tupleToVector3(this.position, state.position);
         this.rotation.set(state.rotation[0], state.rotation[1], state.rotation[2], 'XYZ');
+        
+        if (state.data?.cameraPitch) {
+            this.camera.rotation.x = state.data.cameraPitch as number;
+        }
 
         this.updateChunkPosition();
     }

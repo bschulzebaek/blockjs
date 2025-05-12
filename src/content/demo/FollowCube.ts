@@ -1,7 +1,15 @@
 import { Vector3, MeshBasicMaterial, Mesh, BoxGeometry, Object3D, Color } from "three";
 import Cube from "./Cube";
+import type { EntityState, SerializableEntity } from "../../framework/scene/SerializableEntity";
+import { tupleToVector3, vector3ToTuple } from "../../lib/VectorUtils";
 
-export default class FollowCube extends Cube {
+type FollowCubeData = {
+    [key: string]: unknown;
+    baseColor: number;
+    currentColor: number;
+}
+
+export default class FollowCube extends Cube implements SerializableEntity {
     public type = 'FollowCube';
     public persist = true;
 
@@ -47,4 +55,29 @@ export default class FollowCube extends Cube {
             this.baseColor.b * (0.7 + 0.3 * Math.sin(t + Math.PI/3))
         );
     };
+
+    public serialize(): EntityState {
+        return {
+            id: this.uuid,
+            type: this.type,
+            position: vector3ToTuple(this.position),
+            rotation: [this.rotation.x, this.rotation.y, this.rotation.z],
+            data: {
+                baseColor: this.baseColor.getHex(),
+                currentColor: this.material.color.getHex(),
+            } as FollowCubeData,
+        };
+    }
+
+    public deserialize(state: EntityState): void {
+        tupleToVector3(this.position, state.position);
+        this.rotation.set(state.rotation[0], state.rotation[1], state.rotation[2], 'XYZ');
+
+        const data = state.data as FollowCubeData | undefined;
+        const baseColor = data?.baseColor ?? 0x00ff00;
+        const currentColor = data?.currentColor ?? baseColor;
+        
+        this.baseColor.setHex(baseColor);
+        this.material.color.setHex(currentColor);
+    }
 } 
