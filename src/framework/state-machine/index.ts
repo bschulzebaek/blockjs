@@ -1,6 +1,18 @@
+import { useSessionState } from "../../interface/composables/useSessionState";
 import ReservedFileNames from "../storage/reserved-file-names";
 import { defaultSettings } from "../storage/Settings";
 import { StateMachine as _StateMachine, type StateConfig } from "./StateMachine";
+
+const { setState } = useSessionState();
+
+export const STATES = {
+    APP_INIT: 'APP_INIT',
+    APP_READY: 'APP_READY',
+    SCENE_INIT: 'SCENE_INIT',
+    SCENE_ACTIVE: 'SCENE_ACTIVE',
+    SCENE_PAUSED: 'SCENE_PAUSED',
+    SCENE_DESTROY: 'SCENE_DESTROY',
+};
 
 type BlockJSState =
     | 'APP_INIT'
@@ -23,47 +35,57 @@ const config: StateConfig<BlockJSState> = {
         },
     },
     SCENE_INIT: {
-        transitions: ['SCENE_ACTIVE'],
+        transitions: ['SCENE_ACTIVE', 'SCENE_PAUSED'],
         onEnter: async () => {
             if (!BlockJS.id || !BlockJS.canvas) { 
                 throw new Error('BlockJS.id or BlockJS.canvas is not set!');
             }
+
+            setState(STATES.SCENE_INIT);
             
             BlockJS.container.FileService.setWorldId(BlockJS.id);
-            
+
             const fileContent = await BlockJS.container.FileService.readWorldFile(ReservedFileNames.META);
             BlockJS.meta = JSON.parse(fileContent);
 
+            await BlockJS.container.EntityManager.loadEntities();
+
             await Promise.all([
-                BlockJS.container.AssetService.init(),
                 BlockJS.container.World.init(),
+                BlockJS.container.AssetService.init(),
                 BlockJS.container.PointerLockHelper.init(),
                 BlockJS.container.Skybox.load(),
             ]);
 
-            // BlockJS.worldDataStorage = new WorldDataStorage();
-            // await BlockJS.worldDataStorage.init();
-
-            // const playerState = await BlockJS.worldDataStorage.getPlayerData();
+            BlockJS.container.Scene.frame();
          },
     },
     SCENE_ACTIVE: {
         transitions: ['SCENE_PAUSED', 'SCENE_DESTROY'],
         onEnter: async () => {
+            await BlockJS.container.PointerLockHelper.lock();
+
             BlockJS.container.Scene.start();
             BlockJS.container.InputMapper.start(); 
+
+            setState(STATES.SCENE_ACTIVE);
         },
         onExit: async () => {
             BlockJS.container.InputMapper.stop();
             BlockJS.container.Scene.stop();
+            await BlockJS.container.EntityManager.saveEntities();
         },
     },
     SCENE_PAUSED: {
         transitions: ['SCENE_ACTIVE', 'SCENE_DESTROY'],
+        onEnter: async () => {
+            setState('SCENE_PAUSED');
+        },
     },
     SCENE_DESTROY: {
         transitions: ['APP_READY'],
         onEnter: async () => {
+            BlockJS.id = null;
             BlockJS.meta = null;
             BlockJS.canvas = null;
             

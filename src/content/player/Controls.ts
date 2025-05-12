@@ -41,16 +41,16 @@ export default class Controls {
 
     private bindInput() {
         document.addEventListener('pointerlockchange', () => {
-            if (document.pointerLockElement === BlockJS.canvas) {
-                return;
-            }
+            if (document.pointerLockElement === null) {
+                this.forward = false;
+                this.backward = false;
+                this.left = false;
+                this.right = false;
+                this.up = false;
+                this.down = false;
 
-            this.forward = false;
-            this.backward = false;
-            this.left = false;
-            this.right = false;
-            this.up = false;
-            this.down = false;
+                this.velocity.set(0, 0, 0);
+            }
         });
 
         const input = BlockJS.container.InputMapper;

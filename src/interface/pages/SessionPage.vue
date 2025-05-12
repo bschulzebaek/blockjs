@@ -1,58 +1,56 @@
 <template>
     <canvas ref="canvas"/>
-    <loading-view v-if="state === SceneStates.LOADING"/>
-    <default-view v-else-if="state === SceneStates.DEFAULT"/>
+    <loading-view v-if="state === STATES.SCENE_LOADING"/>
+    <default-view v-else-if="state === STATES.SCENE_DEFAULT"/>
+    <pause-view v-else-if="state === STATES.SCENE_PAUSED"/>
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, useTemplateRef, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { onMounted, onUnmounted, useTemplateRef } from 'vue';
+import { useRoute } from 'vue-router';
 import LoadingView from '../views/LoadingView.vue';
 import DefaultView from '../views/DefaultView.vue';
+import PauseView from '../views/PauseView.vue';
+import { useSessionState } from '../composables/useSessionState';
+import { STATES } from '../../framework/state-machine';
 
-const SceneStates = {
-    LOADING: 'loading',
-    DEFAULT: 'default'
-} as const;
-
-const router = useRouter();
 const canvas = useTemplateRef('canvas');
 const route = useRoute();
-const state = ref(SceneStates.LOADING);
+const { state } = useSessionState();
+
+function handlePointerLockChange(event) {
+    if (document.pointerLockElement === null && state.value === STATES.SCENE_ACTIVE) {
+        StateMachine.transition(STATES.SCENE_PAUSED);
+    } 
+}
 
 onMounted(async () => {
     BlockJS.id = route.params.id as string;
     BlockJS.canvas = canvas.value as HTMLCanvasElement;
+    await StateMachine.transition(STATES.SCENE_INIT);
+    await StateMachine.transition('SCENE_PAUSED');
 
-    await StateMachine.transition('SCENE_INIT');
-    await StateMachine.transition('SCENE_ACTIVE');
-    state.value = SceneStates.DEFAULT;
+    document.addEventListener('pointerlockchange', handlePointerLockChange);
 });
 
 onUnmounted(async () => {
-    BlockJS.id = null;
-
-    await StateMachine.transition('SCENE_DESTROY');
-    await StateMachine.transition('APP_READY');
-
-    router.push('/');
+    document.removeEventListener('pointerlockchange', handlePointerLockChange);
+    await StateMachine.transition(STATES.SCENE_DESTROY);
+    await StateMachine.transition(STATES.APP_READY);
 });
 </script>
 
 <style scoped>
-canvas,
-.ui-container {
+canvas {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-}
-
-canvas {
     z-index: 0;
     width: 100vw;
     height: 100vh;
+    pointer-events: none;
 }
 
 .ui-container {

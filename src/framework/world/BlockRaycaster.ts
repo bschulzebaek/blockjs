@@ -27,6 +27,14 @@ export default class BlockRaycaster {
         this.origin.setFromMatrixPosition(this.camera.matrixWorld);
         this.direction.copy(this.camera.getWorldDirection(new Vector3())).normalize();
 
+        // early return, if the ray origin is in a block
+        // Normalize the origin to block coordinates
+        const block = this.world.getBlock(Math.round(this.origin.x), Math.round(this.origin.y), Math.round(this.origin.z));
+
+        if (block !== BlockIds.AIR) {
+            return null;
+        }
+
         const pos = this.origin.clone();
         const dir = this.direction.clone();
 

@@ -7,19 +7,25 @@ import type Controls from './Controls.ts';
 import type Cursor from './Cursor.ts';
 import type InputMapper from '../../framework/input/InputMapper.ts';
 import type World from '../../framework/world/World.ts';
+import type { EntityState, SerializableEntity } from '../../framework/scene/SerializableEntity.ts';
+import { vector3ToTuple, tupleToVector3 } from '../../lib/VectorUtils.ts';
 
-export default class PlayerContainer extends Object3D {
-    public readonly type = 'player';
+export default class Player extends Object3D implements SerializableEntity {
+    public readonly type = 'Player';
+    public readonly isSerializable = true;
+    public readonly persist = true;
 
     private chunkPosition = new Vector3(0, 0, 0);
     
     private readonly cursor: Cursor;
     private readonly controls: Controls;
     private readonly world: World;
+    private readonly camera: Camera;
 
     constructor(camera: Camera, cursor: Cursor, input: InputMapper, world: World) {
         super();
 
+        this.camera = camera;
         this.controls = new PLAYER_CONTROLS(this, camera);
         this.cursor = cursor;
         this.world = world;
@@ -33,6 +39,33 @@ export default class PlayerContainer extends Object3D {
         camera.updateWorldMatrix(true, true);
         
         this.add(camera);
+
+        this.updateChunkPosition();
+        this.world.updateCenter(this.position);
+    }
+
+    public serialize(): EntityState {
+        return {
+            id: this.uuid,
+            type: this.type,
+            position: vector3ToTuple(this.position),
+            rotation: [this.rotation.x, this.rotation.y, this.rotation.z],
+        };
+    }
+
+    public deserialize(state: EntityState): void {
+        tupleToVector3(this.position, state.position);
+        this.rotation.set(state.rotation[0], state.rotation[1], state.rotation[2], 'XYZ');
+
+        this.updateChunkPosition();
+    }
+
+    private updateChunkPosition(): void {
+        const chunkX = Math.floor(this.position.x / CHUNK.WIDTH);
+        const chunkY = Math.floor(this.position.y / CHUNK.HEIGHT);
+        const chunkZ = Math.floor(this.position.z / CHUNK.WIDTH);
+        this.chunkPosition.set(chunkX, chunkY, chunkZ);
+        this.world.updateCenter(this.position);
     }
 
     public onLeftClick = (_: MouseEvent) => {
