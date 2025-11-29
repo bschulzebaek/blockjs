@@ -13,9 +13,13 @@ export default class Scene extends ThreeScene {
     constructor(camera: PerspectiveCamera) {
         super();
 
+        const { clientWidth, clientHeight } = BlockJS.canvas as HTMLCanvasElement;
+        camera.aspect = clientWidth / clientHeight;
+        camera.updateProjectionMatrix();
+
         this.camera = camera;
         
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.setSize(clientWidth, clientHeight);
         this.add(this.dynamicEntities);
     }
 
