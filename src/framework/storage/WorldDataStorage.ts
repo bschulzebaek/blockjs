@@ -36,7 +36,7 @@ export class WorldDataStorage {
     }
 
     private setupPageUnloadHandlers() {
-        window.addEventListener('beforeunload', async (e) => {
+        window.addEventListener('beforeunload', async () => {
             if (this.hasUnsavedChanges) {
                 await this.executeSave();
             }

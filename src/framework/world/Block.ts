@@ -1,7 +1,11 @@
 export type BlockType = 'air' | 'stone' | 'dirt' | 'grass' | 'bedrock' | 'water' | 'sand' | 'log' | 'leaves';
 
 export class Block {
-    constructor(public readonly type: BlockType) {}
+    readonly type: BlockType;
+    
+    constructor(type: BlockType) {
+        this.type = type;
+    }
 
     isSolid(): boolean {
         return this.type !== 'air' && this.type !== 'water';

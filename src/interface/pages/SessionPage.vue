@@ -18,7 +18,7 @@ const canvas = useTemplateRef('canvas');
 const route = useRoute();
 const { state } = useSessionState();
 
-function handlePointerLockChange(event) {
+function handlePointerLockChange() {
     if (document.pointerLockElement === null && state.value === STATES.SCENE_ACTIVE) {
         StateMachine.transition(STATES.SCENE_PAUSED);
     } 
@@ -28,7 +28,7 @@ onMounted(async () => {
     BlockJS.id = route.params.id as string;
     BlockJS.canvas = canvas.value as HTMLCanvasElement;
     await StateMachine.transition(STATES.SCENE_INIT);
-    await StateMachine.transition('SCENE_PAUSED');
+    await StateMachine.transition(STATES.SCENE_PAUSED);
 
     document.addEventListener('pointerlockchange', handlePointerLockChange);
 });

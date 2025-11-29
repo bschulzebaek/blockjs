@@ -1,7 +1,7 @@
 import type FileService from "../storage/FileService";
 import type Scene from "./Scene";
 import type { EntityState, SerializableEntity } from "./SerializableEntity";
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid';
 
 export default class EntityManager {
     static FILE_NAME = 'entities';
@@ -63,18 +63,19 @@ export default class EntityManager {
             rotation: [0, 0, 0],
         }];
 
-        for (let i = 0; i < 10; i++) {
-            entities.push({
-                id: uuidv4(),
-                type: 'FollowCube',
-                position: [Math.random() * 100, 20, Math.random() * 100],
-                rotation: [0, 0, 0],
-                data: {
-                    baseColor: Math.random() * 0xffffff,
-                    currentColor: Math.random() * 0xffffff,
-                },
-            });
-        }
+        // for (let i = 0; i < 10; i++) {
+        //     entities.push({
+        //         id: uuidv4(),
+        //         type: 'FollowCube',
+        //         position: [Math.random() * 100, 20, Math.random() * 100],
+        //         rotation: [0, 0, 0],
+        //         data: {
+        //             baseColor: Math.random() * 0xffffff,
+        //             currentColor: Math.random() * 0xffffff,
+        //         },
+        //     });
+        // }
+        
         return entities;
     }
 

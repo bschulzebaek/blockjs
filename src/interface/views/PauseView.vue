@@ -17,7 +17,6 @@
 </template>
 
 <script setup lang="ts">
-import { useSessionState } from '../composables/useSessionState';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 

@@ -6,15 +6,16 @@ import { StateMachine as _StateMachine, type StateConfig } from "./StateMachine"
 const { setState } = useSessionState();
 
 export const STATES = {
-    APP_INIT: 'APP_INIT',
-    APP_READY: 'APP_READY',
-    SCENE_INIT: 'SCENE_INIT',
-    SCENE_ACTIVE: 'SCENE_ACTIVE',
-    SCENE_PAUSED: 'SCENE_PAUSED',
-    SCENE_DESTROY: 'SCENE_DESTROY',
-};
+    APP_INIT: 'APP_INIT' as const,
+    APP_READY: 'APP_READY' as const,
+    SCENE_INIT: 'SCENE_INIT' as const,
+    SCENE_LOADING: 'SCENE_INIT' as const,
+    SCENE_ACTIVE: 'SCENE_ACTIVE' as const,
+    SCENE_PAUSED: 'SCENE_PAUSED' as const,
+    SCENE_DESTROY: 'SCENE_DESTROY' as const,
+} as const;
 
-type BlockJSState =
+export type BlockJSState =
     | 'APP_INIT'
     | 'APP_READY'
     | 'SCENE_INIT'
@@ -81,7 +82,7 @@ const config: StateConfig<BlockJSState> = {
     SCENE_PAUSED: {
         transitions: ['SCENE_ACTIVE', 'SCENE_DESTROY'],
         onEnter: async () => {
-            setState('SCENE_PAUSED');
+            setState(STATES.SCENE_PAUSED);
         },
     },
     SCENE_DESTROY: {
