@@ -12,7 +12,8 @@ import LoadingView from '../views/LoadingView.vue';
 import DefaultView from '../views/DefaultView.vue';
 import PauseView from '../views/PauseView.vue';
 import { useSessionState } from '../composables/useSessionState';
-import { STATES } from '../../framework/state-machine';
+
+import { STATES } from '@/framework/state-machine/states.ts';
 
 const canvas = useTemplateRef('canvas');
 const route = useRoute();
@@ -24,12 +25,12 @@ function handlePointerLockChange() {
     } 
 }
 
-// Block Tab forces pointer lock off
+// Pressing tab in non-fullscreen will lose the pointerlock, since most browsers will focus the address bar or other UI elements.
 addEventListener('keydown', (event: KeyboardEvent) => {
     if (event.code === 'Tab') {
         event.preventDefault();
     }
-})
+});
 
 onMounted(async () => {
     BlockJS.id = route.params.id as string;

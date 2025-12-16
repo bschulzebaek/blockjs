@@ -1,16 +1,12 @@
+@import 'abstract/typography.css';
+
 @import 'elements/button.css';
 @import 'elements/input.css';
-@import './menu.css';
+@import 'elements/headline.css';
 
-@font-face {
-	font-family: 'Minecraft';
-	src: url('/font/Minecraft.ttf') format('ttf'),
-	url('/font/Minecraft.woff2') format('woff2'),
-	url('/font/Minecraft.woff') format('woff');
-}
+@import 'layout/menu.css';
 
 * {
-	font-family: 'Minecraft', Fallback, sans-serif;
 	box-sizing: border-box;
 }
 
@@ -20,11 +16,6 @@
 	color-scheme: light dark;
 	color: rgba(255, 255, 255, 0.87);
 	background-color: #242424;
-
-	font-synthesis: none;
-	text-rendering: optimizeLegibility;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
 }
 
 html,
@@ -33,9 +24,4 @@ body {
 	padding: 0;
 	height: 100%;
 	width: 100%;
-}
-
-h1,
-h2 {
-	text-align: center;
 }

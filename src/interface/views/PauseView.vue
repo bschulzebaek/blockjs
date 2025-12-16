@@ -22,13 +22,15 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
+import { STATES } from '@/framework/state-machine/states.ts';
+
 const router = useRouter();
 
 const resuming = ref(false);
 
 const onResume = async () => {
     resuming.value = true;
-    await StateMachine.transition('SCENE_ACTIVE');
+    await StateMachine.transition(STATES.SCENE_ACTIVE);
     resuming.value = false;
 }
 

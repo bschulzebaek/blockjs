@@ -7,12 +7,14 @@
 import { ref, onMounted } from 'vue';
 import Loading from './components/Loading.vue';
 
+import { STATES } from '@/framework/state-machine/states.ts';
+
 let appReady = ref(false);
 
 onMounted(async () => {
     await StateMachine.waitForTransition();
 
-    await StateMachine.transition('APP_READY');
+    await StateMachine.transition(STATES.APP_READY);
     appReady.value = true;
 });
 </script>
