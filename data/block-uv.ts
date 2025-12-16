@@ -1,5 +1,7 @@
 import { BlockIds  } from './block-ids';
 
+
+// 4x Sides, Top, Bottom
 export const BlockUV: Record<number, [number, number, number, number, number, number, number, number, number, number, number, number]> = {
     [BlockIds.STONE]: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
     [BlockIds.GRASS]: [3, 0, 3, 0, 3, 0, 3, 0, 0, 0, 2, 0],
@@ -55,4 +57,5 @@ export const BlockUV: Record<number, [number, number, number, number, number, nu
 
     [BlockIds.WOODEN_DOOR_A]: [1, 5, 4, 0, 1, 5, 4, 0, 4, 0, 4, 0],
     [BlockIds.WOODEN_DOOR_B]: [1, 6, 4, 0, 1, 6, 4, 0, 4, 0, 4, 0],
+    [BlockIds.TNT]: [8, 0, 8, 0, 8, 0, 8, 0, 9, 0, 10, 0],
 };

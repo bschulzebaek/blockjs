@@ -63,4 +63,8 @@ export default class FileService {
         
         return metaFiles;
     }
+    
+    public deleteWorldFiles(worldId: string) {
+        return this.adapter.deleteDirectory(worldId);
+    }
 }

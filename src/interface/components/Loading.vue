@@ -1,7 +1,3 @@
-<script setup lang="ts">
-
-</script>
-
 <template>
     <div class="loader"></div>
 </template>
@@ -19,6 +15,10 @@
     background-size: 25px 25px;
     background-repeat: no-repeat;
     animation: l11 1.5s infinite;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 @keyframes l11 {
     0%   {background-size:35px 15px,15px 15px,15px 35px,35px 35px}

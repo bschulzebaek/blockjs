@@ -22,7 +22,7 @@ const faceNames = {
 
 export default class Cursor extends Object3D {
     public readonly type = 'cursor';
-    
+
     public visible = false;
     public result: RaycastResult | null = null;
 
@@ -41,6 +41,8 @@ export default class Cursor extends Object3D {
             color: 0xffffff,
             transparent: true,
             opacity: 0.15,
+            depthWrite: false,
+            depthTest: true,
         });
         const mesh = new Mesh(geometry, material);
         const outline = new BoxHelper(mesh, 0x333333);

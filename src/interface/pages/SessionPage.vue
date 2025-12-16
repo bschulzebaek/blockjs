@@ -24,6 +24,13 @@ function handlePointerLockChange() {
     } 
 }
 
+// Block Tab forces pointer lock off
+addEventListener('keydown', (event: KeyboardEvent) => {
+    if (event.code === 'Tab') {
+        event.preventDefault();
+    }
+})
+
 onMounted(async () => {
     BlockJS.id = route.params.id as string;
     BlockJS.canvas = canvas.value as HTMLCanvasElement;
@@ -47,13 +54,9 @@ canvas {
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: 0;
     width: 100vw;
     height: 100vh;
     pointer-events: none;
-}
-
-.ui-container {
-    z-index: 1;
+    z-index: -1;
 }
 </style>

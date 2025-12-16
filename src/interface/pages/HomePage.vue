@@ -1,22 +1,70 @@
 <template>
+    <MenuBackground />
     
-    <div style="display: flex; flex-direction: column; gap 2rem; justify-content: center; align-items: center; height: 80%;">
-        <h2>Main Menu</h2>
+    <div class="menu">
+        <div class="logo">
+            <img class="logo__image" src="/main_menu_logo.png">
+            <div class="logo__label">
+                Minecraft in JavaScript!
+            </div>
+        </div>
 
         <router-link to="/new">
-            <button>New World</button>
+            <button>New Game</button>
         </router-link>
         <router-link to="/load">
-            <button>Load World</button>
+            <button>Load Game</button>
         </router-link>
         <router-link to="/settings">
-            <button>Settings</button>
+            <button>Options</button>
         </router-link>
+        <a href="https://github.com/bschulzebaek/blockjs" target="_blank">
+            <button>About</button>
+        </a>
     </div>
 </template>
 
-<style>
+<script setup lang="ts">
+import MenuBackground from '@/interface/components/MenuBackground.vue';
+</script>
+
+<style scoped>
+.logo {
+    position: relative;
+    text-align: center;
+    margin-bottom: 4rem;
+    width: 100%;
+}
+
+.logo__image {
+    width: 100%;
+    height: auto;
+}
+
+.logo__label {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    transform: rotate(-12deg) translate(25%, 0);
+    font-size: 16px;
+    color: rgb(248, 248, 73);
+    text-shadow: 0 0 10px rgb(0 0 0);
+    animation: bumpLogo 3s 2s ease-in-out infinite;
+}
+
+@keyframes bumpLogo {
+    0% {
+        font-size: 16px;
+    }
+    10% {
+        font-size: 17px;
+    }
+    20% {
+        font-size: 16px;
+    }
+    100% {
+        font-size: 16px;
+    }
+}
 
 </style>
-<script setup lang="ts">
-</script>

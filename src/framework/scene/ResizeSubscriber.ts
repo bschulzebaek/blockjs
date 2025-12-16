@@ -15,4 +15,6 @@ window.addEventListener('resize', () => {
     camera.updateProjectionMatrix();
 
     renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+    
+     scene.frame();
 });

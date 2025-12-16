@@ -1,8 +1,13 @@
 <template>
-    <div style="display: flex; flex-direction: column; max-width: 23rem; margin: 0 auto; gap: 0.5rem;">
-        <h1 style="text-align: center;">Create new World</h1>
-        <input v-model="name" type="text" placeholder="Name">
-        <input v-model="seed" type="text" placeholder="Seed">
+    <MenuBackground />
+
+    <div class="menu">
+        <h1>Create new World</h1>
+
+        <label for="name">Name</label>
+        <input v-model="name" id="name" type="text" placeholder="Name">
+        <label for="seed">Seed</label>
+        <input v-model="seed" id="seed" type="text" placeholder="Seed">
 
         <button @click="onSubmit">Create</button>
     </div>
@@ -13,6 +18,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import type MetaInformation from '../../framework/storage/MetaInformation.ts';
 import ReservedFileNames from '../../framework/storage/reserved-file-names.ts';
+import MenuBackground from '@/interface/components/MenuBackground.vue';
 
 const router = useRouter();
 const name = ref('New World');

@@ -1,6 +1,7 @@
 type KeyDownHandler = (event: KeyboardEvent) => void;
 type KeyUpHandler = (event: KeyboardEvent) => void;
 type MouseEventHandler = (event: MouseEvent) => void;
+type WheelEventHandler = (event: WheelEvent) => void;
 
 const InputAction = {
     MOVE_FORWARD: 'move_forward',
@@ -10,6 +11,18 @@ const InputAction = {
     MOVE_UP: 'move_up',
     MOVE_DOWN: 'move_down',
     SPRINT: 'sprint',
+    HOTBAR_1: 'hotbar_1',
+    HOTBAR_2: 'hotbar_2',
+    HOTBAR_3: 'hotbar_3',
+    HOTBAR_4: 'hotbar_4',
+    HOTBAR_5: 'hotbar_5',
+    HOTBAR_6: 'hotbar_6',
+    HOTBAR_7: 'hotbar_7',
+    HOTBAR_8: 'hotbar_8',
+    HOTBAR_9: 'hotbar_9',
+    HOTBAR_10: 'hotbar_10',
+    HOTBAR_NEXT: 'hotbar_next',
+    HOTBAR_PREV: 'hotbar_prev',
 }
 
 type InputActionName = typeof InputAction[keyof typeof InputAction];
@@ -22,11 +35,22 @@ const defaultKeyMapping: Record<InputActionName, string> = {
     [InputAction.MOVE_UP]: 'Space',
     [InputAction.MOVE_DOWN]: 'ShiftLeft',
     [InputAction.SPRINT]: 'ControlLeft',
+    [InputAction.HOTBAR_1]: 'Digit1',
+    [InputAction.HOTBAR_2]: 'Digit2',
+    [InputAction.HOTBAR_3]: 'Digit3',
+    [InputAction.HOTBAR_4]: 'Digit4',
+    [InputAction.HOTBAR_5]: 'Digit5',
+    [InputAction.HOTBAR_6]: 'Digit6',
+    [InputAction.HOTBAR_7]: 'Digit7',
+    [InputAction.HOTBAR_8]: 'Digit8',
+    [InputAction.HOTBAR_9]: 'Digit9',
+    [InputAction.HOTBAR_10]: 'Digit0',
 };
 
 class InputMapper {
     private leftClickHandler: MouseEventHandler | null = null;
     private rightClickHandler: MouseEventHandler | null = null;
+    private wheelHandler: WheelEventHandler | null = null;
     private mouseMoveHandler = new Map<string, MouseEventHandler | null>();
     private actionStartHandler = new Map<InputActionName, KeyDownHandler | null>();
     private actionEndHandler = new Map<InputActionName, KeyUpHandler | null>();
@@ -41,7 +65,7 @@ class InputMapper {
             this.actionEndHandler.set(action as InputActionName, null);
             this.actionInputMap.set(key, action as InputActionName);
         });
-        
+
         document.addEventListener('pointerlockchange', () => {
             this.lockActive = document.pointerLockElement !== null;
             this.updateListeners();
@@ -76,6 +100,10 @@ class InputMapper {
         this.rightClickHandler = handler;
     }
 
+    public bindWheel(handler: WheelEventHandler | null = null) {
+        this.wheelHandler = handler;
+    }
+
     public start = () => {
         this.sceneActive = true;
         this.updateListeners();
@@ -95,12 +123,15 @@ class InputMapper {
             addEventListener('keydown', this._onKeyDown);
             addEventListener('keyup', this._onKeyUp);
             addEventListener('mousemove', this._onMouseMove);
+            addEventListener('mousemove', this._onMouseMove);
             addEventListener('click', this._onMouseClick);
+            addEventListener('wheel', this._onWheel);
         } else {
             removeEventListener('keydown', this._onKeyDown);
             removeEventListener('keyup', this._onKeyUp);
             removeEventListener('mousemove', this._onMouseMove);
             removeEventListener('click', this._onMouseClick);
+            removeEventListener('wheel', this._onWheel);
         }
     }
 
@@ -148,6 +179,10 @@ class InputMapper {
         } else if (event.button === 2) {
             this.rightClickHandler?.(event);
         }
+    }
+
+    private _onWheel = (event: WheelEvent) => {
+        this.wheelHandler?.(event);
     }
 }
 

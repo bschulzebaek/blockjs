@@ -44,4 +44,14 @@ export default class OPFSAdapter {
         const handle = await directory.getFileHandle(name);
         return handle.getFile();
     }
+    
+    public async deleteDirectory(id: string) {
+        if (!this.root) {
+            throw new Error("Root directory not initialized");
+        }
+        
+        await this.root.removeEntry(id, {
+            recursive: true,
+        });
+    }
 }
