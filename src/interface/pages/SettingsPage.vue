@@ -1,6 +1,4 @@
 <template>
-    <MenuBackground />
-    
     <div class="menu">
         <h1>Settings</h1>
         <label for="renderDistance">Render Distance</label>
@@ -15,7 +13,6 @@ import ReservedFileNames from '../../framework/storage/reserved-file-names.ts';
 import type Settings from '../../framework/storage/Settings.ts';
 import { defaultSettings } from '../../framework/storage/Settings.ts';
 import { ref, onMounted } from 'vue';
-import MenuBackground from '@/interface/components/MenuBackground.vue';
 let settings = ref<Settings>(defaultSettings);
 
 onMounted(async () => {

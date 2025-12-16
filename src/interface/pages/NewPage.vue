@@ -1,6 +1,4 @@
 <template>
-    <MenuBackground />
-
     <div class="menu">
         <h1>Create new World</h1>
 
@@ -18,7 +16,6 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import type MetaInformation from '../../framework/storage/MetaInformation.ts';
 import ReservedFileNames from '../../framework/storage/reserved-file-names.ts';
-import MenuBackground from '@/interface/components/MenuBackground.vue';
 
 const router = useRouter();
 const name = ref('New World');

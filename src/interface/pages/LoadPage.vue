@@ -1,6 +1,4 @@
 <template>
-    <MenuBackground />
-
     <div class="menu">
         <h1>Load World</h1>
 
@@ -45,7 +43,6 @@
 <script setup lang="ts">
 import { ref, type Ref, onMounted } from 'vue';
 import type MetaInformation from '../../framework/storage/MetaInformation.ts';
-import MenuBackground from '@/interface/components/MenuBackground.vue';
 
 const worlds: Ref<MetaInformation[]> = ref([]);
 

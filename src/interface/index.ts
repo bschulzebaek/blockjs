@@ -5,4 +5,4 @@ import router from './pages/router';
 
 createApp(App)
     .use(router)
-    .mount('body');
+    .mount('#app');

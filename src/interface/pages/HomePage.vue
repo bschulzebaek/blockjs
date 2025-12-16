@@ -1,6 +1,4 @@
 <template>
-    <MenuBackground />
-    
     <div class="menu">
         <div class="logo">
             <img class="logo__image" src="/main_menu_logo.png">
@@ -23,10 +21,6 @@
         </a>
     </div>
 </template>
-
-<script setup lang="ts">
-import MenuBackground from '@/interface/components/MenuBackground.vue';
-</script>
 
 <style scoped>
 .logo {
