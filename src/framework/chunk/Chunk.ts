@@ -3,7 +3,6 @@ import {
     Float32BufferAttribute,
     Mesh, MeshBasicMaterial,
     NearestFilter,
-    NearestMipMapLinearFilter,
     Object3D
 } from 'three';
 import { CHUNK } from '../../defaults.const.ts';
@@ -75,7 +74,9 @@ export default class Chunk extends Object3D {
         const meshes = Chunk.createMesh(data);
 
         this.blocks.set(data.blocks);
-        this.add(meshes.transparent, meshes.opaque);
+
+        if (meshes.transparent) this.add(meshes.transparent);
+        if (meshes.opaque) this.add(meshes.opaque);
     }
 
     public destroy() {
@@ -84,7 +85,6 @@ export default class Chunk extends Object3D {
 
     public getBlockLocal = (x: number, y: number, z: number): BlockId => {
         if (x < 0 || x >= CHUNK.WIDTH || y < 0 || y >= CHUNK.HEIGHT || z < 0 || z >= CHUNK.WIDTH) {
-            // throw new LogicError('Tried to access block outside of Chunk bounds!');
             throw new Error('Tried to access block outside of Chunk bounds!');
         }
 
@@ -100,11 +100,20 @@ export default class Chunk extends Object3D {
 
         return this.getBlockLocal(xLocal, yLocal, zLocal);
     }
-    
+
     static createMesh(chunkGeometry: ChunkGeometry): ChunkMesh {
         let meshes: { [x: string]: Mesh } = {};
 
-        Object.entries(chunkGeometry).forEach(([type, geometry]) => {
+        const geometries = {
+            opaque: chunkGeometry.opaque,
+            transparent: chunkGeometry.transparent,
+        };
+
+        Object.entries(geometries).forEach(([type, geometry]) => {
+            if (!geometry || geometry.positions.byteLength === 0) {
+                return;
+            }
+
             const bufferGeometry = new BufferGeometry();
 
             bufferGeometry.setAttribute('position', new Float32BufferAttribute(geometry.positions, 3));
@@ -112,13 +121,16 @@ export default class Chunk extends Object3D {
             bufferGeometry.setAttribute('uv', new Float32BufferAttribute(geometry.uvs, 2));
             bufferGeometry.setAttribute('color', new Float32BufferAttribute(geometry.colors, 3));
 
+            bufferGeometry.computeBoundingSphere();
+            bufferGeometry.computeBoundingBox();
+
             meshes[type] = new Mesh(bufferGeometry, Chunk.getMaterials()[type as MaterialName]);
             meshes[type].name = type;
         });
 
         return meshes as ChunkMesh;
     }
-    
+
     static getMaterials(): ChunkMaterials {
         if (materials) {
             return materials;
@@ -127,7 +139,7 @@ export default class Chunk extends Object3D {
         const texture = BlockJS.container.AssetService.get(AssetName.BLOCK_ATLAS);
 
         texture.flipY = false;
-        texture.minFilter = NearestMipMapLinearFilter;
+        texture.minFilter = NearestFilter;
         texture.magFilter = NearestFilter;
 
         const materialOptions = {
@@ -143,9 +155,6 @@ export default class Chunk extends Object3D {
                 opacity: 1.0,
                 side: DoubleSide,
                 premultipliedAlpha: true,
-                // alphaTest: 0.5,
-                // depthWrite: false,
-                // depthTest: false,
             }),
         };
 

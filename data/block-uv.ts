@@ -1,4 +1,4 @@
-import { BlockIds  } from './block-ids';
+import { BlockIds } from './block-ids';
 
 
 // 4x Sides, Top, Bottom
@@ -58,4 +58,8 @@ export const BlockUV: Record<number, [number, number, number, number, number, nu
     [BlockIds.WOODEN_DOOR_A]: [1, 5, 4, 0, 1, 5, 4, 0, 4, 0, 4, 0],
     [BlockIds.WOODEN_DOOR_B]: [1, 6, 4, 0, 1, 6, 4, 0, 4, 0, 4, 0],
     [BlockIds.TNT]: [8, 0, 8, 0, 8, 0, 8, 0, 9, 0, 10, 0],
+    [BlockIds.ICE]: [3, 4, 3, 4, 3, 4, 3, 4, 3, 4, 3, 4],
+    [BlockIds.SNOW]: [2, 4, 2, 4, 2, 4, 2, 4, 2, 4, 2, 4],
+    [BlockIds.CACTUS]: [6, 4, 6, 4, 6, 4, 6, 4, 5, 4, 7, 4],
+    [BlockIds.CLAY]: [8, 4, 8, 4, 8, 4, 8, 4, 8, 4, 8, 4],
 };

@@ -15,14 +15,11 @@ export default class ChunkStorage {
         const fileService = this.getFileService();
         const fileName = chunk.getId();
 
-        // Convert blocks to base64 for storage
         const base64Data = SerializationUtils.arrayBufferToBase64(chunk.blocks.buffer);
         
-        // Compress the data
         const compressedData = await this.compress(new TextEncoder().encode(base64Data));
         const compressedBase64 = SerializationUtils.arrayBufferToBase64(compressedData);
         
-        // Save to file system
         // @ts-ignore
         await fileService.writeFile(fileName, compressedBase64, globalThis.chunkWorker.id);
     }
@@ -35,12 +32,10 @@ export default class ChunkStorage {
             const fileService = this.getFileService();
             const fileName = WorkerChunk.getId(x, y, z);
             
-            // Read and decompress the data
             const compressedBase64 = await fileService.readWorldFile(fileName);
             const compressedData = SerializationUtils.base64ToArrayBuffer(compressedBase64);
             const decompressedData = await this.decompress(new Uint8Array(compressedData));
             
-            // Convert back to Uint8Array
             const base64Data = new TextDecoder().decode(decompressedData);
             const blocksBuffer = SerializationUtils.base64ToArrayBuffer(base64Data);
             
@@ -48,7 +43,6 @@ export default class ChunkStorage {
                 blocks: new Uint8Array(blocksBuffer)
             };
         } catch (e) {
-            // File doesn't exist or other error
             return null;
         }
     }

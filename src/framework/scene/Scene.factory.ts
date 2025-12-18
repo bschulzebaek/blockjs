@@ -6,6 +6,7 @@ export default function SceneFactory(container: BlockJSContainer) {
 
     scene.add(container.World);
     scene.addDynamicEntity(container.Cursor);
+    scene.addDynamicEntity(container.Player);
 
     return scene;
 }

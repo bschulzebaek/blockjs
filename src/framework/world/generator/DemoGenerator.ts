@@ -25,7 +25,7 @@ export default class DemoGenerator implements GeneratorInterface {
                             blockId = BlockIds.GOLD_BLOCK;
                         } else if (x === CHUNK.WIDTH - 1 && z === 0) {
                             blockId = BlockIds.IRON_BLOCK;
-                        } else if (x === CHUNK.WIDTH -1 && z === CHUNK.WIDTH - 1) {
+                        } else if (x === CHUNK.WIDTH - 1 && z === CHUNK.WIDTH - 1) {
                             blockId = BlockIds.LAPIS_BLOCK;
                         } else if (absolutY === 0) {
                             blockId = BlockIds.BEDROCK;

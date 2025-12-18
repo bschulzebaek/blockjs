@@ -13,7 +13,7 @@ export default class WorkerChunk {
     public y: number;
     public z: number;
     public isModified = false;
-    
+
     constructor(
         x: number,
         y: number,
@@ -29,36 +29,35 @@ export default class WorkerChunk {
         this.blockData = blockData;
         this.isModified = isModified;
     }
-    
+
     static getId(x: number, y: number, z: number): string {
         return `${x}:${y}:${z}`;
     }
-    
+
     public getId() {
         return WorkerChunk.getId(this.x, this.y, this.z);
     }
-    
+
     public getOffsetX(): number {
         return this.x * CHUNK.WIDTH;
     }
-    
+
     public getOffsetY(): number {
         return this.y * CHUNK.HEIGHT;
     }
-    
+
     public getOffsetZ(): number {
         return this.z * CHUNK.WIDTH;
     }
 
     public getBlockLocal = (x: number, y: number, z: number): number => {
         if (x < 0 || x >= CHUNK.WIDTH || y < 0 || y >= CHUNK.HEIGHT || z < 0 || z >= CHUNK.WIDTH) {
-            // throw new LogicError('Tried to access block outside of Chunk bounds!');
             throw new Error('Tried to access block outside of Chunk bounds!');
         }
 
         const index = CoordinatesHelper.ChunkCoordsToIndex(x, y, z);
 
-        return this.blocks[index] ??BlockIds.AIR;
+        return this.blocks[index] ?? BlockIds.AIR;
     }
 
     public getBlockAbsolute = (x: number, y: number, z: number): number => {

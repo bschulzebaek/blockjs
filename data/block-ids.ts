@@ -69,6 +69,10 @@ const BlockIds = {
     WOODEN_DOOR_B: 64.2,
     LADDER: 65,
     RAIL: 66,
+    ICE: 67,
+    SNOW: 68,
+    CACTUS: 69,
+    CLAY: 70,
 };
 
 type BlockId = typeof BlockIds[keyof typeof BlockIds];

@@ -29,12 +29,12 @@ const config: StateConfig<BlockJSState> = {
     SCENE_INIT: {
         transitions: ['SCENE_ACTIVE', 'SCENE_PAUSED'],
         onEnter: async () => {
-            if (!BlockJS.id || !BlockJS.canvas) { 
+            if (!BlockJS.id || !BlockJS.canvas) {
                 throw new Error('BlockJS.id or BlockJS.canvas is not set!');
             }
 
             setState(STATES.SCENE_INIT);
-            
+
             BlockJS.container.FileService.setWorldId(BlockJS.id);
 
             const fileContent = await BlockJS.container.FileService.readWorldFile(ReservedFileNames.META);
@@ -51,8 +51,13 @@ const config: StateConfig<BlockJSState> = {
                 BlockJS.container.Skybox.load(),
             ]);
 
+            if (BlockJS.container.Player.position.lengthSq() === 0) {
+                const spawnPosition = BlockJS.container.World.findSpawnPosition();
+                BlockJS.container.Player.position.fromArray(spawnPosition);
+            }
+
             BlockJS.container.Scene.frame();
-         },
+        },
     },
     SCENE_ACTIVE: {
         transitions: ['SCENE_PAUSED', 'SCENE_DESTROY'],
@@ -60,7 +65,7 @@ const config: StateConfig<BlockJSState> = {
             await BlockJS.container.PointerLockHelper.lock();
 
             BlockJS.container.Scene.start();
-            BlockJS.container.InputMapper.start(); 
+            BlockJS.container.InputMapper.start();
 
             setState(STATES.SCENE_ACTIVE);
         },
@@ -82,7 +87,7 @@ const config: StateConfig<BlockJSState> = {
             BlockJS.id = null;
             BlockJS.meta = null;
             BlockJS.canvas = null;
-            
+
             BlockJS.bottle.resetProviders();
         },
     },

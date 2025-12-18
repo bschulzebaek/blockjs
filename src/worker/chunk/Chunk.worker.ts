@@ -30,16 +30,20 @@ class ChunkWorker implements ChunkWorkerInterface {
 
     public async getChunkData(x: number, y: number, z: number): Promise<ChunkData | null> {
         const chunk = this.world.get(x, y, z);
-        
+
         if (!chunk || !chunk.ready) {
             return null;
         }
-        
+
         return this.getResponse(chunk);
     }
 
     public async setBlock(x: number, y: number, z: number, id: BlockId): Promise<void> {
         await this.chunkService.setBlock(x, y, z, id);
+    }
+
+    public async unloadChunk(x: number, y: number, z: number): Promise<void> {
+        await this.chunkService.unloadChunk(x, y, z);
     }
 
     private getResponse(chunk: WorkerChunk): ChunkData {
@@ -61,7 +65,7 @@ class ChunkWorker implements ChunkWorkerInterface {
                 colors: this.copyArrayBuffer(chunk.transparent!.colors),
             },
         };
-        
+
         return transfer(payload, [
             payload.blocks.buffer,
             payload.opaque.positions,

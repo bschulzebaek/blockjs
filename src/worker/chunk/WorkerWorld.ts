@@ -16,6 +16,11 @@ export default class WorkerWorld {
         this.chunks.delete(id);
         this.loadedFromDisk.delete(id);
         this.fileCache.delete(id);
+        this.fileCache.delete(id);
+    }
+
+    public remove = (x: number, y: number, z: number) => {
+        this.delete(x, y, z);
     }
 
     public has = (x: number, y: number, z: number) => {
